@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Gest_Comm_ClientFX.iml" filepath="$PROJECT_DIR$/Gest_Comm_ClientFX.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Gest_Comm_ClientFX/Gest_Comm_ClientFX.iml" filepath="$PROJECT_DIR$/Gest_Comm_ClientFX/Gest_Comm_ClientFX.iml" />
     </modules>
   </component>
 </project>
