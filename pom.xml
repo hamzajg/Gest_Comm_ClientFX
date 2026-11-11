@@ -8,11 +8,23 @@
     <artifactId>Gest_Comm_ClientFX</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.release>17</maven.compiler.release>
+        <javafx.version>17.0.2</javafx.version>
+    </properties>
+
     <dependencies>
+        <!-- JavaFX is not bundled with the JDK since Java 11. -->
         <dependency>
-            <groupId>net.sf.jasperreports</groupId>
-            <artifactId>jasperreports</artifactId>
-            <version>6.4.3</version>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>${javafx.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-fxml</artifactId>
+            <version>${javafx.version}</version>
         </dependency>
     </dependencies>
 
@@ -25,6 +37,15 @@
                 </includes>
             </resource>
         </resources>
+        <plugins>
+            <!-- Pin the compiler plugin so `maven.compiler.release` is honored
+                 regardless of the Maven version in use. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+            </plugin>
+        </plugins>
     </build>
-    
+
 </project>
