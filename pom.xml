@@ -37,6 +37,15 @@
                 </includes>
             </resource>
         </resources>
+        <plugins>
+            <!-- Pin the compiler plugin so `maven.compiler.release` is honored
+                 regardless of the Maven version in use. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+            </plugin>
+        </plugins>
     </build>
 
 </project>
