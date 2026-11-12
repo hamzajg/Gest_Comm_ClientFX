@@ -45,6 +45,16 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.13.0</version>
             </plugin>
+            <!-- `mvn javafx:run` launches the client with the JavaFX modules
+                 on the module path; the JDK itself no longer ships them. -->
+            <plugin>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>0.0.8</version>
+                <configuration>
+                    <mainClass>com.xdev.gest_comm_clientfx.app.StartApp</mainClass>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
