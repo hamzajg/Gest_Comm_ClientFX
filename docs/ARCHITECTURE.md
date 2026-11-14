@@ -11,8 +11,9 @@ StartApp (JavaFX Application)
         │                      Bon Liv / Facture + search + Bienvenue tab
         ▼
 controllers/  HomeScreenCtrl, ConfigScreenCtrl — EMPTY stubs (no @FXML)
-models/       Article (fields only), Client, BonLivClient, FactureClient
-              (empty shells)
+models/       Article + Client POJOs with accessors (Client mirrors the
+              PyGestComm backend fields); BonLivClient, FactureClient
+              still empty shells
         │
         ▼ (intended, not built)
 Gest_Comm ADF backend  /rest/*  (Article view object only)
