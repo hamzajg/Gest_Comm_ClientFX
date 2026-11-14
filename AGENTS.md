@@ -19,7 +19,7 @@ Verified 2026-11-13 against CI (`.github/workflows/ci.yml`) and README.
 |---|---|
 | Build | `mvn -B package` (CI: JDK 17) |
 | Run app | `mvn javafx:run` |
-| Tests | none yet |
+| Tests | `mvn -B package` runs JUnit 5 model tests (3) |
 
 Requires: JDK 17 only — JavaFX comes from Maven, no separate SDK.
 Entry point: `com.xdev.gest_comm_clientfx.app.StartApp` (set as
@@ -34,8 +34,9 @@ src/main/java/com/xdev/gest_comm_clientfx/
     HomeScreen.java     loads views/HomeScreen.fxml via FXMLLoader
     ConfigScreen.java   empty placeholder
   controllers/          HomeScreenCtrl, ConfigScreenCtrl — EMPTY stubs
-  models/               Article (fields only, no getters/setters),
-                        Client / BonLivClient / FactureClient — empty shells
+  models/               Article + Client POJOs with getters/setters
+                        (Client mirrors the PyGestComm backend fields);
+                        BonLivClient / FactureClient — still empty shells
   views/                *.fxml layouts (HomeScreen, ConfigScreen)
 pom.xml                 JavaFX deps + resources-plugin copies views/*.fxml
                         onto the classpath
@@ -55,18 +56,21 @@ that contract as undefined until first real calls land.
   controllers in `controllers/` (intended `@FXML` wiring — not yet used).
 - `.fxml` files live under `src/main/java` and reach the classpath via the
   maven-resources-plugin entry — keep that config if moving files.
-- Models are anemic field shells — French domain names
-  (`ref_article`, `prix_vente_unitaire`, `remise_achat`, `tva_*`). Match
-  the backend's vocabulary; the sibling repo `Gest_Comm`/`PyGestComm`
-  share the domain.
+- Models are plain POJOs — French domain names
+  (`ref_article`, `prix_vente_unitaire`, `remise_achat`, `tva_*`,
+  `codeClient`, `nomPrenomClient`). `Client` field names mirror the
+  PyGestComm backend one-to-one so JSON maps cleanly; keep them in sync
+  when the backend model changes. `BonLivClient`/`FactureClient` remain
+  empty until their backend shape is defined — don't guess fields.
 - French UI strings; package root `com.xdev.gest_comm_clientfx`.
 
 ## Landmines
 
 - **Default branch is `master`, not `main`.**
 - Everything interactive is inert: menus have no `onAction`, controllers
-  are empty, `Article` has no getters/setters — don't assume features work.
-- No tests, no HTTP layer, no persistence — "the app runs" ≠ "the app does
+  are empty — don't assume features work. Models now have accessors and
+  JUnit 5 tests, but nothing calls them yet.
+- No HTTP layer, no persistence — "the app runs" ≠ "the app does
   anything".
 - `mvn javafx:run` handles the module path; plain `java -jar` won't work
   without the plugin's setup.
