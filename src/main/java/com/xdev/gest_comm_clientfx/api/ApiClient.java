@@ -15,6 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Base64;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Thin HTTP/JSON client for the PyGestComm REST API.
@@ -82,6 +83,20 @@ public class ApiClient {
 
     public void patch(String path, Object payload) throws ApiException {
         send("PATCH", path, payload);
+    }
+
+    /** POST /api/assistant/ask — returns {intent, answer, data}. */
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> askAssistant(String question)
+        throws ApiException {
+        String body = send("POST", "/api/assistant/ask",
+            Map.of("question", question));
+        try {
+            return mapper.readValue(body, Map.class);
+        } catch (IOException e) {
+            throw new ApiException(
+                "Cannot parse assistant response", e);
+        }
     }
 
     public <T> List<T> getList(String path, Class<T> elementType)

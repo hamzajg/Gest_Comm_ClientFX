@@ -385,6 +385,12 @@ public class HomeScreenCtrl {
     }
 
     @FXML
+    public void showAssistant() {
+        showDialog("/com/xdev/gest_comm_clientfx/views/Assistant.fxml",
+            "Assistant", 640, 520, AssistantCtrl.class, () -> { });
+    }
+
+    @FXML
     public void openConfig() {
         try {
             Stage stage = new Stage();
