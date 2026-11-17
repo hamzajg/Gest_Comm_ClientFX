@@ -314,9 +314,6 @@ public class NouvelFactureCtrl implements ApiDialog {
     }
 
     private String validate() {
-        if (codeFactureField.getText().isBlank()) {
-            return "Le code facture est obligatoire.";
-        }
         if (clientCombo.getValue() == null) {
             return "Choisissez un client.";
         }

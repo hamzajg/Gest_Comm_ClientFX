@@ -29,7 +29,7 @@
             <ColumnConstraints hgrow="ALWAYS" />
         </columnConstraints>
         <Label text="Code facture *" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-        <TextField fx:id="codeFactureField" promptText="ex. F0001"
+        <TextField fx:id="codeFactureField" promptText="auto si vide (ex. FAC-0001)"
                    GridPane.columnIndex="1" GridPane.rowIndex="0" />
         <Label text="Client *" GridPane.columnIndex="0" GridPane.rowIndex="1" />
         <ComboBox fx:id="clientCombo" maxWidth="1.7976931348623157E308"

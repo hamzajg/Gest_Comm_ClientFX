@@ -317,9 +317,6 @@ public class NouveauDevisCtrl implements ApiDialog {
     }
 
     private String validate() {
-        if (codeDevisField.getText().isBlank()) {
-            return "Le code devis est obligatoire.";
-        }
         if (clientCombo.getValue() == null) {
             return "Choisissez un client.";
         }

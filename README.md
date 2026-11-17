@@ -34,7 +34,9 @@ server URL (default `http://localhost:8000`) and the API username/password
 (a Django user — `python manage.py createsuperuser` on the backend), then
 **Tester la connexion**. The app exchanges credentials once for JWT
 tokens (`POST /api/token`) and sends `Authorization: Bearer <access>`;
-the rotating refresh token is persisted so restarts skip login.
+the rotating refresh token is persisted so restarts skip login. Document
+codes are optional — leave them blank and the backend auto-numbers
+(DEV-/FAC-/BL- sequences).
 **Application → Se déconnecter** revokes the refresh token server-side
 (`/api/token/logout`) and clears local tokens.
 request.
