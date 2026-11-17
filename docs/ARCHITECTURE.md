@@ -13,8 +13,11 @@ StartApp (JavaFX Application)
    ├─ ConfigScreen ──loads──► views/ConfigScreen.fxml (settings form)
    ▼
 controllers/  HomeScreenCtrl — @FXML tabs/tables/menus; loads API data
-              on a background thread → Platform.runLater
+              on a background thread → Platform.runLater; launches the
+              create dialogs with onSaved → refresh callbacks
               ConfigScreenCtrl — settings form; save + test connection
+              NouveauClientCtrl / NouvelArticleCtrl — create forms that
+              POST Map payloads and close on success
 api/          ApiClient (java.net.http + Jackson, Basic auth every call)
               ApiConfig (Java Preferences) · ApiException
 models/       Article + Client POJOs with accessors; BonLivClient,
@@ -54,8 +57,9 @@ preferences store between runs.
 
 ## Contract status
 
-Defined and working for the read paths: `GET /api/client` and
-`GET /api/article` with Basic auth (PyGestComm ADR 0006). The backend's
-write endpoints, devis/facture documents, filters and assistant are
-unused so far — `BonLivClient`/`FactureClient` stay empty until those
-screens are designed.
+Defined and working for clients/articles: `GET`/`POST /api/client` and
+`GET`/`POST /api/article` with Basic auth (PyGestComm ADR 0006). Writes
+send `Map` payloads with camelCase keys; reads deserialize into the
+POJOs. The backend's detail routes, devis/facture documents, filters
+and assistant are unused so far — `BonLivClient`/`FactureClient` stay
+empty until those screens are designed.

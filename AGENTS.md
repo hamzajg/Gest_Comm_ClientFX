@@ -6,9 +6,9 @@ Guidance for AI agents (and humans) working in this repository.
 
 Gest_Comm_ClientFX is a **JavaFX desktop client** (French UI) for the
 *gestion commerciale* back end **PyGestComm** (Django REST). Early stage:
-the window, config screen, and live Clients/Articles list tabs work
-against the API; write screens and the Bon Liv/Facture menus are still
-stubs.
+the window, config screen, live Clients/Articles list tabs, and
+create-client/create-article forms work against the API; edit/delete,
+the Bon Liv/Facture menus and document workflows are still stubs.
 Stack: Java 17, JavaFX 17 (via Maven, `javafx-controls`/`javafx-fxml`),
 Jackson databind, `java.net.http`, Maven, FXML views.
 
@@ -46,10 +46,13 @@ src/main/java/com/xdev/gest_comm_clientfx/
     ApiException.java   transport/HTTP error type (RuntimeException)
   controllers/
     HomeScreenCtrl      @FXML: tabs (Bienvenue/Clients/Articles), table
-                        columns, menu actions; loads run on a background
-                        thread, UI updates via Platform.runLater
+                        columns, menu actions incl. dialog launchers;
+                        loads run on a background thread, UI updates via
+                        Platform.runLater
     ConfigScreenCtrl    @FXML: server URL/user/password fields, save,
                         test-connection
+    NouveauClientCtrl   @FXML: client create form → POST /api/client
+    NouvelArticleCtrl   @FXML: article create form → POST /api/article
   models/               Article + Client POJOs with getters/setters;
                         BonLivClient / FactureClient — still empty shells
   views/                *.fxml layouts (HomeScreen, ConfigScreen)
@@ -62,8 +65,10 @@ pom.xml                 JavaFX + Jackson deps + resources-plugin copies
 The backend is **PyGestComm** (`../PyGestComm`), not the old ADF `Gest_Comm`
 repo. Every `/api/*` route requires HTTP Basic auth (PyGestComm ADR 0006);
 `ApiClient` sends `Authorization: Basic base64(user:pass)` from
-`ApiConfig`. Used so far: `GET /api/client`, `GET /api/article` (both
-return JSON arrays). The backend also has `/api/devis`, `/api/facture`,
+`ApiConfig`. Used so far: `GET /api/client`, `GET /api/article` (JSON arrays),
+`POST /api/client`, `POST /api/article` (create dialogs send `Map`
+payloads — only non-empty optional fields are included). The backend also
+has `/<id>` detail routes, `/api/devis`, `/api/facture`,
 `/api/devis/<id>/convertir`, `?search=`/`?statut=`/`?client=` filters, and
 `POST /api/assistant/ask` — none consumed yet.
 
@@ -94,8 +99,11 @@ decimals arrive as strings (`"100.00"`) — Jackson handles that into
 ## Landmines
 
 - **Default branch is `master`, not `main`.**
-- Only *Parametre de l'application*, *Liste des clients* and *Liste des
-  articles* are wired — every other menu item is still inert.
+- Only config, client/article lists and the two create forms are wired —
+  Bon Liv/Facture menus, edit/delete and document screens are inert.
+- Create dialogs send `Map<String,Object>` payloads, not the POJOs —
+  keep it that way for writes (explicit keys, no Jackson serialization
+  surprises); POJOs are for reads.
 - `ConfigScreen.fxml`'s controller must stay
   `com.xdev.gest_comm_clientfx.controllers.ConfigScreenCtrl` (plural
   `controllers`) — it was once broken by a singular path.

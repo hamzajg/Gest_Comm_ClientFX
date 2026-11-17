@@ -6,9 +6,10 @@ French UI.
 
 The window is wired to the [PyGestComm](../PyGestComm) Django REST backend:
 the Application menu opens a settings screen (server URL + credentials,
-stored in the OS preferences store), and the Client/Article menus list live
-data from the API in dedicated tabs. Write screens (new/edit documents) and
-the Bon Liv/Facture menus are still stubs.
+stored in the OS preferences store), the Client/Article menus list live
+data from the API in dedicated tabs, and *Nouveau client* / *Nouveau
+article* open create forms that POST to the API. The Bon Liv/Facture menus
+and edit/delete are still stubs.
 
 ## Run it
 
@@ -43,10 +44,11 @@ The app opens a 1200×700 window titled *Gestion Commerciale*, loaded from
 
 - **Application** menu — *Parametre de l'application* opens the settings
   screen (wired); the template's sequence/Save/Open/Close items stay inert
-- **Article** menu — *Liste des articles* opens the Articles tab (wired);
-  *Nouveau article* is still inert
-- **Client** menu — *Liste des clients* opens the Clients tab (wired);
-  *Nouveau client*, *Bon Liv* and *Facture* items are still inert
+- **Article** menu — *Nouveau article* opens a create form (wired);
+  *Liste des articles* opens the Articles tab (wired)
+- **Client** menu — *Nouveau client* opens a create form (wired);
+  *Liste des clients* opens the Clients tab (wired); *Bon Liv* and
+  *Facture* items are still inert
 - **Help** menu — unchanged
 - tabs: *Bienvenue*, *Clients* and *Articles* — each list tab has an
   *Actualiser* button and a status line
@@ -62,8 +64,9 @@ src/main/java/com/xdev/gest_comm_clientfx/
                              Basic auth on every request)
   api/ApiConfig.java         server URL + credentials (Java Preferences)
   api/ApiException.java      transport/HTTP error type
-  controllers/               @FXML controllers — HomeScreenCtrl and
-                             ConfigScreenCtrl are wired
+  controllers/               @FXML controllers — HomeScreenCtrl,
+                             ConfigScreenCtrl, NouveauClientCtrl,
+                             NouvelArticleCtrl all wired
   models/Article.java        snake_case fields + @JsonProperty bridge to
                              the API's camelCase JSON
   models/Client.java         mirrors the backend Client fields 1:1
@@ -81,11 +84,12 @@ by the `maven-resources-plugin` resource entry in `pom.xml`, which is why
 | Piece | State |
 |---|---|
 | Window, menus, tabs | laid out in FXML |
-| Menu actions | config + client/article lists wired; write items inert |
+| Menu actions | config, client/article lists and create forms wired; Bon Liv/Facture + edit/delete inert |
 | `HomeScreenCtrl`, `ConfigScreenCtrl` | wired (`@FXML` injection, background loads) |
+| `NouveauClientCtrl`, `NouvelArticleCtrl` | wired — POST forms with client-side validation |
 | `Article`, `Client` | full accessors + Jackson JSON mapping (tested) |
 | `BonLivClient`, `FactureClient` | empty classes |
-| HTTP client | `api/ApiClient` — list endpoints only so far |
+| HTTP client | `api/ApiClient` — list + post used so far |
 | Tests | 5 JUnit 5 tests (model accessors + JSON mapping) |
 
 ## Continuous integration
