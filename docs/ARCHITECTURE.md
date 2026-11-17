@@ -7,39 +7,55 @@ Current-state map. Descriptive, not aspirational; see `docs/adr/` for why.
 ```
 StartApp (JavaFX Application)
    └─ HomeScreen ──loads──► views/HomeScreen.fxml
-        │                      menus: Application / Article / Client /
-        │                      Bon Liv / Facture + search + Bienvenue tab
-        ▼
-controllers/  HomeScreenCtrl, ConfigScreenCtrl — EMPTY stubs (no @FXML)
-models/       Article + Client POJOs with accessors (Client mirrors the
-              PyGestComm backend fields); BonLivClient, FactureClient
-              still empty shells
+   │                          menus: Application / Article / Client /
+   │                          Bon Liv / Facture; tabs Bienvenue /
+   │                          Clients / Articles
+   ├─ ConfigScreen ──loads──► views/ConfigScreen.fxml (settings form)
+   ▼
+controllers/  HomeScreenCtrl — @FXML tabs/tables/menus; loads API data
+              on a background thread → Platform.runLater
+              ConfigScreenCtrl — settings form; save + test connection
+api/          ApiClient (java.net.http + Jackson, Basic auth every call)
+              ApiConfig (Java Preferences) · ApiException
+models/       Article + Client POJOs with accessors; BonLivClient,
+              FactureClient still empty shells
         │
-        ▼ (intended, not built)
-Gest_Comm ADF backend  /rest/*  (Article view object only)
+        ▼  HTTP/JSON + Authorization: Basic …
+PyGestComm (Django/DRF)  /api/client  /api/article  /api/devis
+                         /api/facture  /api/assistant/ask  /admin/
 ```
 
 ## Design
 
 - **FXML + loader pattern.** `HomeScreen`/`ConfigScreen` wrap
   `FXMLLoader.load(...)` and expose `getRootView()`; `StartApp` puts the
-  root in a `Scene`. Controllers exist as placeholders for `@FXML`
-  injection but aren't wired.
-- **Anemic models.** `Article` declares the domain fields
-  (`id_article`, `ref_article`, `desc_article`, purchase/sale prices,
-  `remise_*`, `tva_*`, `dernier_prix_vente_unitaire`) with no behaviour —
-  a DTO-shaped shell matching the future REST payloads.
-- **No service layer.** No HTTP client, no repository, no persistence —
-  the app is currently a static window.
+  root in a `Scene`. Controllers are real `@FXML` classes now — menu items
+  use `onAction="#..."`, tabs/tables/labels are injected by `fx:id`.
+- **Anemic models + Jackson bridge.** `Article`/`Client` are DTO-shaped
+  POJOs. `Client` field names match the backend JSON 1:1; `Article`
+  keeps snake_case Java fields with `@JsonProperty` mapping to the API's
+  camelCase keys.
+- **Thin API layer.** `ApiClient` is a `java.net.http.HttpClient` +
+  Jackson `ObjectMapper` wrapper: `getList(path, type)`, `post(path,
+  payload, type)`, raw `send(method, path, payload)`. No retry, no
+  caching, no offline mode — errors surface as `ApiException`.
+- **Config in Java Preferences.** `ApiConfig` stores baseUrl/username/
+  password via `Preferences.userNodeForPackage` — OS-backed, no
+  plaintext file in the repo or home dir.
+- **FX-thread discipline.** All network I/O runs on spawned threads;
+  results reach the UI through `Platform.runLater` (`HomeScreenCtrl.load`,
+  `ConfigScreenCtrl.testConnection`).
 
 ## State
 
-None. No local storage, no network calls. All state will come from the
-Gest_Comm backend once the client layer is built.
+Server-side only. The client keeps no local database — lists are fetched
+on demand via *Actualiser* / menu actions. Credentials persist in the
+preferences store between runs.
 
 ## Contract status
 
-Unspecified. The backend (`Gest_Comm`) exposes ADF-generated REST for a
-single `Article` view object; the client's model fields anticipate the
-article payload but nothing calls it yet. First HTTP implementation should
-pin the contract in an ADR here and in `Gest_Comm`.
+Defined and working for the read paths: `GET /api/client` and
+`GET /api/article` with Basic auth (PyGestComm ADR 0006). The backend's
+write endpoints, devis/facture documents, filters and assistant are
+unused so far — `BonLivClient`/`FactureClient` stay empty until those
+screens are designed.

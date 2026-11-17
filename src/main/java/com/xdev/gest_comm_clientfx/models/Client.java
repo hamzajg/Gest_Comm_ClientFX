@@ -1,10 +1,13 @@
 package com.xdev.gest_comm_clientfx.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * Client entity mirroring the Gest_Comm backend model
  * (PyGestComm GestCommApp Client): same field names so JSON payloads map
  * one-to-one. Field types follow the backend — phone numbers are ints.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Client {
 
     private Long idClient;
