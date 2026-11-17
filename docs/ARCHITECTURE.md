@@ -66,7 +66,9 @@ preferences store between runs.
 
 ## Contract status
 
-Defined and working for the full commercial document chain:
+Defined and working for the full commercial document chain, including
+row-level edit (PUT), delete (DELETE with confirm) and statut PATCH:
+
 `GET`/`POST` on `/api/client`, `/api/article`, `/api/devis`, `/api/facture`
 plus `POST /api/devis/<id>/convertir` (devis→facture) — all with Basic
 auth (PyGestComm ADR 0006). Writes send `Map` payloads with camelCase

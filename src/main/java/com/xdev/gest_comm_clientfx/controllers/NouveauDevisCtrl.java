@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class NouveauDevisCtrl {
+public class NouveauDevisCtrl implements ApiDialog {
 
     /** Editable draft row for the lines table — strings keep the FXML
      *  simple; the backend accepts numeric strings for Decimal/Float. */

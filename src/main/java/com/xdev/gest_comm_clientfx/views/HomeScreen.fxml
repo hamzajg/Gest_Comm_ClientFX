@@ -109,7 +109,12 @@
                         <VBox spacing="5.0">
                             <children>
                                 <TableView fx:id="clientTable" VBox.vgrow="ALWAYS" />
-                                <Button mnemonicParsing="false" onAction="#refreshClients" text="Actualiser" />
+                                <HBox spacing="10.0">
+                                    <Button mnemonicParsing="false" onAction="#refreshClients" text="Actualiser" />
+                                    <Button mnemonicParsing="false" onAction="#showNewClient" text="Nouveau client" />
+                                    <Button mnemonicParsing="false" onAction="#editSelectedClient" text="Modifier" />
+                                    <Button mnemonicParsing="false" onAction="#deleteSelectedClient" text="Supprimer" />
+                                </HBox>
                                 <Label fx:id="clientStatus" text="" />
                             </children>
                         </VBox>
@@ -120,7 +125,12 @@
                         <VBox spacing="5.0">
                             <children>
                                 <TableView fx:id="articleTable" VBox.vgrow="ALWAYS" />
-                                <Button mnemonicParsing="false" onAction="#refreshArticles" text="Actualiser" />
+                                <HBox spacing="10.0">
+                                    <Button mnemonicParsing="false" onAction="#refreshArticles" text="Actualiser" />
+                                    <Button mnemonicParsing="false" onAction="#showNewArticle" text="Nouvel article" />
+                                    <Button mnemonicParsing="false" onAction="#editSelectedArticle" text="Modifier" />
+                                    <Button mnemonicParsing="false" onAction="#deleteSelectedArticle" text="Supprimer" />
+                                </HBox>
                                 <Label fx:id="articleStatus" text="" />
                             </children>
                         </VBox>
@@ -135,6 +145,9 @@
                                     <Button mnemonicParsing="false" onAction="#refreshDevis" text="Actualiser" />
                                     <Button mnemonicParsing="false" onAction="#showNewDevis" text="Nouveau devis" />
                                     <Button mnemonicParsing="false" onAction="#convertSelectedDevis" text="Convertir en facture" />
+                                    <Button mnemonicParsing="false" onAction="#validerDevis" text="Valider" />
+                                    <Button mnemonicParsing="false" onAction="#refuserDevis" text="Refuser" />
+                                    <Button mnemonicParsing="false" onAction="#deleteSelectedDevis" text="Supprimer" />
                                 </HBox>
                                 <Label fx:id="devisStatus" text="" />
                             </children>
@@ -149,6 +162,10 @@
                                 <HBox spacing="10.0">
                                     <Button mnemonicParsing="false" onAction="#refreshFactures" text="Actualiser" />
                                     <Button mnemonicParsing="false" onAction="#showNewFacture" text="Nouvelle facture" />
+                                    <Button mnemonicParsing="false" onAction="#validerFacture" text="Valider" />
+                                    <Button mnemonicParsing="false" onAction="#payerFacture" text="Marquer payée" />
+                                    <Button mnemonicParsing="false" onAction="#annulerFacture" text="Annuler" />
+                                    <Button mnemonicParsing="false" onAction="#deleteSelectedFacture" text="Supprimer" />
                                 </HBox>
                                 <Label fx:id="factureStatus" text="" />
                             </children>

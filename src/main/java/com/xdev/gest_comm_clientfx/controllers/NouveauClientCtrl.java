@@ -12,7 +12,7 @@ import javafx.stage.Stage;
 import java.util.HashMap;
 import java.util.Map;
 
-public class NouveauClientCtrl {
+public class NouveauClientCtrl implements ApiDialog {
 
     @FXML private TextField codeClientField;
     @FXML private TextField nomPrenomField;
@@ -25,6 +25,23 @@ public class NouveauClientCtrl {
 
     private ApiClient api;
     private Runnable onSaved;
+    private Client editing;
+
+    /** Prefill the form for editing an existing client (PUT on save). */
+    public void setEditing(Client client) {
+        this.editing = client;
+        codeClientField.setText(client.getCodeClient());
+        nomPrenomField.setText(client.getNomPrenomClient());
+        matFiscalField.setText(client.getMatFiscalClient());
+        adresse1Field.setText(client.getAddresseClient1());
+        adresse2Field.setText(client.getAddresseClient2());
+        tel1Field.setText(phoneText(client.getNumTelClient1()));
+        tel2Field.setText(phoneText(client.getNumTelClient2()));
+    }
+
+    private static String phoneText(Integer phone) {
+        return phone != null && phone != 0 ? String.valueOf(phone) : "";
+    }
 
     public void setApi(ApiClient api) {
         this.api = api;
@@ -54,7 +71,12 @@ public class NouveauClientCtrl {
         statusLabel.setText("Enregistrement…");
         new Thread(() -> {
             try {
-                api.post("/api/client", payload, Client.class);
+                if (editing != null) {
+                    api.put("/api/client/" + editing.getIdClient(),
+                        payload, Client.class);
+                } else {
+                    api.post("/api/client", payload, Client.class);
+                }
                 Platform.runLater(() -> {
                     if (onSaved != null) {
                         onSaved.run();
