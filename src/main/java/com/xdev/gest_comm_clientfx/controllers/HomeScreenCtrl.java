@@ -234,6 +234,19 @@ public class HomeScreenCtrl {
     @FXML public void annulerBonLiv() { setBonLivStatut("annule"); }
 
     @FXML
+    public void editSelectedBonLiv() {
+        BonLiv b = bonlivTable.getSelectionModel().getSelectedItem();
+        if (b == null) {
+            bonlivStatus.setText("Sélectionnez un bon de livraison.");
+            return;
+        }
+        showDialog("/com/xdev/gest_comm_clientfx/views/NouveauBonLiv.fxml",
+            "Modifier le bon de livraison", 720, 560,
+            NouveauBonLivCtrl.class, this::refreshBonLivs,
+            c -> c.setEditing(b));
+    }
+
+    @FXML
     public void deleteSelectedBonLiv() {
         BonLiv b = bonlivTable.getSelectionModel().getSelectedItem();
         if (b == null) {
@@ -395,6 +408,18 @@ public class HomeScreenCtrl {
     @FXML public void refuserDevis() { setDevisStatut("refuse"); }
 
     @FXML
+    public void editSelectedDevis() {
+        Devis d = devisTable.getSelectionModel().getSelectedItem();
+        if (d == null) {
+            devisStatus.setText("Sélectionnez un devis.");
+            return;
+        }
+        showDialog("/com/xdev/gest_comm_clientfx/views/NouveauDevis.fxml",
+            "Modifier le devis", 720, 560, NouveauDevisCtrl.class,
+            this::refreshDevis, c -> c.setEditing(d));
+    }
+
+    @FXML
     public void deleteSelectedDevis() {
         Devis d = devisTable.getSelectionModel().getSelectedItem();
         if (d == null) {
@@ -424,6 +449,18 @@ public class HomeScreenCtrl {
     @FXML public void validerFacture() { setFactureStatut("validee"); }
     @FXML public void payerFacture() { setFactureStatut("payee"); }
     @FXML public void annulerFacture() { setFactureStatut("annulee"); }
+
+    @FXML
+    public void editSelectedFacture() {
+        Facture f = factureTable.getSelectionModel().getSelectedItem();
+        if (f == null) {
+            factureStatus.setText("Sélectionnez une facture.");
+            return;
+        }
+        showDialog("/com/xdev/gest_comm_clientfx/views/NouvelFacture.fxml",
+            "Modifier la facture", 720, 580, NouvelFactureCtrl.class,
+            this::refreshFactures, c -> c.setEditing(f));
+    }
 
     @FXML
     public void deleteSelectedFacture() {

@@ -71,7 +71,7 @@ row-level edit (PUT), delete (DELETE with confirm) and statut PATCH:
 `GET`/`POST` on `/api/client`, `/api/article`, `/api/devis`, `/api/facture`
 plus `POST /api/devis/<id>/convertir` (devis→facture) — all with Basic
 auth (PyGestComm ADR 0006). Writes send `Map` payloads with camelCase
-keys; document writes nest `lignes` (article-linked or free-text lines);
+keys; document writes nest `lignes`; PUT replaces all lines when provided (article-linked or free-text lines);
 reads deserialize into the POJOs. Filters (`?search=`/`?statut=`/
 `?client=`), detail routes and the assistant endpoint are unused so far —
 `BonLivClient` stays empty until that screen is designed.

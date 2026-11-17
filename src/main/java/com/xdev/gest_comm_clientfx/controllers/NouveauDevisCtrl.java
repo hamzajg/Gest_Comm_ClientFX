@@ -5,6 +5,7 @@ import com.xdev.gest_comm_clientfx.api.ApiException;
 import com.xdev.gest_comm_clientfx.models.Article;
 import com.xdev.gest_comm_clientfx.models.Client;
 import com.xdev.gest_comm_clientfx.models.Devis;
+import com.xdev.gest_comm_clientfx.models.LigneDevis;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -110,10 +111,37 @@ public class NouveauDevisCtrl implements ApiDialog {
 
     private ApiClient api;
     private Runnable onSaved;
+    private Devis editing;
+    private Long pendingClientId;
     private final ObservableList<LigneDraft> lines =
         FXCollections.observableArrayList();
     private List<Client> clients = new ArrayList<>();
     private List<Article> articles = new ArrayList<>();
+
+    /** Prefill the form for editing an existing devis (PUT on save;
+     *  the backend replaces lignes when the payload includes them). */
+    public void setEditing(Devis devis) {
+        this.editing = devis;
+        this.pendingClientId = devis.getClient();
+        codeDevisField.setText(devis.getCodeDevis());
+        dateDevisField.setText(textOr(devis.getDateDevis(), ""));
+        observationField.setText(textOr(devis.getObservationDevis(), ""));
+        if (devis.getStatutDevis() != null) {
+            statutCombo.getSelectionModel().select(devis.getStatutDevis());
+        }
+        lines.clear();
+        if (devis.getLignes() != null) {
+            for (LigneDevis l : devis.getLignes()) {
+                lines.add(new LigneDraft(
+                    l.getArticle(), l.getDesignation(),
+                    textOr(l.getQuantite(), "1"),
+                    textOr(l.getPrixUnitaire(), "0"),
+                    textOr(l.getRemise(), "0"),
+                    textOr(l.getTva(), "0")));
+            }
+        }
+        updateTotals();
+    }
 
     public void setApi(ApiClient api) {
         this.api = api;
@@ -159,7 +187,15 @@ public class NouveauDevisCtrl implements ApiDialog {
             Platform.runLater(() -> {
                 clientCombo.getItems().setAll(clients);
                 articleCombo.getItems().setAll(articles);
-                if (!clients.isEmpty()) {
+                if (pendingClientId != null) {
+                    for (Client c : clients) {
+                        if (pendingClientId.equals(c.getIdClient())) {
+                            clientCombo.getSelectionModel().select(c);
+                            break;
+                        }
+                    }
+                    pendingClientId = null;
+                } else if (!clients.isEmpty()) {
                     clientCombo.getSelectionModel().selectFirst();
                 }
                 statusLabel.setText("");
@@ -258,7 +294,12 @@ public class NouveauDevisCtrl implements ApiDialog {
         statusLabel.setText("Enregistrement…");
         new Thread(() -> {
             try {
-                api.createDevis(payload);
+                if (editing != null) {
+                    api.put("/api/devis/" + editing.getIdDevis(), payload,
+                        Devis.class);
+                } else {
+                    api.createDevis(payload);
+                }
                 Platform.runLater(() -> {
                     if (onSaved != null) {
                         onSaved.run();
