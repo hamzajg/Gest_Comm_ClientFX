@@ -8,8 +8,8 @@ Gest_Comm_ClientFX is a **JavaFX desktop client** (French UI) for the
 *gestion commerciale* back end **PyGestComm** (Django REST). Early stage:
 the window, config screen, live Clients/Articles/Devis/Factures list
 tabs, create/edit/delete forms and statut actions for all four resources, and
-devis→facture conversion and an assistant panel work against the API;
-only the Bon Liv menu items are still stubs.
+devis→facture conversion, an assistant panel and bons de livraison
+work against the API — the full declared domain is wired.
 Stack: Java 17, JavaFX 17 (via Maven, `javafx-controls`/`javafx-fxml`),
 Jackson databind, `java.net.http`, Maven, FXML views.
 
@@ -21,7 +21,7 @@ Verified 2026-11-17 against CI (`.github/workflows/ci.yml`) and README.
 |---|---|
 | Build | `mvn -B package` (CI: JDK 17) |
 | Run app | `mvn javafx:run` |
-| Tests | `mvn -B package` runs JUnit 5 tests (7) |
+| Tests | `mvn -B package` runs JUnit 5 tests (8) |
 
 Requires: JDK 17 only — JavaFX and Jackson come from Maven. The app also
 needs a running PyGestComm backend (`python manage.py runserver` in that
@@ -63,8 +63,7 @@ src/main/java/com/xdev/gest_comm_clientfx/
                         picker that prefills client/date/lines, POST
                         /api/facture with nested lignes
   models/               Article + Client + Devis + LigneDevis + Facture +
-                        LigneFacture POJOs; BonLivClient — still an
-                        empty shell
+                        LigneFacture + BonLiv + LigneBonLiv POJOs
   views/                *.fxml layouts (HomeScreen, ConfigScreen)
 pom.xml                 JavaFX + Jackson deps + resources-plugin copies
                         views/*.fxml onto the classpath
@@ -76,7 +75,8 @@ The backend is **PyGestComm** (`../PyGestComm`), not the old ADF `Gest_Comm`
 repo. Every `/api/*` route requires HTTP Basic auth (PyGestComm ADR 0006);
 `ApiClient` sends `Authorization: Basic base64(user:pass)` from
 `ApiConfig`. Used: `GET`/`POST`/`PUT`/`DELETE`/`PATCH` on `/api/client`, `/api/article`,
-`/api/devis`, `/api/facture`, plus `POST /api/devis/<id>/convertir` (Devis → Facture
+`/api/devis`, `/api/facture`, `/api/bonliv`, plus
+`POST /api/devis/<id>/convertir` (Devis → Facture
 menu action; backend requires statut `valide`). Create dialogs send `Map`
 payloads — only non-empty optional fields are included. Document writes
 send `lignes: [{article?, designation, quantite, prixUnitaire, remise,
@@ -102,16 +102,16 @@ decimals arrive as strings (`"100.00"`) — Jackson handles that into
   (`ref_article`, `prix_vente_unitaire`, `remise_achat`, `tva_*`,
   `codeClient`, `nomPrenomClient`). `Client`/`Article` map the backend
   JSON; keep them in sync when backend models change.
-  `BonLivClient` remains empty until its backend shape
-  is implemented client-side — don't guess fields.
+  All backend resources now have client POJOs — keep them in sync.
+  `BonLivClient` was removed once the real `BonLiv` model landed.
 - French UI strings; package root `com.xdev.gest_comm_clientfx`.
 
 ## Landmines
 
 - **Default branch is `master`, not `main`.**
-- Everything except Bon Liv is wired: all four resources support
-  list/create/edit/delete and statut transitions, plus the assistant
-  dialog. Document-line editing on existing devis/factures is not
+- Everything is wired: all five resources support list/create/edit/
+  delete and statut transitions, devis→facture conversion, and the
+  assistant dialog. Document-line editing on existing documents is not
   supported (create-only lines).
 - Create dialogs send `Map<String,Object>` payloads, not the POJOs —
   keep it that way for writes (explicit keys, no Jackson serialization

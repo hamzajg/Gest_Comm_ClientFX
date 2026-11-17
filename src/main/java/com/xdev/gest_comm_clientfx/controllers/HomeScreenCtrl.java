@@ -5,6 +5,7 @@ import com.xdev.gest_comm_clientfx.api.ApiConfig;
 import com.xdev.gest_comm_clientfx.api.ApiException;
 import com.xdev.gest_comm_clientfx.app.ConfigScreen;
 import com.xdev.gest_comm_clientfx.models.Article;
+import com.xdev.gest_comm_clientfx.models.BonLiv;
 import com.xdev.gest_comm_clientfx.models.Client;
 import com.xdev.gest_comm_clientfx.models.Devis;
 import com.xdev.gest_comm_clientfx.models.Facture;
@@ -39,14 +40,17 @@ public class HomeScreenCtrl {
     @FXML private Tab articlesTab;
     @FXML private Tab devisTab;
     @FXML private Tab factureTab;
+    @FXML private Tab bonlivTab;
     @FXML private TableView<Client> clientTable;
     @FXML private TableView<Article> articleTable;
     @FXML private TableView<Devis> devisTable;
     @FXML private TableView<Facture> factureTable;
+    @FXML private TableView<BonLiv> bonlivTable;
     @FXML private Label clientStatus;
     @FXML private Label articleStatus;
     @FXML private Label devisStatus;
     @FXML private Label factureStatus;
+    @FXML private Label bonlivStatus;
 
     private final ApiClient api = new ApiClient(ApiConfig.load());
 
@@ -76,6 +80,13 @@ public class HomeScreenCtrl {
             column("Nom", "nomPrenomClient", 200),
             column("Devis", "codeDevis", 90),
             column("Statut", "statutFacture", 90),
+            column("Total TTC", "totalTTC", 100));
+        bonlivTable.getColumns().addAll(
+            column("Code", "codeBonLiv", 90),
+            column("Date", "dateBonLiv", 100),
+            column("Client", "codeClient", 90),
+            column("Nom", "nomPrenomClient", 200),
+            column("Statut", "statutBonLiv", 90),
             column("Total TTC", "totalTTC", 100));
     }
 
@@ -162,6 +173,57 @@ public class HomeScreenCtrl {
         showDialog("/com/xdev/gest_comm_clientfx/views/NouvelFacture.fxml",
             "Nouvelle facture", 720, 580, NouvelFactureCtrl.class,
             this::refreshFactures);
+    }
+
+    @FXML
+    public void showBonLivs() {
+        tabs.getSelectionModel().select(bonlivTab);
+        refreshBonLivs();
+    }
+
+    @FXML
+    public void refreshBonLivs() {
+        load("bon de livraison", bonlivStatus,
+            () -> FXCollections.observableArrayList(api.listBonLivs()),
+            bonlivTable::setItems);
+    }
+
+    @FXML
+    public void showNewBonLiv() {
+        showDialog("/com/xdev/gest_comm_clientfx/views/NouveauBonLiv.fxml",
+            "Nouveau bon de livraison", 720, 560, NouveauBonLivCtrl.class,
+            this::refreshBonLivs);
+    }
+
+    private void setBonLivStatut(String statut) {
+        BonLiv b = bonlivTable.getSelectionModel().getSelectedItem();
+        if (b == null) {
+            bonlivStatus.setText("Sélectionnez un bon de livraison.");
+            return;
+        }
+        mutate(bonlivStatus, "Statut du bon de livraison mis à jour.",
+            () -> api.patch("/api/bonliv/" + b.getIdBonLiv(),
+                Map.of("statutBonLiv", statut)),
+            this::refreshBonLivs);
+    }
+
+    @FXML public void validerBonLiv() { setBonLivStatut("valide"); }
+    @FXML public void livrerBonLiv() { setBonLivStatut("livre"); }
+    @FXML public void annulerBonLiv() { setBonLivStatut("annule"); }
+
+    @FXML
+    public void deleteSelectedBonLiv() {
+        BonLiv b = bonlivTable.getSelectionModel().getSelectedItem();
+        if (b == null) {
+            bonlivStatus.setText("Sélectionnez un bon de livraison.");
+            return;
+        }
+        if (!confirmDelete("le bon de livraison " + b.getCodeBonLiv())) {
+            return;
+        }
+        mutate(bonlivStatus, "Bon de livraison supprimé.",
+            () -> api.delete("/api/bonliv/" + b.getIdBonLiv()),
+            this::refreshBonLivs);
     }
 
     @FXML

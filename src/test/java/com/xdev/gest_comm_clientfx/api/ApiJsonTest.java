@@ -2,6 +2,7 @@ package com.xdev.gest_comm_clientfx.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xdev.gest_comm_clientfx.models.Article;
+import com.xdev.gest_comm_clientfx.models.BonLiv;
 import com.xdev.gest_comm_clientfx.models.Client;
 import com.xdev.gest_comm_clientfx.models.Devis;
 import com.xdev.gest_comm_clientfx.models.Facture;
@@ -118,5 +119,31 @@ class ApiJsonTest {
         assertEquals(240.0, f.getTotalTTC());
         assertEquals(1, f.getLignes().size());
         assertEquals("Widget", f.getLignes().get(0).getDesignation());
+    }
+
+    @Test
+    void bonlivListMapsBackendPayload() throws Exception {
+        String json = "[{\"idBonLiv\":1,\"codeBonLiv\":\"BL001\","
+            + "\"dateBonLiv\":\"2026-11-17\",\"client\":1,"
+            + "\"statutBonLiv\":\"valide\",\"observationBonLiv\":\"-\","
+            + "\"codeClient\":\"C001\",\"nomPrenomClient\":\"Ada Lovelace\","
+            + "\"totalHT\":100.0,\"totalTVA\":20.0,\"totalTTC\":120.0,"
+            + "\"lignes\":[{\"idLigneBonLiv\":1,\"bonliv\":1,"
+            + "\"article\":1,\"designation\":\"Widget\","
+            + "\"quantite\":\"1.00\",\"prixUnitaire\":\"100.00\","
+            + "\"remise\":0.0,\"tva\":20.0,\"totalHT\":100.0,"
+            + "\"totalTVA\":20.0}]}]";
+
+        List<BonLiv> bonlivs = mapper.readValue(json,
+            mapper.getTypeFactory()
+                .constructCollectionType(List.class, BonLiv.class));
+
+        assertEquals(1, bonlivs.size());
+        BonLiv b = bonlivs.get(0);
+        assertEquals("BL001", b.getCodeBonLiv());
+        assertEquals("valide", b.getStatutBonLiv());
+        assertEquals(120.0, b.getTotalTTC());
+        assertEquals(1, b.getLignes().size());
+        assertEquals("Widget", b.getLignes().get(0).getDesignation());
     }
 }

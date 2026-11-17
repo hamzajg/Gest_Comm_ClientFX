@@ -8,9 +8,9 @@ Current-state map. Descriptive, not aspirational; see `docs/adr/` for why.
 StartApp (JavaFX Application)
    └─ HomeScreen ──loads──► views/HomeScreen.fxml
    │                          menus: Application / Article / Client /
-   │                          Devis / Facture / Bon Liv / Help; tabs
-   │                          Bienvenue / Clients / Articles / Devis /
-   │                          Factures
+   │                          Devis / Facture / Help; tabs Bienvenue /
+   │                          Clients / Articles / Devis / Factures /
+   │                          Bons de livraison
    ├─ ConfigScreen ──loads──► views/ConfigScreen.fxml (settings form)
    ▼
 controllers/  HomeScreenCtrl — @FXML tabs/tables/menus; loads API data
@@ -29,8 +29,7 @@ controllers/  HomeScreenCtrl — @FXML tabs/tables/menus; loads API data
 api/          ApiClient (java.net.http + Jackson, Basic auth every call)
               ApiConfig (Java Preferences) · ApiException
 models/       Article + Client + Devis + LigneDevis + Facture +
-              LigneFacture POJOs with accessors; BonLivClient still an
-              empty shell
+              LigneFacture + BonLiv + LigneBonLiv POJOs with accessors
         │
         ▼  HTTP/JSON + Authorization: Basic …
 PyGestComm (Django/DRF)  /api/client  /api/article  /api/devis

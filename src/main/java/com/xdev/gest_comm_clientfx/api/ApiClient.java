@@ -2,6 +2,7 @@ package com.xdev.gest_comm_clientfx.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xdev.gest_comm_clientfx.models.Article;
+import com.xdev.gest_comm_clientfx.models.BonLiv;
 import com.xdev.gest_comm_clientfx.models.Client;
 import com.xdev.gest_comm_clientfx.models.Devis;
 import com.xdev.gest_comm_clientfx.models.Facture;
@@ -65,6 +66,14 @@ public class ApiClient {
         throws ApiException {
         return post("/api/devis/" + devisId + "/convertir", payload,
             Facture.class);
+    }
+
+    public List<BonLiv> listBonLivs() throws ApiException {
+        return getList("/api/bonliv", BonLiv.class);
+    }
+
+    public BonLiv createBonLiv(Object payload) throws ApiException {
+        return post("/api/bonliv", payload, BonLiv.class);
     }
 
     public <T> T put(String path, Object payload, Class<T> responseType)
