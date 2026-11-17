@@ -7,6 +7,7 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -24,8 +25,8 @@
 
     <GridPane hgap="10.0" vgap="6.0">
         <columnConstraints>
-            <ColumnConstraint minWidth="130.0" prefWidth="130.0" />
-            <ColumnConstraint hgrow="ALWAYS" />
+            <ColumnConstraints minWidth="130.0" prefWidth="130.0" />
+            <ColumnConstraints hgrow="ALWAYS" />
         </columnConstraints>
         <Label text="Code bon liv *" GridPane.columnIndex="0" GridPane.rowIndex="0" />
         <TextField fx:id="codeBonLivField" promptText="ex. BL001"
@@ -55,12 +56,12 @@
 
     <GridPane hgap="6.0" vgap="6.0">
         <columnConstraints>
-            <ColumnConstraint hgrow="2.0" />
-            <ColumnConstraint hgrow="1.0" />
-            <ColumnConstraint hgrow="1.0" />
-            <ColumnConstraint hgrow="1.0" />
-            <ColumnConstraint hgrow="1.0" />
-            <ColumnConstraint hgrow="1.0" />
+            <ColumnConstraints percentWidth="28.5" />
+            <ColumnConstraints percentWidth="14.3" />
+            <ColumnConstraints percentWidth="14.3" />
+            <ColumnConstraints percentWidth="14.3" />
+            <ColumnConstraints percentWidth="14.3" />
+            <ColumnConstraints percentWidth="14.3" />
         </columnConstraints>
         <ComboBox fx:id="articleCombo" promptText="Article (optionnel)"
                   GridPane.columnIndex="0" GridPane.rowIndex="0" />

@@ -48,6 +48,7 @@ public class NouveauBonLivCtrl implements ApiDialog {
     @FXML private Label statusLabel;
 
     private ApiClient api;
+    private boolean lookupsStarted;
     private Runnable onSaved;
     private BonLiv editing;
     private Long pendingClientId;
@@ -85,6 +86,9 @@ public class NouveauBonLivCtrl implements ApiDialog {
 
     public void setApi(ApiClient api) {
         this.api = api;
+        if (!lookupsStarted) {
+            lookupsStarted = true;
+            }
     }
 
     public void setOnSaved(Runnable onSaved) {
@@ -116,7 +120,6 @@ public class NouveauBonLivCtrl implements ApiDialog {
             .addListener((obs, oldV, article) -> prefillFromArticle(article));
 
         statusLabel.setText("Chargement des clients et articles…");
-        new Thread(this::loadLookups).start();
     }
 
     private void loadLookups() {
