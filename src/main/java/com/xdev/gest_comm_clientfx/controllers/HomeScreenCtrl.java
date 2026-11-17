@@ -512,6 +512,16 @@ public class HomeScreenCtrl {
     }
 
     @FXML
+    public void logout() {
+        new Thread(() -> {
+            api.logout();
+            Platform.runLater(() -> clientStatus.setText(
+                "Session révoquée — la prochaine action reconnectera "
+                + "automatiquement."));
+        }).start();
+    }
+
+    @FXML
     public void openConfig() {
         try {
             Stage stage = new Stage();

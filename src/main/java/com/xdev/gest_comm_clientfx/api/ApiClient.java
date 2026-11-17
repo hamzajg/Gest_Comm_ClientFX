@@ -193,7 +193,10 @@ public class ApiClient {
                     URI.create(url))
                 .header("Accept", "application/json")
                 .timeout(Duration.ofSeconds(10));
-            if (withAuth && !path.startsWith("/api/token")) {
+            // Only the credential-exchange endpoints are unauthenticated;
+            // /api/token/logout and /api/token/verify still take Bearer.
+            if (withAuth && !path.equals("/api/token")
+                && !path.equals("/api/token/refresh")) {
                 builder.header("Authorization",
                     "Bearer " + ensureAccessToken());
             }
@@ -273,6 +276,28 @@ public class ApiClient {
             return;
         }
         storeTokens(response.body());
+    }
+
+    /**
+     * Blacklist the refresh token server-side (POST /api/token/logout),
+     * then drop local tokens. The next API call transparently logs in
+     * again with the stored credentials.
+     */
+    public void logout() {
+        String refresh = config.getRefreshToken();
+        try {
+            if (refresh != null && !refresh.isBlank()) {
+                send("POST", "/api/token/logout",
+                    Map.of("refresh", refresh));
+            }
+        } catch (ApiException ignored) {
+            // Server unreachable or token already dead — local logout
+            // still proceeds.
+        } finally {
+            accessToken = null;
+            config.setRefreshToken("");
+            config.save();
+        }
     }
 
     private void storeTokens(String body) throws ApiException {

@@ -28,6 +28,8 @@
                     <Menu mnemonicParsing="false" text="Application">
                         <items>
                             <MenuItem mnemonicParsing="false" onAction="#openConfig" text="Parametre de l'application" />
+                            <SeparatorMenuItem/>
+                            <MenuItem mnemonicParsing="false" onAction="#logout" text="Se déconnecter" />
                         </items>
                     </Menu>
 

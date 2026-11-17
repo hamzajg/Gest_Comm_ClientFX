@@ -71,7 +71,8 @@ row-level edit (PUT), delete (DELETE with confirm) and statut PATCH:
 `GET`/`POST` on `/api/client`, `/api/article`, `/api/devis`, `/api/facture`
 plus `POST /api/devis/<id>/convertir` (devis→facture) — all with JWT
 Bearer auth (PyGestComm ADR 0008): tokens from `POST /api/token`,
-rotating refresh via `/api/token/refresh`. Writes send `Map` payloads with camelCase
+rotating refresh via `/api/token/refresh`, revocation via
+`/api/token/logout` (Application → Se déconnecter). Writes send `Map` payloads with camelCase
 keys; document writes nest `lignes`; PUT replaces all lines when provided (article-linked or free-text lines);
 reads deserialize into the POJOs. Filters (`?search=`/`?statut=`/
 `?client=`), detail routes and the assistant endpoint are unused so far —
