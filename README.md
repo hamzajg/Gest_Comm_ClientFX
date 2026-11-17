@@ -48,13 +48,13 @@ The app opens a 1200×700 window titled *Gestion Commerciale*, loaded from
 ## What is in the window
 
 - **Application** menu — *Parametre de l'application* opens the settings
-  screen (wired); the template's sequence/Save/Open/Close items stay inert
+  screen (wired)
 - **Article** menu — *Nouveau article* opens a create form (wired);
   *Liste des articles* opens the Articles tab (wired)
 - **Client** menu — *Nouveau client* / *Modifier* / *Supprimer* (wired);
   *Liste des clients* opens the Clients tab (wired); *Nouveau Bon Liv* /
   *Liste des Bon Livs* open the delivery-note form/tab (wired)
-- **Help** menu — unchanged
+- **Help** menu — *Assistant* opens the assistant dialog (wired)
 - **Devis** menu — *Nouveau devis* opens the quote form (wired, with
   line items + totals); *Liste des devis* opens the Devis tab (wired);
   *Convertir en facture* converts the selected `valide` devis
