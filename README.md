@@ -32,7 +32,9 @@ mvn javafx:run
 On first launch open **Application → Parametre de l'application**, enter the
 server URL (default `http://localhost:8000`) and the API username/password
 (a Django user — `python manage.py createsuperuser` on the backend), then
-**Tester la connexion**. Credentials are sent as HTTP Basic auth on every
+**Tester la connexion**. The app exchanges credentials once for JWT
+tokens (`POST /api/token`) and sends `Authorization: Bearer <access>`;
+the rotating refresh token is persisted so restarts skip login.
 request.
 
 To build without starting the app:
@@ -72,8 +74,9 @@ src/main/java/com/xdev/gest_comm_clientfx/
   app/HomeScreen.java        loads views/HomeScreen.fxml
   app/ConfigScreen.java      loads views/ConfigScreen.fxml
   api/ApiClient.java         HTTP/JSON client (java.net.http + Jackson,
-                             Basic auth on every request)
-  api/ApiConfig.java         server URL + credentials (Java Preferences)
+                             JWT Bearer auth)
+  api/ApiConfig.java         server URL + credentials + refresh token
+                             (Java Preferences)
   api/ApiException.java      transport/HTTP error type
   controllers/               @FXML controllers — HomeScreenCtrl,
                              ConfigScreenCtrl, NouveauClientCtrl,

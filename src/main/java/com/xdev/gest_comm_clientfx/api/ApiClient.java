@@ -15,7 +15,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
-import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
@@ -34,6 +33,10 @@ public class ApiClient {
     private final HttpClient http = HttpClient.newBuilder()
         .connectTimeout(Duration.ofSeconds(5))
         .build();
+
+    // JWT state: the access token is memory-only (1 h lifetime); the
+    // refresh token is persisted via ApiConfig so restarts skip login.
+    private String accessToken;
 
     public ApiClient(ApiConfig config) {
         this.config = config;
@@ -162,13 +165,38 @@ public class ApiClient {
 
     public String send(String method, String path, Object payload)
         throws ApiException {
-        String url = config.getBaseUrl().replaceAll("/+$", "") + path;
+        HttpResponse<String> response = sendOnce(
+            method, path, payload, true);
+        if (response.statusCode() == 401) {
+            // Access token expired/rejected — rotate and retry once.
+            refreshTokens();
+            response = sendOnce(method, path, payload, false);
+        }
+        if (response.statusCode() >= 400) {
+            throw new ApiException("HTTP " + response.statusCode()
+                + " from " + url(path) + " — "
+                + abbreviate(response.body()));
+        }
+        return response.body();
+    }
+
+    /**
+     * One HTTP round-trip. When {@code withAuth} is true, obtains/attaches
+     * a Bearer token (token endpoints themselves never carry one).
+     */
+    private HttpResponse<String> sendOnce(String method, String path,
+                                          Object payload, boolean withAuth)
+        throws ApiException {
+        String url = url(path);
         try {
             HttpRequest.Builder builder = HttpRequest.newBuilder(
                     URI.create(url))
                 .header("Accept", "application/json")
-                .header("Authorization", basicAuth())
                 .timeout(Duration.ofSeconds(10));
+            if (withAuth && !path.startsWith("/api/token")) {
+                builder.header("Authorization",
+                    "Bearer " + ensureAccessToken());
+            }
             if (payload != null) {
                 builder.header("Content-Type", "application/json")
                     .method(method, HttpRequest.BodyPublishers.ofString(
@@ -176,13 +204,8 @@ public class ApiClient {
             } else if (!"GET".equals(method)) {
                 builder.method(method, HttpRequest.BodyPublishers.noBody());
             }
-            HttpResponse<String> response = http.send(
-                builder.build(), HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() >= 400) {
-                throw new ApiException("HTTP " + response.statusCode()
-                    + " from " + url + " — " + abbreviate(response.body()));
-            }
-            return response.body();
+            return http.send(builder.build(),
+                HttpResponse.BodyHandlers.ofString());
         } catch (IOException e) {
             throw new ApiException("Cannot reach " + url
                 + " — is PyGestComm running?", e);
@@ -192,11 +215,78 @@ public class ApiClient {
         }
     }
 
-    private String basicAuth() {
-        String credentials = config.getUsername() + ":"
-            + config.getPassword();
-        return "Basic " + Base64.getEncoder().encodeToString(
-            credentials.getBytes(StandardCharsets.UTF_8));
+    private String url(String path) {
+        return config.getBaseUrl().replaceAll("/+$", "") + path;
+    }
+
+    private synchronized String ensureAccessToken()
+        throws ApiException {
+        if (accessToken == null) {
+            // Prefer the persisted refresh token (survives restarts and
+            // password changes); fall back to credential login inside
+            // refreshTokens() when it's missing/expired.
+            refreshTokens();
+        }
+        return accessToken;
+    }
+
+    /**
+     * Exchange stored credentials for a fresh token pair at
+     * POST /api/token. The new refresh token is persisted — the server
+     * rotates and blacklists it on every refresh.
+     */
+    private synchronized void obtainTokens() throws ApiException {
+        HttpResponse<String> response = sendOnce(
+            "POST", "/api/token",
+            Map.of("username", config.getUsername(),
+                   "password", config.getPassword()),
+            false);
+        if (response.statusCode() >= 400) {
+            throw new ApiException("HTTP " + response.statusCode()
+                + " from " + url("/api/token")
+                + " — check username/password — "
+                + abbreviate(response.body()));
+        }
+        storeTokens(response.body());
+    }
+
+    /**
+     * Rotate the token pair via /api/token/refresh. If the refresh token
+     * is expired/revoked, fall back to a full credential login.
+     */
+    private synchronized void refreshTokens() throws ApiException {
+        String refresh = config.getRefreshToken();
+        if (refresh == null || refresh.isBlank()) {
+            obtainTokens();
+            return;
+        }
+        HttpResponse<String> response;
+        try {
+            response = sendOnce("POST", "/api/token/refresh",
+                Map.of("refresh", refresh), false);
+        } catch (ApiException e) {
+            obtainTokens();
+            return;
+        }
+        if (response.statusCode() >= 400) {
+            obtainTokens();
+            return;
+        }
+        storeTokens(response.body());
+    }
+
+    private void storeTokens(String body) throws ApiException {
+        try {
+            Map<?, ?> tokens = mapper.readValue(body, Map.class);
+            accessToken = (String) tokens.get("access");
+            Object newRefresh = tokens.get("refresh");
+            if (newRefresh != null) {
+                config.setRefreshToken((String) newRefresh);
+                config.save();
+            }
+        } catch (IOException e) {
+            throw new ApiException("Cannot parse token response", e);
+        }
     }
 
     private static String abbreviate(String body) {
