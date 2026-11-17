@@ -8,8 +8,8 @@ Gest_Comm_ClientFX is a **JavaFX desktop client** (French UI) for the
 *gestion commerciale* back end **PyGestComm** (Django REST). Early stage:
 the window, config screen, live Clients/Articles/Devis/Factures list
 tabs, create/edit/delete forms and statut actions for all four resources, and
-devis→facture conversion work against the API; the Bon Liv menu and the
-assistant panel are still stubs.
+devis→facture conversion and an assistant panel work against the API;
+only the Bon Liv menu items are still stubs.
 Stack: Java 17, JavaFX 17 (via Maven, `javafx-controls`/`javafx-fxml`),
 Jackson databind, `java.net.http`, Maven, FXML views.
 
@@ -80,9 +80,7 @@ repo. Every `/api/*` route requires HTTP Basic auth (PyGestComm ADR 0006);
 menu action; backend requires statut `valide`). Create dialogs send `Map`
 payloads — only non-empty optional fields are included. Document writes
 send `lignes: [{article?, designation, quantite, prixUnitaire, remise,
-tva}]` — numeric values as strings are accepted. Filters
-(`?search=`/`?statut=`/`?client=`) and `POST /api/assistant/ask` are not
-consumed yet.
+tva}]` — numeric values as strings are accepted. List filters (`?search=`/`?statut=`/`?client=`) are not consumed yet.
 
 JSON shapes: `Client` field names mirror the backend one-to-one
 (camelCase). `Article` keeps legacy snake_case Java fields bridged by
@@ -112,8 +110,9 @@ decimals arrive as strings (`"100.00"`) — Jackson handles that into
 
 - **Default branch is `master`, not `main`.**
 - Everything except Bon Liv is wired: all four resources support
-  list/create/edit/delete and statut transitions. Document-line editing
-  on existing devis/factures is not supported (create-only lines).
+  list/create/edit/delete and statut transitions, plus the assistant
+  dialog. Document-line editing on existing devis/factures is not
+  supported (create-only lines).
 - Create dialogs send `Map<String,Object>` payloads, not the POJOs —
   keep it that way for writes (explicit keys, no Jackson serialization
   surprises); POJOs are for reads.

@@ -52,9 +52,6 @@
                             <SeparatorMenuItem/>
                             <MenuItem mnemonicParsing="false" text="Nouveau Bon Liv" />
                             <MenuItem mnemonicParsing="false" text="Liste des Bon Livs" />
-                            <SeparatorMenuItem/>
-                            <MenuItem mnemonicParsing="false" text="Nouvelle facture" />
-                            <MenuItem mnemonicParsing="false" text="Liste des facture" />
                         </items>
                     </Menu>
                     <Menu mnemonicParsing="false" text="Devis">
@@ -73,6 +70,7 @@
                     </Menu>
                     <Menu mnemonicParsing="false" text="Help">
                         <items>
+                            <MenuItem mnemonicParsing="false" onAction="#showAssistant" text="Assistant" />
                             <MenuItem mnemonicParsing="false" text="About Blank" />
                         </items>
                     </Menu>

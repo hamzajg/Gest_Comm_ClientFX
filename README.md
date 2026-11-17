@@ -99,15 +99,16 @@ by the `maven-resources-plugin` resource entry in `pom.xml`, which is why
 | Piece | State |
 |---|---|
 | Window, menus, tabs | laid out in FXML |
-| Menu actions | config + all list/create/edit/delete/statut actions wired for clients, articles, devis, factures; Bon Liv inert |
+| Menu actions | config + all list/create/edit/delete/statut actions + assistant wired; Bon Liv inert |
 | `HomeScreenCtrl`, `ConfigScreenCtrl` | wired (`@FXML` injection, background loads) |
 | `NouveauClientCtrl`, `NouvelArticleCtrl` | wired — POST forms with client-side validation |
 | `NouveauDevisCtrl` | wired — client/article pickers, line editor, live totals, POSTs nested `lignes` |
 | `NouvelFactureCtrl` | wired — same line editor + optional devis prefill |
 | `Article`, `Client`, `Devis`, `LigneDevis`, `Facture`, `LigneFacture` | full accessors + Jackson JSON mapping (tested) |
 | Row actions | edit (PUT), delete (DELETE + confirm), statut PATCH on devis/factures |
+| Assistant | Help → Assistant dialog over `POST /api/assistant/ask` |
 | `BonLivClient` | empty class (delivery note) |
-| HTTP client | `api/ApiClient` — list/post/put/delete/patch + `convertDevis` |
+| HTTP client | `api/ApiClient` — list/post/put/delete/patch + `convertDevis` + `askAssistant` |
 | Tests | 7 JUnit 5 tests (model accessors + JSON mapping) |
 
 ## Continuous integration
