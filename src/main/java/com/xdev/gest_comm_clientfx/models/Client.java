@@ -19,6 +19,11 @@ public class Client {
     private Integer numTelClient1;
     private Integer numTelClient2;
 
+    @Override
+    public String toString() {
+        return codeClient + " — " + nomPrenomClient;
+    }
+
     public Long getIdClient() {
         return idClient;
     }
