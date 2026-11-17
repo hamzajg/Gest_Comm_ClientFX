@@ -34,6 +34,11 @@ public class Article {
     @JsonProperty("dernierPrixVenteUnitaire")
     private BigDecimal dernier_prix_vente_unitaire;
 
+    @Override
+    public String toString() {
+        return ref_article + " — " + desc_article;
+    }
+
     @JsonProperty("idArticle")
     public Long getId_article() {
         return id_article;

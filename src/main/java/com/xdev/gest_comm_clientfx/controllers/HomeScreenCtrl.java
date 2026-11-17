@@ -6,6 +6,7 @@ import com.xdev.gest_comm_clientfx.api.ApiException;
 import com.xdev.gest_comm_clientfx.app.ConfigScreen;
 import com.xdev.gest_comm_clientfx.models.Article;
 import com.xdev.gest_comm_clientfx.models.Client;
+import com.xdev.gest_comm_clientfx.models.Devis;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -30,10 +31,13 @@ public class HomeScreenCtrl {
     @FXML private TabPane tabs;
     @FXML private Tab clientsTab;
     @FXML private Tab articlesTab;
+    @FXML private Tab devisTab;
     @FXML private TableView<Client> clientTable;
     @FXML private TableView<Article> articleTable;
+    @FXML private TableView<Devis> devisTable;
     @FXML private Label clientStatus;
     @FXML private Label articleStatus;
+    @FXML private Label devisStatus;
 
     private final ApiClient api = new ApiClient(ApiConfig.load());
 
@@ -49,6 +53,13 @@ public class HomeScreenCtrl {
             column("Référence", "ref_article", 120),
             column("Désignation", "desc_article", 260),
             column("Prix vente", "prix_vente_unitaire", 110));
+        devisTable.getColumns().addAll(
+            column("Code", "codeDevis", 90),
+            column("Date", "dateDevis", 100),
+            column("Client", "codeClient", 90),
+            column("Nom", "nomPrenomClient", 200),
+            column("Statut", "statutDevis", 90),
+            column("Total TTC", "totalTTC", 100));
     }
 
     private static <T> TableColumn<T, Object> column(
@@ -69,6 +80,26 @@ public class HomeScreenCtrl {
     public void showArticles() {
         tabs.getSelectionModel().select(articlesTab);
         refreshArticles();
+    }
+
+    @FXML
+    public void showDevis() {
+        tabs.getSelectionModel().select(devisTab);
+        refreshDevis();
+    }
+
+    @FXML
+    public void refreshDevis() {
+        load("devis", devisStatus,
+            () -> FXCollections.observableArrayList(api.listDevis()),
+            devisTable::setItems);
+    }
+
+    @FXML
+    public void showNewDevis() {
+        showDialog("/com/xdev/gest_comm_clientfx/views/NouveauDevis.fxml",
+            "Nouveau devis", 720, 560, NouveauDevisCtrl.class,
+            this::refreshDevis);
     }
 
     @FXML

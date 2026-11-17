@@ -6,10 +6,12 @@ French UI.
 
 The window is wired to the [PyGestComm](../PyGestComm) Django REST backend:
 the Application menu opens a settings screen (server URL + credentials,
-stored in the OS preferences store), the Client/Article menus list live
-data from the API in dedicated tabs, and *Nouveau client* / *Nouveau
-article* open create forms that POST to the API. The Bon Liv/Facture menus
-and edit/delete are still stubs.
+stored in the OS preferences store), the Client/Article/Devis menus list
+live data from the API in dedicated tabs, *Nouveau client* / *Nouveau
+article* open create forms that POST to the API, and *Nouveau devis*
+opens a quote form with a client picker, article-driven line items and
+live totals that POSTs nested `lignes` to `/api/devis`. The Bon Liv and
+Facture menus and edit/delete are still stubs.
 
 ## Run it
 
@@ -50,8 +52,10 @@ The app opens a 1200×700 window titled *Gestion Commerciale*, loaded from
   *Liste des clients* opens the Clients tab (wired); *Bon Liv* and
   *Facture* items are still inert
 - **Help** menu — unchanged
-- tabs: *Bienvenue*, *Clients* and *Articles* — each list tab has an
-  *Actualiser* button and a status line
+- **Devis** menu — *Nouveau devis* opens the quote form (wired, with
+  line items + totals); *Liste des devis* opens the Devis tab (wired)
+- tabs: *Bienvenue*, *Clients*, *Articles* and *Devis* — each list tab
+  has an *Actualiser* button and a status line
 
 ## Layout
 
@@ -66,10 +70,12 @@ src/main/java/com/xdev/gest_comm_clientfx/
   api/ApiException.java      transport/HTTP error type
   controllers/               @FXML controllers — HomeScreenCtrl,
                              ConfigScreenCtrl, NouveauClientCtrl,
-                             NouvelArticleCtrl all wired
+                             NouvelArticleCtrl, NouveauDevisCtrl all wired
   models/Article.java        snake_case fields + @JsonProperty bridge to
                              the API's camelCase JSON
   models/Client.java         mirrors the backend Client fields 1:1
+  models/Devis.java          quote header + nested LigneDevis + totals
+  models/LigneDevis.java     devis line item (article or free text)
   models/BonLivClient.java   empty (delivery note)
   models/FactureClient.java  empty (invoice)
   views/*.fxml               the layouts, copied onto the classpath
@@ -84,13 +90,14 @@ by the `maven-resources-plugin` resource entry in `pom.xml`, which is why
 | Piece | State |
 |---|---|
 | Window, menus, tabs | laid out in FXML |
-| Menu actions | config, client/article lists and create forms wired; Bon Liv/Facture + edit/delete inert |
+| Menu actions | config, client/article/devis lists and create forms wired; Bon Liv/Facture + edit/delete inert |
 | `HomeScreenCtrl`, `ConfigScreenCtrl` | wired (`@FXML` injection, background loads) |
 | `NouveauClientCtrl`, `NouvelArticleCtrl` | wired — POST forms with client-side validation |
-| `Article`, `Client` | full accessors + Jackson JSON mapping (tested) |
+| `NouveauDevisCtrl` | wired — client picker + article-driven line items, live HT/TVA/TTC, POSTs nested `lignes` |
+| `Article`, `Client`, `Devis`, `LigneDevis` | full accessors + Jackson JSON mapping (tested) |
 | `BonLivClient`, `FactureClient` | empty classes |
-| HTTP client | `api/ApiClient` — list + post used so far |
-| Tests | 5 JUnit 5 tests (model accessors + JSON mapping) |
+| HTTP client | `api/ApiClient` — list + post used (incl. `GET`/`POST /api/devis`) |
+| Tests | 6 JUnit 5 tests (model accessors + JSON mapping) |
 
 ## Continuous integration
 

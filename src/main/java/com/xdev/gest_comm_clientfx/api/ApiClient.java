@@ -3,6 +3,7 @@ package com.xdev.gest_comm_clientfx.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xdev.gest_comm_clientfx.models.Article;
 import com.xdev.gest_comm_clientfx.models.Client;
+import com.xdev.gest_comm_clientfx.models.Devis;
 
 import java.io.IOException;
 import java.net.URI;
@@ -40,6 +41,14 @@ public class ApiClient {
 
     public List<Article> listArticles() throws ApiException {
         return getList("/api/article", Article.class);
+    }
+
+    public List<Devis> listDevis() throws ApiException {
+        return getList("/api/devis", Devis.class);
+    }
+
+    public Devis createDevis(Object payload) throws ApiException {
+        return post("/api/devis", payload, Devis.class);
     }
 
     public <T> List<T> getList(String path, Class<T> elementType)
