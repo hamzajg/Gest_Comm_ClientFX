@@ -1,18 +1,37 @@
 package com.xdev.gest_comm_clientfx.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.math.BigDecimal;
 
+/**
+ * Article entity. Java field names stay snake_case (legacy ADF naming);
+ * the PyGestComm API speaks camelCase — the @JsonProperty annotations
+ * bridge the two so JSON maps one-to-one.
+ */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Article {
 
+    @JsonProperty("idArticle")
     private Long id_article;
+    @JsonProperty("refArticle")
     private String ref_article;
+    @JsonProperty("descArticle")
     private String desc_article;
+    @JsonProperty("prixAchatUnitaire")
     private BigDecimal prix_achat_unitaire;
+    @JsonProperty("remiseAchat")
     private Double remise_achat;
+    @JsonProperty("tvaAchat")
     private Double tva_achat;
+    @JsonProperty("prixVenteUnitaire")
     private BigDecimal prix_vente_unitaire;
+    @JsonProperty("remiseVente")
     private Double remise_vente;
+    @JsonProperty("tvaVente")
     private Double tva_vente;
+    @JsonProperty("dernierPrixVenteUnitaire")
     private BigDecimal dernier_prix_vente_unitaire;
 
     public Long getId_article() {
