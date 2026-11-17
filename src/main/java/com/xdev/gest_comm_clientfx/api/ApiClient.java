@@ -9,6 +9,7 @@ import com.xdev.gest_comm_clientfx.models.Facture;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -39,15 +40,27 @@ public class ApiClient {
     }
 
     public List<Client> listClients() throws ApiException {
-        return getList("/api/client", Client.class);
+        return listClients(null);
+    }
+
+    public List<Client> listClients(String search) throws ApiException {
+        return getList("/api/client", Client.class, search);
     }
 
     public List<Article> listArticles() throws ApiException {
-        return getList("/api/article", Article.class);
+        return listArticles(null);
+    }
+
+    public List<Article> listArticles(String search) throws ApiException {
+        return getList("/api/article", Article.class, search);
     }
 
     public List<Devis> listDevis() throws ApiException {
-        return getList("/api/devis", Devis.class);
+        return listDevis(null);
+    }
+
+    public List<Devis> listDevis(String search) throws ApiException {
+        return getList("/api/devis", Devis.class, search);
     }
 
     public Devis createDevis(Object payload) throws ApiException {
@@ -55,7 +68,11 @@ public class ApiClient {
     }
 
     public List<Facture> listFactures() throws ApiException {
-        return getList("/api/facture", Facture.class);
+        return listFactures(null);
+    }
+
+    public List<Facture> listFactures(String search) throws ApiException {
+        return getList("/api/facture", Facture.class, search);
     }
 
     public Facture createFacture(Object payload) throws ApiException {
@@ -69,7 +86,11 @@ public class ApiClient {
     }
 
     public List<BonLiv> listBonLivs() throws ApiException {
-        return getList("/api/bonliv", BonLiv.class);
+        return listBonLivs(null);
+    }
+
+    public List<BonLiv> listBonLivs(String search) throws ApiException {
+        return getList("/api/bonliv", BonLiv.class, search);
     }
 
     public BonLiv createBonLiv(Object payload) throws ApiException {
@@ -110,7 +131,17 @@ public class ApiClient {
 
     public <T> List<T> getList(String path, Class<T> elementType)
         throws ApiException {
-        String body = send("GET", path, null);
+        return getList(path, elementType, null);
+    }
+
+    public <T> List<T> getList(String path, Class<T> elementType,
+                               String search) throws ApiException {
+        String url = path;
+        if (search != null && !search.isBlank()) {
+            url += "?search=" + URLEncoder.encode(
+                search.trim(), StandardCharsets.UTF_8);
+        }
+        String body = send("GET", url, null);
         try {
             return mapper.readValue(body, mapper.getTypeFactory()
                 .constructCollectionType(List.class, elementType));

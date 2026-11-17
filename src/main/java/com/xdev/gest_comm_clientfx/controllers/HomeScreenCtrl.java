@@ -22,6 +22,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
@@ -51,8 +52,10 @@ public class HomeScreenCtrl {
     @FXML private Label devisStatus;
     @FXML private Label factureStatus;
     @FXML private Label bonlivStatus;
+    @FXML private TextField searchField;
 
     private final ApiClient api = new ApiClient(ApiConfig.load());
+    private String searchTerm = "";
 
     @FXML
     public void initialize() {
@@ -88,6 +91,25 @@ public class HomeScreenCtrl {
             column("Nom", "nomPrenomClient", 200),
             column("Statut", "statutBonLiv", 90),
             column("Total TTC", "totalTTC", 100));
+        searchField.setOnAction(e -> applySearch());
+    }
+
+    /** Re-run the list load for whichever tab is selected, with the
+     *  toolbar search term as ?search=. */
+    private void applySearch() {
+        searchTerm = searchField.getText().trim();
+        Tab selected = tabs.getSelectionModel().getSelectedItem();
+        if (selected == clientsTab) {
+            refreshClients();
+        } else if (selected == articlesTab) {
+            refreshArticles();
+        } else if (selected == devisTab) {
+            refreshDevis();
+        } else if (selected == factureTab) {
+            refreshFactures();
+        } else if (selected == bonlivTab) {
+            refreshBonLivs();
+        }
     }
 
     private static <T> TableColumn<T, Object> column(
@@ -119,7 +141,7 @@ public class HomeScreenCtrl {
     @FXML
     public void refreshDevis() {
         load("devis", devisStatus,
-            () -> FXCollections.observableArrayList(api.listDevis()),
+            () -> FXCollections.observableArrayList(api.listDevis(searchTerm)),
             devisTable::setItems);
     }
 
@@ -164,7 +186,7 @@ public class HomeScreenCtrl {
     @FXML
     public void refreshFactures() {
         load("facture", factureStatus,
-            () -> FXCollections.observableArrayList(api.listFactures()),
+            () -> FXCollections.observableArrayList(api.listFactures(searchTerm)),
             factureTable::setItems);
     }
 
@@ -184,7 +206,7 @@ public class HomeScreenCtrl {
     @FXML
     public void refreshBonLivs() {
         load("bon de livraison", bonlivStatus,
-            () -> FXCollections.observableArrayList(api.listBonLivs()),
+            () -> FXCollections.observableArrayList(api.listBonLivs(searchTerm)),
             bonlivTable::setItems);
     }
 
@@ -229,14 +251,14 @@ public class HomeScreenCtrl {
     @FXML
     public void refreshClients() {
         load("clients", clientStatus,
-            () -> FXCollections.observableArrayList(api.listClients()),
+            () -> FXCollections.observableArrayList(api.listClients(searchTerm)),
             clientTable::setItems);
     }
 
     @FXML
     public void refreshArticles() {
         load("articles", articleStatus,
-            () -> FXCollections.observableArrayList(api.listArticles()),
+            () -> FXCollections.observableArrayList(api.listArticles(searchTerm)),
             articleTable::setItems);
     }
 
