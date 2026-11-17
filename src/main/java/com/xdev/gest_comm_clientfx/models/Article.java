@@ -34,6 +34,7 @@ public class Article {
     @JsonProperty("dernierPrixVenteUnitaire")
     private BigDecimal dernier_prix_vente_unitaire;
 
+    @JsonProperty("idArticle")
     public Long getId_article() {
         return id_article;
     }
@@ -42,6 +43,7 @@ public class Article {
         this.id_article = id_article;
     }
 
+    @JsonProperty("refArticle")
     public String getRef_article() {
         return ref_article;
     }
@@ -50,6 +52,7 @@ public class Article {
         this.ref_article = ref_article;
     }
 
+    @JsonProperty("descArticle")
     public String getDesc_article() {
         return desc_article;
     }
@@ -58,6 +61,7 @@ public class Article {
         this.desc_article = desc_article;
     }
 
+    @JsonProperty("prixAchatUnitaire")
     public BigDecimal getPrix_achat_unitaire() {
         return prix_achat_unitaire;
     }
@@ -66,6 +70,7 @@ public class Article {
         this.prix_achat_unitaire = prix_achat_unitaire;
     }
 
+    @JsonProperty("remiseAchat")
     public Double getRemise_achat() {
         return remise_achat;
     }
@@ -74,6 +79,7 @@ public class Article {
         this.remise_achat = remise_achat;
     }
 
+    @JsonProperty("tvaAchat")
     public Double getTva_achat() {
         return tva_achat;
     }
@@ -82,6 +88,7 @@ public class Article {
         this.tva_achat = tva_achat;
     }
 
+    @JsonProperty("prixVenteUnitaire")
     public BigDecimal getPrix_vente_unitaire() {
         return prix_vente_unitaire;
     }
@@ -90,6 +97,7 @@ public class Article {
         this.prix_vente_unitaire = prix_vente_unitaire;
     }
 
+    @JsonProperty("remiseVente")
     public Double getRemise_vente() {
         return remise_vente;
     }
@@ -98,6 +106,7 @@ public class Article {
         this.remise_vente = remise_vente;
     }
 
+    @JsonProperty("tvaVente")
     public Double getTva_vente() {
         return tva_vente;
     }
@@ -106,6 +115,7 @@ public class Article {
         this.tva_vente = tva_vente;
     }
 
+    @JsonProperty("dernierPrixVenteUnitaire")
     public BigDecimal getDernier_prix_vente_unitaire() {
         return dernier_prix_vente_unitaire;
     }

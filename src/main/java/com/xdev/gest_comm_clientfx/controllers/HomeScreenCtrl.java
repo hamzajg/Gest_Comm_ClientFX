@@ -9,6 +9,8 @@ import com.xdev.gest_comm_clientfx.models.Client;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -19,6 +21,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -101,6 +104,44 @@ public class HomeScreenCtrl {
                     "Erreur : " + e.getClass().getSimpleName() + " " + e.getMessage()));
             }
         }).start();
+    }
+
+    @FXML
+    public void showNewClient() {
+        showDialog("/com/xdev/gest_comm_clientfx/views/NouveauClient.fxml",
+            "Nouveau client", 480, 460, NouveauClientCtrl.class,
+            this::refreshClients);
+    }
+
+    @FXML
+    public void showNewArticle() {
+        showDialog("/com/xdev/gest_comm_clientfx/views/NouvelArticle.fxml",
+            "Nouvel article", 480, 520, NouvelArticleCtrl.class,
+            this::refreshArticles);
+    }
+
+    private <C> void showDialog(String fxml, String title, double w,
+                                double h, Class<C> ctrlType,
+                                Runnable onSaved) {
+        try {
+            URL url = getClass().getResource(fxml);
+            FXMLLoader loader = new FXMLLoader(url);
+            Parent root = loader.load();
+            C ctrl = ctrlType.cast(loader.getController());
+            if (ctrl instanceof NouveauClientCtrl c) {
+                c.setApi(api);
+                c.setOnSaved(onSaved);
+            } else if (ctrl instanceof NouvelArticleCtrl c) {
+                c.setApi(api);
+                c.setOnSaved(onSaved);
+            }
+            Stage stage = new Stage();
+            stage.setTitle(title);
+            stage.setScene(new Scene(root, w, h));
+            stage.show();
+        } catch (IOException e) {
+            clientStatus.setText("Erreur : impossible d'ouvrir le formulaire.");
+        }
     }
 
     @FXML

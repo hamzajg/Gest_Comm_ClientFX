@@ -38,7 +38,7 @@
 
                     <Menu mnemonicParsing="false" text="Article">
                         <items>
-                            <MenuItem mnemonicParsing="false" text="Nouveau article" />
+                            <MenuItem mnemonicParsing="false" onAction="#showNewArticle" text="Nouveau article" />
                             <MenuItem mnemonicParsing="false" onAction="#showArticles" text="Liste des articles" />
                             <SeparatorMenuItem/>
                         </items>
@@ -46,7 +46,7 @@
 
                     <Menu mnemonicParsing="false" text="Client">
                         <items>
-                            <MenuItem mnemonicParsing="false" text="Nouveau client" />
+                            <MenuItem mnemonicParsing="false" onAction="#showNewClient" text="Nouveau client" />
                             <MenuItem mnemonicParsing="false" onAction="#showClients" text="Liste des clients" />
                             <SeparatorMenuItem/>
                             <MenuItem mnemonicParsing="false" text="Nouveau Bon Liv" />
