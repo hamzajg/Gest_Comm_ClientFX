@@ -51,9 +51,9 @@ The app opens a 1200×700 window titled *Gestion Commerciale*, loaded from
   screen (wired); the template's sequence/Save/Open/Close items stay inert
 - **Article** menu — *Nouveau article* opens a create form (wired);
   *Liste des articles* opens the Articles tab (wired)
-- **Client** menu — *Nouveau client* opens a create form (wired);
-  *Liste des clients* opens the Clients tab (wired); *Bon Liv* and
-  *Facture* items are still inert
+- **Client** menu — *Nouveau client* / *Modifier* / *Supprimer* (wired);
+  *Liste des clients* opens the Clients tab (wired); *Nouveau Bon Liv* /
+  *Liste des Bon Livs* open the delivery-note form/tab (wired)
 - **Help** menu — unchanged
 - **Devis** menu — *Nouveau devis* opens the quote form (wired, with
   line items + totals); *Liste des devis* opens the Devis tab (wired);
@@ -61,8 +61,8 @@ The app opens a 1200×700 window titled *Gestion Commerciale*, loaded from
 - **Facture** menu — *Nouvelle facture* opens the invoice form (wired,
   optional devis prefill); *Liste des factures* opens the Factures tab
   (wired)
-- tabs: *Bienvenue*, *Clients*, *Articles*, *Devis* and *Factures* —
-  each list tab has an *Actualiser* button and a status line
+- tabs: *Bienvenue*, *Clients*, *Articles*, *Devis*, *Factures* and
+  *Bons de livraison* — each list tab has action buttons and a status line
 
 ## Layout
 
@@ -86,7 +86,8 @@ src/main/java/com/xdev/gest_comm_clientfx/
   models/LigneDevis.java     devis line item (article or free text)
   models/Facture.java        invoice header + nested LigneFacture + totals
   models/LigneFacture.java   facture line item (article or free text)
-  models/BonLivClient.java   empty (delivery note)
+  models/BonLiv.java         delivery note header + nested LigneBonLiv
+  models/LigneBonLiv.java    bonliv line item (article or free text)
   views/*.fxml               the layouts, copied onto the classpath
 ```
 
@@ -99,17 +100,16 @@ by the `maven-resources-plugin` resource entry in `pom.xml`, which is why
 | Piece | State |
 |---|---|
 | Window, menus, tabs | laid out in FXML |
-| Menu actions | config + all list/create/edit/delete/statut actions + assistant wired; Bon Liv inert |
+| Menu actions | everything wired — all five resources list/create/edit/delete/statut, conversion, assistant |
 | `HomeScreenCtrl`, `ConfigScreenCtrl` | wired (`@FXML` injection, background loads) |
 | `NouveauClientCtrl`, `NouvelArticleCtrl` | wired — POST forms with client-side validation |
 | `NouveauDevisCtrl` | wired — client/article pickers, line editor, live totals, POSTs nested `lignes` |
 | `NouvelFactureCtrl` | wired — same line editor + optional devis prefill |
-| `Article`, `Client`, `Devis`, `LigneDevis`, `Facture`, `LigneFacture` | full accessors + Jackson JSON mapping (tested) |
+| `Article`, `Client`, `Devis`, `LigneDevis`, `Facture`, `LigneFacture`, `BonLiv`, `LigneBonLiv` | full accessors + Jackson JSON mapping (tested) |
 | Row actions | edit (PUT), delete (DELETE + confirm), statut PATCH on devis/factures |
 | Assistant | Help → Assistant dialog over `POST /api/assistant/ask` |
-| `BonLivClient` | empty class (delivery note) |
-| HTTP client | `api/ApiClient` — list/post/put/delete/patch + `convertDevis` + `askAssistant` |
-| Tests | 7 JUnit 5 tests (model accessors + JSON mapping) |
+| HTTP client | `api/ApiClient` — list/post/put/delete/patch + `convertDevis` + `askAssistant` (all routes) |
+| Tests | 8 JUnit 5 tests (model accessors + JSON mapping) |
 
 ## Continuous integration
 

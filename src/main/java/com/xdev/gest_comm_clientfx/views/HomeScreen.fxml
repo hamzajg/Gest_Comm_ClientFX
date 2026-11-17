@@ -50,8 +50,8 @@
                             <MenuItem mnemonicParsing="false" onAction="#showNewClient" text="Nouveau client" />
                             <MenuItem mnemonicParsing="false" onAction="#showClients" text="Liste des clients" />
                             <SeparatorMenuItem/>
-                            <MenuItem mnemonicParsing="false" text="Nouveau Bon Liv" />
-                            <MenuItem mnemonicParsing="false" text="Liste des Bon Livs" />
+                            <MenuItem mnemonicParsing="false" onAction="#showNewBonLiv" text="Nouveau Bon Liv" />
+                            <MenuItem mnemonicParsing="false" onAction="#showBonLivs" text="Liste des Bon Livs" />
                         </items>
                     </Menu>
                     <Menu mnemonicParsing="false" text="Devis">
@@ -166,6 +166,24 @@
                                     <Button mnemonicParsing="false" onAction="#deleteSelectedFacture" text="Supprimer" />
                                 </HBox>
                                 <Label fx:id="factureStatus" text="" />
+                            </children>
+                        </VBox>
+                    </content>
+                </Tab>
+                <Tab fx:id="bonlivTab" text="Bons de livraison">
+                    <content>
+                        <VBox spacing="5.0">
+                            <children>
+                                <TableView fx:id="bonlivTable" VBox.vgrow="ALWAYS" />
+                                <HBox spacing="10.0">
+                                    <Button mnemonicParsing="false" onAction="#refreshBonLivs" text="Actualiser" />
+                                    <Button mnemonicParsing="false" onAction="#showNewBonLiv" text="Nouveau bon liv" />
+                                    <Button mnemonicParsing="false" onAction="#validerBonLiv" text="Valider" />
+                                    <Button mnemonicParsing="false" onAction="#livrerBonLiv" text="Marquer livré" />
+                                    <Button mnemonicParsing="false" onAction="#annulerBonLiv" text="Annuler" />
+                                    <Button mnemonicParsing="false" onAction="#deleteSelectedBonLiv" text="Supprimer" />
+                                </HBox>
+                                <Label fx:id="bonlivStatus" text="" />
                             </children>
                         </VBox>
                     </content>
