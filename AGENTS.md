@@ -110,9 +110,8 @@ decimals arrive as strings (`"100.00"`) — Jackson handles that into
 
 - **Default branch is `master`, not `main`.**
 - Everything is wired: all five resources support list/create/edit/
-  delete and statut transitions, devis→facture conversion, and the
-  assistant dialog. Document-line editing on existing documents is not
-  supported (create-only lines).
+  delete, full edit (header + lignes via PUT) and statut transitions,
+  devis→facture conversion, and the assistant dialog.
 - Create dialogs send `Map<String,Object>` payloads, not the POJOs —
   keep it that way for writes (explicit keys, no Jackson serialization
   surprises); POJOs are for reads.

@@ -6,7 +6,9 @@ import com.xdev.gest_comm_clientfx.controllers.NouveauDevisCtrl.LigneDraft;
 import com.xdev.gest_comm_clientfx.models.Article;
 import com.xdev.gest_comm_clientfx.models.Client;
 import com.xdev.gest_comm_clientfx.models.Devis;
+import com.xdev.gest_comm_clientfx.models.Facture;
 import com.xdev.gest_comm_clientfx.models.LigneDevis;
+import com.xdev.gest_comm_clientfx.models.LigneFacture;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -50,8 +52,39 @@ public class NouvelFactureCtrl implements ApiDialog {
 
     private ApiClient api;
     private Runnable onSaved;
+    private Facture editing;
+    private Long pendingClientId;
+    private Long pendingDevisId;
     private final ObservableList<LigneDraft> lines =
         FXCollections.observableArrayList();
+
+    /** Prefill the form for editing an existing facture (PUT on save;
+     *  the backend replaces lignes when the payload includes them). */
+    public void setEditing(Facture facture) {
+        this.editing = facture;
+        this.pendingClientId = facture.getClient();
+        this.pendingDevisId = facture.getDevis();
+        codeFactureField.setText(facture.getCodeFacture());
+        dateFactureField.setText(textOr(facture.getDateFacture(), ""));
+        observationField.setText(
+            textOr(facture.getObservationFacture(), ""));
+        if (facture.getStatutFacture() != null) {
+            statutCombo.getSelectionModel()
+                .select(facture.getStatutFacture());
+        }
+        lines.clear();
+        if (facture.getLignes() != null) {
+            for (LigneFacture l : facture.getLignes()) {
+                lines.add(new LigneDraft(
+                    l.getArticle(), l.getDesignation(),
+                    textOr(l.getQuantite(), "1"),
+                    textOr(l.getPrixUnitaire(), "0"),
+                    textOr(l.getRemise(), "0"),
+                    textOr(l.getTva(), "0")));
+            }
+        }
+        updateTotals();
+    }
 
     public void setApi(ApiClient api) {
         this.api = api;
@@ -106,9 +139,26 @@ public class NouvelFactureCtrl implements ApiDialog {
                 clientCombo.getItems().setAll(clients);
                 articleCombo.getItems().setAll(articles);
                 devisCombo.getItems().setAll(open);
-                if (!clients.isEmpty()) {
+                if (pendingClientId != null) {
+                    for (Client c : clients) {
+                        if (pendingClientId.equals(c.getIdClient())) {
+                            clientCombo.getSelectionModel().select(c);
+                            break;
+                        }
+                    }
+                } else if (!clients.isEmpty()) {
                     clientCombo.getSelectionModel().selectFirst();
                 }
+                if (pendingDevisId != null) {
+                    for (Devis d : open) {
+                        if (pendingDevisId.equals(d.getIdDevis())) {
+                            devisCombo.getSelectionModel().select(d);
+                            break;
+                        }
+                    }
+                }
+                pendingClientId = null;
+                pendingDevisId = null;
                 statusLabel.setText("");
             });
         } catch (ApiException e) {
@@ -241,7 +291,12 @@ public class NouvelFactureCtrl implements ApiDialog {
         statusLabel.setText("Enregistrement…");
         new Thread(() -> {
             try {
-                api.createFacture(payload);
+                if (editing != null) {
+                    api.put("/api/facture/" + editing.getIdFacture(),
+                        payload, Facture.class);
+                } else {
+                    api.createFacture(payload);
+                }
                 Platform.runLater(() -> {
                     if (onSaved != null) {
                         onSaved.run();

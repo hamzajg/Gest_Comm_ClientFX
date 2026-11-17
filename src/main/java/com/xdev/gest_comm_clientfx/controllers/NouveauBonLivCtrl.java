@@ -4,7 +4,9 @@ import com.xdev.gest_comm_clientfx.api.ApiClient;
 import com.xdev.gest_comm_clientfx.api.ApiException;
 import com.xdev.gest_comm_clientfx.controllers.NouveauDevisCtrl.LigneDraft;
 import com.xdev.gest_comm_clientfx.models.Article;
+import com.xdev.gest_comm_clientfx.models.BonLiv;
 import com.xdev.gest_comm_clientfx.models.Client;
+import com.xdev.gest_comm_clientfx.models.LigneBonLiv;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -47,10 +49,39 @@ public class NouveauBonLivCtrl implements ApiDialog {
 
     private ApiClient api;
     private Runnable onSaved;
+    private BonLiv editing;
+    private Long pendingClientId;
     private final ObservableList<LigneDraft> lines =
         FXCollections.observableArrayList();
     private List<Client> clients = new ArrayList<>();
     private List<Article> articles = new ArrayList<>();
+
+    /** Prefill the form for editing an existing bon de livraison
+     *  (PUT on save; the backend replaces lignes when provided). */
+    public void setEditing(BonLiv bonliv) {
+        this.editing = bonliv;
+        this.pendingClientId = bonliv.getClient();
+        codeBonLivField.setText(bonliv.getCodeBonLiv());
+        dateBonLivField.setText(textOr(bonliv.getDateBonLiv(), ""));
+        observationField.setText(
+            textOr(bonliv.getObservationBonLiv(), ""));
+        if (bonliv.getStatutBonLiv() != null) {
+            statutCombo.getSelectionModel()
+                .select(bonliv.getStatutBonLiv());
+        }
+        lines.clear();
+        if (bonliv.getLignes() != null) {
+            for (LigneBonLiv l : bonliv.getLignes()) {
+                lines.add(new LigneDraft(
+                    l.getArticle(), l.getDesignation(),
+                    textOr(l.getQuantite(), "1"),
+                    textOr(l.getPrixUnitaire(), "0"),
+                    textOr(l.getRemise(), "0"),
+                    textOr(l.getTva(), "0")));
+            }
+        }
+        updateTotals();
+    }
 
     public void setApi(ApiClient api) {
         this.api = api;
@@ -95,7 +126,15 @@ public class NouveauBonLivCtrl implements ApiDialog {
             Platform.runLater(() -> {
                 clientCombo.getItems().setAll(clients);
                 articleCombo.getItems().setAll(articles);
-                if (!clients.isEmpty()) {
+                if (pendingClientId != null) {
+                    for (Client c : clients) {
+                        if (pendingClientId.equals(c.getIdClient())) {
+                            clientCombo.getSelectionModel().select(c);
+                            break;
+                        }
+                    }
+                    pendingClientId = null;
+                } else if (!clients.isEmpty()) {
                     clientCombo.getSelectionModel().selectFirst();
                 }
                 statusLabel.setText("");
@@ -195,7 +234,12 @@ public class NouveauBonLivCtrl implements ApiDialog {
         statusLabel.setText("Enregistrement…");
         new Thread(() -> {
             try {
-                api.createBonLiv(payload);
+                if (editing != null) {
+                    api.put("/api/bonliv/" + editing.getIdBonLiv(), payload,
+                        BonLiv.class);
+                } else {
+                    api.createBonLiv(payload);
+                }
                 Platform.runLater(() -> {
                     if (onSaved != null) {
                         onSaved.run();
