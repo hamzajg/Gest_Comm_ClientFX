@@ -1,0 +1,40 @@
+{
+  "feature": "evidence-walkthrough",
+  "status": "done",
+  "iterations": 3,
+  "updated": "2026-11-17T20:56:24Z",
+  "waves": {
+    "1": {
+      "status": "done",
+      "branch": "feat/evidence-walkthrough-w1",
+      "pr": "\u2014",
+      "evidence": "spec dir + gitignore committed (be29e59); history rewritten cf83469 purging docs/walkthrough; mvn package green, 8 tests",
+      "updated": "2026-11-17T20:56:08Z"
+    }
+  },
+  "gates": {
+    "G1": {
+      "status": "met",
+      "evidence": "specs/evidence-walkthrough/SPEC.md \u2014 scope in/out and 3 ACs frozen",
+      "updated": "2026-11-17T20:54:48Z"
+    },
+    "G2": {
+      "status": "met",
+      "evidence": "mvn -B -q package -> BUILD SUCCESS, surefire 8 tests 0 failures",
+      "updated": "2026-11-17T20:56:11Z"
+    },
+    "G3": {
+      "status": "met",
+      "evidence": "git ls-files 'docs/**/*.png' 'specs/**/*.png' -> 0 results; history rewritten (cf83469)",
+      "updated": "2026-11-17T20:56:11Z"
+    }
+  },
+  "events": [
+    "2026-11-17T20:54:48Z gate G1 met: specs/evidence-walkthrough/SPEC.md \u2014 scope in/out and 3 ACs frozen",
+    "2026-11-17T20:55:43Z start wave 1 on feat/evidence-walkthrough-w1",
+    "2026-11-17T20:56:08Z complete wave 1: spec dir + gitignore committed (be29e59); history rewritten cf83469 purging docs/walkthrough; mvn package green, 8 tests",
+    "2026-11-17T20:56:11Z gate G2 met: mvn -B -q package -> BUILD SUCCESS, surefire 8 tests 0 failures",
+    "2026-11-17T20:56:11Z gate G3 met: git ls-files 'docs/**/*.png' 'specs/**/*.png' -> 0 results; history rewritten (cf83469)",
+    "2026-11-17T20:56:24Z feature validated and shipped"
+  ]
+}

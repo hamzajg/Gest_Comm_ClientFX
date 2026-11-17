@@ -123,6 +123,10 @@ decimals arrive as strings (`"100.00"`) — Jackson handles that into
   `controllers`) — it was once broken by a singular path.
 - `mvn javafx:run` handles the module path; plain `java -jar` won't work
   without the plugin's setup.
+- `specs/` holds ship-loop spec artifacts — `specs/evidence-walkthrough/`
+  records the screen-evidence feature; `tools/Screenshots.java`
+  regenerates captures into gitignored `docs/walkthrough/` (never commit
+  PNGs).
 - Credentials + the rotating refresh token live in the OS preferences
   store; the access token is memory-only. Bearer tokens are plaintext
   without TLS — acceptable on a LAN, needs TLS before any real
