@@ -51,6 +51,7 @@ public class NouvelFactureCtrl implements ApiDialog {
     @FXML private Label statusLabel;
 
     private ApiClient api;
+    private boolean lookupsStarted;
     private Runnable onSaved;
     private Facture editing;
     private Long pendingClientId;
@@ -88,6 +89,9 @@ public class NouvelFactureCtrl implements ApiDialog {
 
     public void setApi(ApiClient api) {
         this.api = api;
+        if (!lookupsStarted) {
+            lookupsStarted = true;
+            }
     }
 
     public void setOnSaved(Runnable onSaved) {
@@ -121,7 +125,6 @@ public class NouvelFactureCtrl implements ApiDialog {
             .addListener((obs, oldV, article) -> prefillFromArticle(article));
 
         statusLabel.setText("Chargement des données…");
-        new Thread(this::loadLookups).start();
     }
 
     private void loadLookups() {

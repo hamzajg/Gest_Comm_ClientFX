@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -22,8 +23,8 @@
 
     <GridPane hgap="10.0" vgap="10.0">
         <columnConstraints>
-            <ColumnConstraint minWidth="110.0" prefWidth="110.0" />
-            <ColumnConstraint hgrow="ALWAYS" />
+            <ColumnConstraints minWidth="110.0" prefWidth="110.0" />
+            <ColumnConstraints hgrow="ALWAYS" />
         </columnConstraints>
         <Label text="Serveur (URL)" GridPane.columnIndex="0" GridPane.rowIndex="0" />
         <TextField fx:id="baseUrlField" promptText="http://localhost:8000"
