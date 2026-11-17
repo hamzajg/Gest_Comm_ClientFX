@@ -257,9 +257,6 @@ public class NouveauBonLivCtrl implements ApiDialog {
     }
 
     private String validate() {
-        if (codeBonLivField.getText().isBlank()) {
-            return "Le code bon de livraison est obligatoire.";
-        }
         if (clientCombo.getValue() == null) {
             return "Choisissez un client.";
         }
