@@ -28,12 +28,6 @@
                     <Menu mnemonicParsing="false" text="Application">
                         <items>
                             <MenuItem mnemonicParsing="false" onAction="#openConfig" text="Parametre de l'application" />
-                            <SeparatorMenuItem/>
-                            <MenuItem mnemonicParsing="false" text="Parametre des sequences" />
-                            <SeparatorMenuItem/>
-                            <MenuItem mnemonicParsing="false" text="Save As..." />
-                            <MenuItem mnemonicParsing="false" text="Open..." />
-                            <MenuItem mnemonicParsing="false" text="Close" />
                         </items>
                     </Menu>
 
@@ -71,7 +65,6 @@
                     <Menu mnemonicParsing="false" text="Help">
                         <items>
                             <MenuItem mnemonicParsing="false" onAction="#showAssistant" text="Assistant" />
-                            <MenuItem mnemonicParsing="false" text="About Blank" />
                         </items>
                     </Menu>
                 </menus>
