@@ -50,4 +50,10 @@ public class Devis {
     public void setTotalTVA(Double totalTVA) { this.totalTVA = totalTVA; }
     public Double getTotalTTC() { return totalTTC; }
     public void setTotalTTC(Double totalTTC) { this.totalTTC = totalTTC; }
+
+    @Override
+    public String toString() {
+        return codeDevis + " — " + nomPrenomClient
+            + " — TTC " + totalTTC;
+    }
 }

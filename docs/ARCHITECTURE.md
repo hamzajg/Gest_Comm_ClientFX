@@ -8,8 +8,9 @@ Current-state map. Descriptive, not aspirational; see `docs/adr/` for why.
 StartApp (JavaFX Application)
    └─ HomeScreen ──loads──► views/HomeScreen.fxml
    │                          menus: Application / Article / Client /
-   │                          Devis / Bon Liv / Facture; tabs Bienvenue /
-   │                          Clients / Articles / Devis
+   │                          Devis / Facture / Bon Liv / Help; tabs
+   │                          Bienvenue / Clients / Articles / Devis /
+   │                          Factures
    ├─ ConfigScreen ──loads──► views/ConfigScreen.fxml (settings form)
    ▼
 controllers/  HomeScreenCtrl — @FXML tabs/tables/menus; loads API data
@@ -20,10 +21,16 @@ controllers/  HomeScreenCtrl — @FXML tabs/tables/menus; loads API data
               POST Map payloads and close on success
               NouveauDevisCtrl — quote form: client/article ComboBoxes,
               LigneDraft line editor, live totals, POST /api/devis
+              NouvelFactureCtrl — invoice form reusing LigneDraft, plus
+              an optional devis picker that prefills client/date/lines;
+              POST /api/facture
+              HomeScreenCtrl.convertSelectedDevis — POST
+              /api/devis/<id>/convertir on the selected row
 api/          ApiClient (java.net.http + Jackson, Basic auth every call)
               ApiConfig (Java Preferences) · ApiException
-models/       Article + Client + Devis + LigneDevis POJOs with accessors;
-              BonLivClient, FactureClient still empty shells
+models/       Article + Client + Devis + LigneDevis + Facture +
+              LigneFacture POJOs with accessors; BonLivClient still an
+              empty shell
         │
         ▼  HTTP/JSON + Authorization: Basic …
 PyGestComm (Django/DRF)  /api/client  /api/article  /api/devis
@@ -59,11 +66,11 @@ preferences store between runs.
 
 ## Contract status
 
-Defined and working for clients/articles/devis: `GET`/`POST /api/client`,
-`GET`/`POST /api/article`, `GET`/`POST /api/devis` with Basic auth
-(PyGestComm ADR 0006). Writes send `Map` payloads with camelCase keys;
-devis writes nest `lignes` (article-linked or free-text lines); reads
-deserialize into the POJOs. The backend's detail routes, facture
-documents, devis→facture conversion, filters and assistant are unused
-so far — `BonLivClient`/`FactureClient` stay empty until those screens
-are designed.
+Defined and working for the full commercial document chain:
+`GET`/`POST` on `/api/client`, `/api/article`, `/api/devis`, `/api/facture`
+plus `POST /api/devis/<id>/convertir` (devis→facture) — all with Basic
+auth (PyGestComm ADR 0006). Writes send `Map` payloads with camelCase
+keys; document writes nest `lignes` (article-linked or free-text lines);
+reads deserialize into the POJOs. Filters (`?search=`/`?statut=`/
+`?client=`), detail routes and the assistant endpoint are unused so far —
+`BonLivClient` stays empty until that screen is designed.

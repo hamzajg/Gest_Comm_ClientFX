@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xdev.gest_comm_clientfx.models.Article;
 import com.xdev.gest_comm_clientfx.models.Client;
 import com.xdev.gest_comm_clientfx.models.Devis;
+import com.xdev.gest_comm_clientfx.models.Facture;
 
 import java.io.IOException;
 import java.net.URI;
@@ -49,6 +50,20 @@ public class ApiClient {
 
     public Devis createDevis(Object payload) throws ApiException {
         return post("/api/devis", payload, Devis.class);
+    }
+
+    public List<Facture> listFactures() throws ApiException {
+        return getList("/api/facture", Facture.class);
+    }
+
+    public Facture createFacture(Object payload) throws ApiException {
+        return post("/api/facture", payload, Facture.class);
+    }
+
+    public Facture convertDevis(Long devisId, Object payload)
+        throws ApiException {
+        return post("/api/devis/" + devisId + "/convertir", payload,
+            Facture.class);
     }
 
     public <T> List<T> getList(String path, Class<T> elementType)

@@ -61,6 +61,14 @@
                         <items>
                             <MenuItem mnemonicParsing="false" onAction="#showNewDevis" text="Nouveau devis" />
                             <MenuItem mnemonicParsing="false" onAction="#showDevis" text="Liste des devis" />
+                            <SeparatorMenuItem />
+                            <MenuItem mnemonicParsing="false" onAction="#convertSelectedDevis" text="Convertir en facture" />
+                        </items>
+                    </Menu>
+                    <Menu mnemonicParsing="false" text="Facture">
+                        <items>
+                            <MenuItem mnemonicParsing="false" onAction="#showNewFacture" text="Nouvelle facture" />
+                            <MenuItem mnemonicParsing="false" onAction="#showFactures" text="Liste des factures" />
                         </items>
                     </Menu>
                     <Menu mnemonicParsing="false" text="Help">
@@ -126,8 +134,23 @@
                                 <HBox spacing="10.0">
                                     <Button mnemonicParsing="false" onAction="#refreshDevis" text="Actualiser" />
                                     <Button mnemonicParsing="false" onAction="#showNewDevis" text="Nouveau devis" />
+                                    <Button mnemonicParsing="false" onAction="#convertSelectedDevis" text="Convertir en facture" />
                                 </HBox>
                                 <Label fx:id="devisStatus" text="" />
+                            </children>
+                        </VBox>
+                    </content>
+                </Tab>
+                <Tab fx:id="factureTab" text="Factures">
+                    <content>
+                        <VBox spacing="5.0">
+                            <children>
+                                <TableView fx:id="factureTable" VBox.vgrow="ALWAYS" />
+                                <HBox spacing="10.0">
+                                    <Button mnemonicParsing="false" onAction="#refreshFactures" text="Actualiser" />
+                                    <Button mnemonicParsing="false" onAction="#showNewFacture" text="Nouvelle facture" />
+                                </HBox>
+                                <Label fx:id="factureStatus" text="" />
                             </children>
                         </VBox>
                     </content>

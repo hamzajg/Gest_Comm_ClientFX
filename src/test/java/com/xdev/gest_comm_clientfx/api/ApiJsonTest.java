@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xdev.gest_comm_clientfx.models.Article;
 import com.xdev.gest_comm_clientfx.models.Client;
 import com.xdev.gest_comm_clientfx.models.Devis;
+import com.xdev.gest_comm_clientfx.models.Facture;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -89,5 +90,33 @@ class ApiJsonTest {
         assertEquals("Widget", d.getLignes().get(0).getDesignation());
         assertEquals(1L, d.getLignes().get(0).getArticle());
         assertNull(d.getLignes().get(1).getArticle());
+    }
+
+    @Test
+    void factureListMapsBackendPayloadWithDevisLink() throws Exception {
+        String json = "[{\"idFacture\":1,\"codeFacture\":\"F0001\","
+            + "\"dateFacture\":\"2026-01-20\",\"client\":1,\"devis\":1,"
+            + "\"statutFacture\":\"brouillon\",\"observationFacture\":\"-\","
+            + "\"codeClient\":\"C001\",\"nomPrenomClient\":\"Ada Lovelace\","
+            + "\"codeDevis\":\"D001\","
+            + "\"totalHT\":200.0,\"totalTVA\":40.0,\"totalTTC\":240.0,"
+            + "\"lignes\":[{\"idLigneFacture\":1,\"facture\":1,"
+            + "\"article\":1,\"designation\":\"Widget\","
+            + "\"quantite\":\"2.00\",\"prixUnitaire\":\"100.00\","
+            + "\"remise\":0.0,\"tva\":20.0,\"totalHT\":200.0,"
+            + "\"totalTVA\":40.0}]}]";
+
+        List<Facture> factures = mapper.readValue(json,
+            mapper.getTypeFactory()
+                .constructCollectionType(List.class, Facture.class));
+
+        assertEquals(1, factures.size());
+        Facture f = factures.get(0);
+        assertEquals("F0001", f.getCodeFacture());
+        assertEquals(1L, f.getDevis());
+        assertEquals("D001", f.getCodeDevis());
+        assertEquals(240.0, f.getTotalTTC());
+        assertEquals(1, f.getLignes().size());
+        assertEquals("Widget", f.getLignes().get(0).getDesignation());
     }
 }
