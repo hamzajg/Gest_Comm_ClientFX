@@ -1,0 +1,26 @@
+{
+  "feature": "evidence-walkthrough",
+  "status": "running",
+  "iterations": 2,
+  "updated": "2026-11-17T20:55:43Z",
+  "waves": {
+    "1": {
+      "status": "in-progress",
+      "branch": "feat/evidence-walkthrough-w1",
+      "pr": "\u2014",
+      "evidence": "\u2014",
+      "updated": "2026-11-17T20:55:43Z"
+    }
+  },
+  "gates": {
+    "G1": {
+      "status": "met",
+      "evidence": "specs/evidence-walkthrough/SPEC.md \u2014 scope in/out and 3 ACs frozen",
+      "updated": "2026-11-17T20:54:48Z"
+    }
+  },
+  "events": [
+    "2026-11-17T20:54:48Z gate G1 met: specs/evidence-walkthrough/SPEC.md \u2014 scope in/out and 3 ACs frozen",
+    "2026-11-17T20:55:43Z start wave 1 on feat/evidence-walkthrough-w1"
+  ]
+}

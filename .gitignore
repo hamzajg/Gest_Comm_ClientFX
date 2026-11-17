@@ -52,3 +52,6 @@ fabric.properties
 
 # Maven build output
 target/
+
+# Generated evidence captures (tools/Screenshots.java)
+docs/walkthrough/
