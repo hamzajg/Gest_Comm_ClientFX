@@ -16,12 +16,14 @@ public class ApiConfig {
     private String baseUrl = DEFAULT_BASE_URL;
     private String username = "";
     private String password = "";
+    private String refreshToken = "";
 
     public static ApiConfig load() {
         ApiConfig config = new ApiConfig();
         config.baseUrl = PREFS.get("baseUrl", DEFAULT_BASE_URL);
         config.username = PREFS.get("username", "");
         config.password = PREFS.get("password", "");
+        config.refreshToken = PREFS.get("refreshToken", "");
         return config;
     }
 
@@ -29,6 +31,7 @@ public class ApiConfig {
         PREFS.put("baseUrl", baseUrl);
         PREFS.put("username", username);
         PREFS.put("password", password);
+        PREFS.put("refreshToken", refreshToken);
     }
 
     public String getBaseUrl() {
@@ -53,5 +56,14 @@ public class ApiConfig {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    /** Rotating JWT refresh token — persisted so restarts skip login. */
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 }

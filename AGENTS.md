@@ -39,7 +39,7 @@ src/main/java/com/xdev/gest_comm_clientfx/
     HomeScreen.java     loads views/HomeScreen.fxml via FXMLLoader
     ConfigScreen.java   loads views/ConfigScreen.fxml
   api/
-    ApiClient.java      java.net.http + Jackson; Basic auth on every
+    ApiClient.java      java.net.http + Jackson; JWT Bearer auth
                         request; list*/create*/put/delete/patch for all four
                         resources, convertDevis(), getList()/post()/send()
     ApiConfig.java      baseUrl + credentials in java.util.prefs
@@ -72,8 +72,11 @@ pom.xml                 JavaFX + Jackson deps + resources-plugin copies
 ### API contract (client ↔ PyGestComm backend)
 
 The backend is **PyGestComm** (`../PyGestComm`), not the old ADF `Gest_Comm`
-repo. Every `/api/*` route requires HTTP Basic auth (PyGestComm ADR 0006);
-`ApiClient` sends `Authorization: Basic base64(user:pass)` from
+repo. Every `/api/*` route requires JWT auth (PyGestComm ADR 0008);
+`ApiClient` exchanges username/password once at `POST /api/token` for
+`{access, refresh}`, sends `Authorization: Bearer <access>`, refreshes
+via `/api/token/refresh` on 401 (rotated refresh token persisted in
+Preferences; falls back to credential login when expired).
 `ApiConfig`. Used: `GET`/`POST`/`PUT`/`DELETE`/`PATCH` on `/api/client`, `/api/article`,
 `/api/devis`, `/api/facture`, `/api/bonliv`, plus
 `POST /api/devis/<id>/convertir` (Devis → Facture
@@ -120,9 +123,10 @@ decimals arrive as strings (`"100.00"`) — Jackson handles that into
   `controllers`) — it was once broken by a singular path.
 - `mvn javafx:run` handles the module path; plain `java -jar` won't work
   without the plugin's setup.
-- Credentials live in the OS preferences store, sent as Basic auth —
-  fine on a LAN, needs TLS before any real deployment (PyGestComm ADR
-  0006).
+- Credentials + the rotating refresh token live in the OS preferences
+  store; the access token is memory-only. Bearer tokens are plaintext
+  without TLS — acceptable on a LAN, needs TLS before any real
+  deployment (PyGestComm ADR 0008).
 - README's status table is accurate and current — trust it over
   assumptions.
 

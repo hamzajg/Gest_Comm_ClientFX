@@ -26,12 +26,12 @@ controllers/  HomeScreenCtrl — @FXML tabs/tables/menus; loads API data
               POST /api/facture
               HomeScreenCtrl.convertSelectedDevis — POST
               /api/devis/<id>/convertir on the selected row
-api/          ApiClient (java.net.http + Jackson, Basic auth every call)
+api/          ApiClient (java.net.http + Jackson, JWT Bearer auth)
               ApiConfig (Java Preferences) · ApiException
 models/       Article + Client + Devis + LigneDevis + Facture +
               LigneFacture + BonLiv + LigneBonLiv POJOs with accessors
         │
-        ▼  HTTP/JSON + Authorization: Basic …
+        ▼  HTTP/JSON + Authorization: Bearer <jwt>
 PyGestComm (Django/DRF)  /api/client  /api/article  /api/devis
                          /api/facture  /api/assistant/ask  /admin/
 ```
@@ -69,8 +69,9 @@ Defined and working for the full commercial document chain, including
 row-level edit (PUT), delete (DELETE with confirm) and statut PATCH:
 
 `GET`/`POST` on `/api/client`, `/api/article`, `/api/devis`, `/api/facture`
-plus `POST /api/devis/<id>/convertir` (devis→facture) — all with Basic
-auth (PyGestComm ADR 0006). Writes send `Map` payloads with camelCase
+plus `POST /api/devis/<id>/convertir` (devis→facture) — all with JWT
+Bearer auth (PyGestComm ADR 0008): tokens from `POST /api/token`,
+rotating refresh via `/api/token/refresh`. Writes send `Map` payloads with camelCase
 keys; document writes nest `lignes`; PUT replaces all lines when provided (article-linked or free-text lines);
 reads deserialize into the POJOs. Filters (`?search=`/`?statut=`/
 `?client=`), detail routes and the assistant endpoint are unused so far —
