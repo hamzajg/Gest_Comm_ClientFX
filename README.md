@@ -99,14 +99,15 @@ by the `maven-resources-plugin` resource entry in `pom.xml`, which is why
 | Piece | State |
 |---|---|
 | Window, menus, tabs | laid out in FXML |
-| Menu actions | config + client/article/devis/facture lists, create forms and devis→facture conversion wired; Bon Liv + edit/delete inert |
+| Menu actions | config + all list/create/edit/delete/statut actions wired for clients, articles, devis, factures; Bon Liv inert |
 | `HomeScreenCtrl`, `ConfigScreenCtrl` | wired (`@FXML` injection, background loads) |
 | `NouveauClientCtrl`, `NouvelArticleCtrl` | wired — POST forms with client-side validation |
 | `NouveauDevisCtrl` | wired — client/article pickers, line editor, live totals, POSTs nested `lignes` |
 | `NouvelFactureCtrl` | wired — same line editor + optional devis prefill |
 | `Article`, `Client`, `Devis`, `LigneDevis`, `Facture`, `LigneFacture` | full accessors + Jackson JSON mapping (tested) |
+| Row actions | edit (PUT), delete (DELETE + confirm), statut PATCH on devis/factures |
 | `BonLivClient` | empty class (delivery note) |
-| HTTP client | `api/ApiClient` — list + post + `convertDevis` (all document routes) |
+| HTTP client | `api/ApiClient` — list/post/put/delete/patch + `convertDevis` |
 | Tests | 7 JUnit 5 tests (model accessors + JSON mapping) |
 
 ## Continuous integration

@@ -66,6 +66,24 @@ public class ApiClient {
             Facture.class);
     }
 
+    public <T> T put(String path, Object payload, Class<T> responseType)
+        throws ApiException {
+        String body = send("PUT", path, payload);
+        try {
+            return mapper.readValue(body, responseType);
+        } catch (IOException e) {
+            throw new ApiException("Cannot parse response from " + path, e);
+        }
+    }
+
+    public void delete(String path) throws ApiException {
+        send("DELETE", path, null);
+    }
+
+    public void patch(String path, Object payload) throws ApiException {
+        send("PATCH", path, payload);
+    }
+
     public <T> List<T> getList(String path, Class<T> elementType)
         throws ApiException {
         String body = send("GET", path, null);

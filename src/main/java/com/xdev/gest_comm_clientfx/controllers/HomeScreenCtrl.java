@@ -14,6 +14,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -26,6 +28,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class HomeScreenCtrl {
@@ -209,27 +213,168 @@ public class HomeScreenCtrl {
             this::refreshArticles);
     }
 
+    // --- row actions: edit / delete / statut -------------------------
+
+    private void mutate(Label status, String okMessage, Runnable call,
+                        Runnable refresh) {
+        status.setText("Enregistrement…");
+        new Thread(() -> {
+            try {
+                call.run();
+                Platform.runLater(() -> {
+                    refresh.run();
+                    status.setText(okMessage);
+                });
+            } catch (ApiException e) {
+                Platform.runLater(() ->
+                    status.setText("Erreur : " + e.getMessage()));
+            }
+        }).start();
+    }
+
+    private boolean confirmDelete(String what) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirmation");
+        alert.setHeaderText(null);
+        alert.setContentText("Supprimer " + what + " ?");
+        Optional<ButtonType> result = alert.showAndWait();
+        return result.isPresent() && result.get() == ButtonType.OK;
+    }
+
+    @FXML
+    public void editSelectedClient() {
+        Client c = clientTable.getSelectionModel().getSelectedItem();
+        if (c == null) {
+            clientStatus.setText("Sélectionnez un client.");
+            return;
+        }
+        showDialog("/com/xdev/gest_comm_clientfx/views/NouveauClient.fxml",
+            "Modifier le client", 480, 460, NouveauClientCtrl.class,
+            this::refreshClients, d -> d.setEditing(c));
+    }
+
+    @FXML
+    public void deleteSelectedClient() {
+        Client c = clientTable.getSelectionModel().getSelectedItem();
+        if (c == null) {
+            clientStatus.setText("Sélectionnez un client.");
+            return;
+        }
+        if (!confirmDelete("le client " + c.getCodeClient())) {
+            return;
+        }
+        mutate(clientStatus, "Client supprimé.",
+            () -> api.delete("/api/client/" + c.getIdClient()),
+            this::refreshClients);
+    }
+
+    @FXML
+    public void editSelectedArticle() {
+        Article a = articleTable.getSelectionModel().getSelectedItem();
+        if (a == null) {
+            articleStatus.setText("Sélectionnez un article.");
+            return;
+        }
+        showDialog("/com/xdev/gest_comm_clientfx/views/NouvelArticle.fxml",
+            "Modifier l'article", 480, 520, NouvelArticleCtrl.class,
+            this::refreshArticles, d -> d.setEditing(a));
+    }
+
+    @FXML
+    public void deleteSelectedArticle() {
+        Article a = articleTable.getSelectionModel().getSelectedItem();
+        if (a == null) {
+            articleStatus.setText("Sélectionnez un article.");
+            return;
+        }
+        if (!confirmDelete("l'article " + a.getRef_article())) {
+            return;
+        }
+        mutate(articleStatus, "Article supprimé.",
+            () -> api.delete("/api/article/" + a.getId_article()),
+            this::refreshArticles);
+    }
+
+    private void setDevisStatut(String statut) {
+        Devis d = devisTable.getSelectionModel().getSelectedItem();
+        if (d == null) {
+            devisStatus.setText("Sélectionnez un devis.");
+            return;
+        }
+        mutate(devisStatus, "Statut du devis mis à jour.",
+            () -> api.patch("/api/devis/" + d.getIdDevis(),
+                Map.of("statutDevis", statut)),
+            this::refreshDevis);
+    }
+
+    @FXML public void validerDevis() { setDevisStatut("valide"); }
+    @FXML public void refuserDevis() { setDevisStatut("refuse"); }
+
+    @FXML
+    public void deleteSelectedDevis() {
+        Devis d = devisTable.getSelectionModel().getSelectedItem();
+        if (d == null) {
+            devisStatus.setText("Sélectionnez un devis.");
+            return;
+        }
+        if (!confirmDelete("le devis " + d.getCodeDevis())) {
+            return;
+        }
+        mutate(devisStatus, "Devis supprimé.",
+            () -> api.delete("/api/devis/" + d.getIdDevis()),
+            this::refreshDevis);
+    }
+
+    private void setFactureStatut(String statut) {
+        Facture f = factureTable.getSelectionModel().getSelectedItem();
+        if (f == null) {
+            factureStatus.setText("Sélectionnez une facture.");
+            return;
+        }
+        mutate(factureStatus, "Statut de la facture mis à jour.",
+            () -> api.patch("/api/facture/" + f.getIdFacture(),
+                Map.of("statutFacture", statut)),
+            this::refreshFactures);
+    }
+
+    @FXML public void validerFacture() { setFactureStatut("validee"); }
+    @FXML public void payerFacture() { setFactureStatut("payee"); }
+    @FXML public void annulerFacture() { setFactureStatut("annulee"); }
+
+    @FXML
+    public void deleteSelectedFacture() {
+        Facture f = factureTable.getSelectionModel().getSelectedItem();
+        if (f == null) {
+            factureStatus.setText("Sélectionnez une facture.");
+            return;
+        }
+        if (!confirmDelete("la facture " + f.getCodeFacture())) {
+            return;
+        }
+        mutate(factureStatus, "Facture supprimée.",
+            () -> api.delete("/api/facture/" + f.getIdFacture()),
+            this::refreshFactures);
+    }
+
     private <C> void showDialog(String fxml, String title, double w,
                                 double h, Class<C> ctrlType,
                                 Runnable onSaved) {
+        showDialog(fxml, title, w, h, ctrlType, onSaved, c -> { });
+    }
+
+    private <C> void showDialog(String fxml, String title, double w,
+                                double h, Class<C> ctrlType,
+                                Runnable onSaved, Consumer<C> configure) {
         try {
             URL url = getClass().getResource(fxml);
             FXMLLoader loader = new FXMLLoader(url);
             Parent root = loader.load();
             C ctrl = ctrlType.cast(loader.getController());
-            if (ctrl instanceof NouveauClientCtrl c) {
-                c.setApi(api);
-                c.setOnSaved(onSaved);
-            } else if (ctrl instanceof NouvelArticleCtrl c) {
-                c.setApi(api);
-                c.setOnSaved(onSaved);
-            } else if (ctrl instanceof NouveauDevisCtrl c) {
-                c.setApi(api);
-                c.setOnSaved(onSaved);
-            } else if (ctrl instanceof NouvelFactureCtrl c) {
-                c.setApi(api);
-                c.setOnSaved(onSaved);
+            if (ctrl instanceof ApiDialog d) {
+                d.setApi(api);
+                d.setOnSaved(onSaved);
             }
+            configure.accept(ctrl);
             Stage stage = new Stage();
             stage.setTitle(title);
             stage.setScene(new Scene(root, w, h));

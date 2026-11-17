@@ -12,7 +12,7 @@ import javafx.stage.Stage;
 import java.util.HashMap;
 import java.util.Map;
 
-public class NouvelArticleCtrl {
+public class NouvelArticleCtrl implements ApiDialog {
 
     @FXML private TextField refArticleField;
     @FXML private TextField descArticleField;
@@ -27,6 +27,26 @@ public class NouvelArticleCtrl {
 
     private ApiClient api;
     private Runnable onSaved;
+    private Article editing;
+
+    /** Prefill the form for editing an existing article (PUT on save). */
+    public void setEditing(Article article) {
+        this.editing = article;
+        refArticleField.setText(article.getRef_article());
+        descArticleField.setText(article.getDesc_article());
+        prixAchatField.setText(textOr(article.getPrix_achat_unitaire()));
+        prixVenteField.setText(textOr(article.getPrix_vente_unitaire()));
+        remiseAchatField.setText(textOr(article.getRemise_achat()));
+        remiseVenteField.setText(textOr(article.getRemise_vente()));
+        tvaAchatField.setText(textOr(article.getTva_achat()));
+        tvaVenteField.setText(textOr(article.getTva_vente()));
+        dernierPrixField.setText(
+            textOr(article.getDernier_prix_vente_unitaire()));
+    }
+
+    private static String textOr(Object value) {
+        return value != null ? String.valueOf(value) : "";
+    }
 
     public void setApi(ApiClient api) {
         this.api = api;
@@ -58,7 +78,12 @@ public class NouvelArticleCtrl {
         statusLabel.setText("Enregistrement…");
         new Thread(() -> {
             try {
-                api.post("/api/article", payload, Article.class);
+                if (editing != null) {
+                    api.put("/api/article/" + editing.getId_article(),
+                        payload, Article.class);
+                } else {
+                    api.post("/api/article", payload, Article.class);
+                }
                 Platform.runLater(() -> {
                     if (onSaved != null) {
                         onSaved.run();

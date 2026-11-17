@@ -7,9 +7,9 @@ Guidance for AI agents (and humans) working in this repository.
 Gest_Comm_ClientFX is a **JavaFX desktop client** (French UI) for the
 *gestion commerciale* back end **PyGestComm** (Django REST). Early stage:
 the window, config screen, live Clients/Articles/Devis/Factures list
-tabs, create forms for all four resources, and devis→facture conversion
-work against the API; edit/delete, the Bon Liv menu and statut workflows
-are still stubs.
+tabs, create/edit/delete forms and statut actions for all four resources, and
+devis→facture conversion work against the API; the Bon Liv menu and the
+assistant panel are still stubs.
 Stack: Java 17, JavaFX 17 (via Maven, `javafx-controls`/`javafx-fxml`),
 Jackson databind, `java.net.http`, Maven, FXML views.
 
@@ -40,8 +40,8 @@ src/main/java/com/xdev/gest_comm_clientfx/
     ConfigScreen.java   loads views/ConfigScreen.fxml
   api/
     ApiClient.java      java.net.http + Jackson; Basic auth on every
-                        request; list*/create* for client/article/devis/
-                        facture, convertDevis(), getList()/post()/send()
+                        request; list*/create*/put/delete/patch for all four
+                        resources, convertDevis(), getList()/post()/send()
     ApiConfig.java      baseUrl + credentials in java.util.prefs
                         (Preferences.userNodeForPackage — no plaintext file)
     ApiException.java   transport/HTTP error type (RuntimeException)
@@ -75,8 +75,8 @@ pom.xml                 JavaFX + Jackson deps + resources-plugin copies
 The backend is **PyGestComm** (`../PyGestComm`), not the old ADF `Gest_Comm`
 repo. Every `/api/*` route requires HTTP Basic auth (PyGestComm ADR 0006);
 `ApiClient` sends `Authorization: Basic base64(user:pass)` from
-`ApiConfig`. Used so far: `GET`/`POST` on `/api/client`, `/api/article`, `/api/devis`,
-`/api/facture`, plus `POST /api/devis/<id>/convertir` (Devis → Facture
+`ApiConfig`. Used: `GET`/`POST`/`PUT`/`DELETE`/`PATCH` on `/api/client`, `/api/article`,
+`/api/devis`, `/api/facture`, plus `POST /api/devis/<id>/convertir` (Devis → Facture
 menu action; backend requires statut `valide`). Create dialogs send `Map`
 payloads — only non-empty optional fields are included. Document writes
 send `lignes: [{article?, designation, quantite, prixUnitaire, remise,
@@ -111,9 +111,9 @@ decimals arrive as strings (`"100.00"`) — Jackson handles that into
 ## Landmines
 
 - **Default branch is `master`, not `main`.**
-- Only config, all four list/create screens and devis→facture conversion
-  are wired — Bon Liv menu, edit/delete and statut transitions
-  (valider/ payer/ annuler) are inert.
+- Everything except Bon Liv is wired: all four resources support
+  list/create/edit/delete and statut transitions. Document-line editing
+  on existing devis/factures is not supported (create-only lines).
 - Create dialogs send `Map<String,Object>` payloads, not the POJOs —
   keep it that way for writes (explicit keys, no Jackson serialization
   surprises); POJOs are for reads.
