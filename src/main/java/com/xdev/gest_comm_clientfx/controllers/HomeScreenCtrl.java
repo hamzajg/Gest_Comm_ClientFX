@@ -7,6 +7,7 @@ import com.xdev.gest_comm_clientfx.app.ConfigScreen;
 import com.xdev.gest_comm_clientfx.models.Article;
 import com.xdev.gest_comm_clientfx.models.Client;
 import com.xdev.gest_comm_clientfx.models.Devis;
+import com.xdev.gest_comm_clientfx.models.Facture;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -24,6 +25,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 
 public class HomeScreenCtrl {
@@ -32,12 +34,15 @@ public class HomeScreenCtrl {
     @FXML private Tab clientsTab;
     @FXML private Tab articlesTab;
     @FXML private Tab devisTab;
+    @FXML private Tab factureTab;
     @FXML private TableView<Client> clientTable;
     @FXML private TableView<Article> articleTable;
     @FXML private TableView<Devis> devisTable;
+    @FXML private TableView<Facture> factureTable;
     @FXML private Label clientStatus;
     @FXML private Label articleStatus;
     @FXML private Label devisStatus;
+    @FXML private Label factureStatus;
 
     private final ApiClient api = new ApiClient(ApiConfig.load());
 
@@ -59,6 +64,14 @@ public class HomeScreenCtrl {
             column("Client", "codeClient", 90),
             column("Nom", "nomPrenomClient", 200),
             column("Statut", "statutDevis", 90),
+            column("Total TTC", "totalTTC", 100));
+        factureTable.getColumns().addAll(
+            column("Code", "codeFacture", 90),
+            column("Date", "dateFacture", 100),
+            column("Client", "codeClient", 90),
+            column("Nom", "nomPrenomClient", 200),
+            column("Devis", "codeDevis", 90),
+            column("Statut", "statutFacture", 90),
             column("Total TTC", "totalTTC", 100));
     }
 
@@ -100,6 +113,51 @@ public class HomeScreenCtrl {
         showDialog("/com/xdev/gest_comm_clientfx/views/NouveauDevis.fxml",
             "Nouveau devis", 720, 560, NouveauDevisCtrl.class,
             this::refreshDevis);
+    }
+
+    @FXML
+    public void convertSelectedDevis() {
+        Devis devis = devisTable.getSelectionModel().getSelectedItem();
+        if (devis == null) {
+            devisStatus.setText("Sélectionnez un devis à convertir.");
+            return;
+        }
+        devisStatus.setText("Conversion en cours…");
+        new Thread(() -> {
+            try {
+                Facture f = api.convertDevis(devis.getIdDevis(),
+                    Map.of());
+                Platform.runLater(() -> {
+                    devisStatus.setText("Devis converti → facture "
+                        + f.getCodeFacture());
+                    refreshDevis();
+                    refreshFactures();
+                });
+            } catch (ApiException e) {
+                Platform.runLater(() ->
+                    devisStatus.setText("Erreur : " + e.getMessage()));
+            }
+        }).start();
+    }
+
+    @FXML
+    public void showFactures() {
+        tabs.getSelectionModel().select(factureTab);
+        refreshFactures();
+    }
+
+    @FXML
+    public void refreshFactures() {
+        load("facture", factureStatus,
+            () -> FXCollections.observableArrayList(api.listFactures()),
+            factureTable::setItems);
+    }
+
+    @FXML
+    public void showNewFacture() {
+        showDialog("/com/xdev/gest_comm_clientfx/views/NouvelFacture.fxml",
+            "Nouvelle facture", 720, 580, NouvelFactureCtrl.class,
+            this::refreshFactures);
     }
 
     @FXML
@@ -163,6 +221,12 @@ public class HomeScreenCtrl {
                 c.setApi(api);
                 c.setOnSaved(onSaved);
             } else if (ctrl instanceof NouvelArticleCtrl c) {
+                c.setApi(api);
+                c.setOnSaved(onSaved);
+            } else if (ctrl instanceof NouveauDevisCtrl c) {
+                c.setApi(api);
+                c.setOnSaved(onSaved);
+            } else if (ctrl instanceof NouvelFactureCtrl c) {
                 c.setApi(api);
                 c.setOnSaved(onSaved);
             }
