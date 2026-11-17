@@ -35,6 +35,8 @@ server URL (default `http://localhost:8000`) and the API username/password
 **Tester la connexion**. The app exchanges credentials once for JWT
 tokens (`POST /api/token`) and sends `Authorization: Bearer <access>`;
 the rotating refresh token is persisted so restarts skip login.
+**Application → Se déconnecter** revokes the refresh token server-side
+(`/api/token/logout`) and clears local tokens.
 request.
 
 To build without starting the app:
