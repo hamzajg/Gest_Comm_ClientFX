@@ -21,7 +21,7 @@ Verified 2026-11-17 against CI (`.github/workflows/ci.yml`) and README.
 |---|---|
 | Build | `mvn -B package` (CI: JDK 17) |
 | Run app | `mvn javafx:run` |
-| Tests | `mvn -B package` runs JUnit 5 tests (21) |
+| Tests | `mvn -B package` runs JUnit 5 tests (28) |
 
 Requires: JDK 17 only — JavaFX and Jackson come from Maven. The app also
 needs a running PyGestComm backend (`python manage.py runserver` in that
@@ -77,6 +77,8 @@ src/main/java/com/xdev/gest_comm_clientfx/
                         pin (★ removes the close button)
     ActionDrawer        right-hand pane with the active tab's actions;
                         expands/collapses to a 30px rail, never hides
+    Theme               installs views/industrial.css on the single app
+                        Scene — the sheet is the only place a colour lives
   models/               Article + Client + Devis + LigneDevis + Facture +
                         LigneFacture + BonLiv + LigneBonLiv POJOs
   views/                *.fxml layouts (HomeScreen, ConfigScreen)
@@ -151,13 +153,16 @@ decimals arrive as strings (`"100.00"`) — Jackson handles that into
 
 ## Agent rules
 
+- Colours belong in `views/industrial.css` (palette tokens on `.root`),
+  never in `setStyle` or FXML `style=` — inline styles beat the stylesheet
+  in JavaFX. Java only adds style classes; `ui/Theme` attaches the sheet.
 - Branch from `master`; name branches `feat/*`, `fix/*`, `chore/*`, `docs/*`.
 - Never add AI/assistant attribution to commit messages, PR bodies,
   reviews or comments: no "generated with …" footer, no `Co-Authored-By:`
   agent trailer, no robot-emoji signature line. A commit message ends at its
   own last line, with no trailer block.
 - Docs-only changes still go through a PR; never commit to `master` directly.
-- Verify before claiming: `mvn -B package` must pass; there are 21 tests —
+- Verify before claiming: `mvn -B package` must pass; there are 28 tests —
   say so.
 - Keep changes minimal and consistent with surrounding code. No drive-by
   refactors.

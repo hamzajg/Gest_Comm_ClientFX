@@ -3,6 +3,7 @@ import com.xdev.gest_comm_clientfx.api.ApiConfig;
 import com.xdev.gest_comm_clientfx.controllers.ApiDialog;
 import com.xdev.gest_comm_clientfx.controllers.AssistantCtrl;
 import com.xdev.gest_comm_clientfx.controllers.HomeScreenCtrl;
+import com.xdev.gest_comm_clientfx.ui.Theme;
 import com.xdev.gest_comm_clientfx.models.Article;
 import com.xdev.gest_comm_clientfx.models.BonLiv;
 import com.xdev.gest_comm_clientfx.models.Client;
@@ -144,6 +145,14 @@ public class Screenshots {
         if (err[0] != null) throw err[0];
     }
 
+
+    /** Every capture scene carries the app stylesheet, like StartApp's does. */
+    private static Scene themedScene(Parent root, double width, double height) {
+        Scene scene = new Scene(root, width, height);
+        Theme.install(scene);
+        return scene;
+    }
+
     private static Object[] loadScene(String fxml) throws Exception {
         FXMLLoader loader = new FXMLLoader(
             Screenshots.class.getResource(VIEWS + fxml));
@@ -165,7 +174,7 @@ public class Screenshots {
         fx(() -> {
             Object[] pair = loadScene("HomeScreen.fxml");
             holder[0] = pair[0];
-            holder[1] = new Scene((Parent) pair[0], 1280, 800);
+            holder[1] = themedScene((Parent) pair[0], 1280, 800);
             holder[2] = pair[1];
             HomeScreenCtrl ctrl = (HomeScreenCtrl) pair[1];
             ctrl.refreshClients();
@@ -215,7 +224,7 @@ public class Screenshots {
         fx(() -> {
             Object[] pair = loadScene(fxml);
             holder[0] = pair[0];
-            holder[1] = new Scene((Parent) pair[0], w, h);
+            holder[1] = themedScene((Parent) pair[0], w, h);
             injectApiDialog(pair[1]);
         });
         Thread.sleep(delay);
@@ -239,7 +248,7 @@ public class Screenshots {
         fx(() -> {
             Object[] pair = loadScene(fxml);
             holder[0] = pair[0];
-            holder[1] = new Scene((Parent) pair[0], w, h);
+            holder[1] = themedScene((Parent) pair[0], w, h);
             injectApiDialog(pair[1]);
             filler.fill((Node) pair[0]);
         });
@@ -257,7 +266,7 @@ public class Screenshots {
         fx(() -> {
             Object[] pair = loadScene(fxml);
             holder[0] = pair[0];
-            holder[1] = new Scene((Parent) pair[0], w, h);
+            holder[1] = themedScene((Parent) pair[0], w, h);
             ctrl[0] = pair[1];
             injectApiDialog(pair[1]);
             Node root = (Node) pair[0];
@@ -296,7 +305,7 @@ public class Screenshots {
         fx(() -> {
             Object[] pair = loadScene(fxml);
             holder[0] = pair[0];
-            holder[1] = new Scene((Parent) pair[0], w, h);
+            holder[1] = themedScene((Parent) pair[0], w, h);
             injectApiDialog(pair[1]);
             try {
                 pair[1].getClass()
@@ -325,7 +334,7 @@ public class Screenshots {
         fx(() -> {
             Object[] pair = loadScene("Assistant.fxml");
             holder[0] = pair[0];
-            holder[1] = new Scene((Parent) pair[0], 680, 560);
+            holder[1] = themedScene((Parent) pair[0], 680, 560);
             ctrl[0] = pair[1];
             injectApiDialog(pair[1]);
             TextField q = (TextField) ((Node) pair[0]).lookup("#questionField");

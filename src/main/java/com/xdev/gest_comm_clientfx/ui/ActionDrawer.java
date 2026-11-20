@@ -42,17 +42,15 @@ public final class ActionDrawer {
     private boolean collapsed;
 
     public ActionDrawer() {
-        title.setStyle("-fx-font-weight: bold; -fx-font-size: 13px;");
+        title.getStyleClass().add("drawer-title");
         hint.setWrapText(true);
-        hint.setStyle("-fx-text-fill: #555;");
+        hint.getStyleClass().add("drawer-hint");
         root.setPadding(new Insets(10));
-        root.setStyle("-fx-border-color: transparent transparent transparent"
-            + " #d8d8d8; -fx-background-color: #fafafa;");
+        root.getStyleClass().add("action-drawer");
         root.setMinHeight(Region.USE_PREF_SIZE);
 
-        caption.setStyle("-fx-text-fill: #888; -fx-font-size: 10px;");
-        collapse.setStyle("-fx-background-color: transparent;"
-            + " -fx-padding: 0 4 0 4; -fx-font-size: 13px;");
+        caption.getStyleClass().add("drawer-caption");
+        collapse.getStyleClass().add("drawer-toggle");
         collapse.setOnAction(e -> toggle());
 
         header = new HBox(6, caption, headerSpacer, collapse);
@@ -78,6 +76,7 @@ public final class ActionDrawer {
         actions.getChildren().clear();
         for (Action entry : entries) {
             Button b = new Button(entry.label());
+            b.getStyleClass().addAll("button", "drawer-action");
             b.setOnAction(e -> entry.handler().run());
             b.setMaxWidth(Double.MAX_VALUE);
             b.setAlignment(Pos.CENTER_LEFT);

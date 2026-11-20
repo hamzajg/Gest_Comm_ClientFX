@@ -1,0 +1,630 @@
+/*
+ * Gest_Comm_ClientFX — industrial theme.
+ *
+ * One sheet for the whole application: the palette is defined once on .root
+ * as looked-up colours, then every component rule reads from it. Change a
+ * token here and the whole app follows; no colours belong in Java or FXML.
+ *
+ * Palette: graphite surfaces, steel borders, a single amber accent.
+ */
+
+.root {
+    /* --- surfaces ------------------------------------------------------- */
+    -ink-900:      #12161a;
+    -surface-850:  #171c21;
+    -surface-800:  #1f252b;
+    -surface-750:  #252c33;
+    -surface-700:  #2c353d;
+    /* --- steel ---------------------------------------------------------- */
+    -steel-600:    #39434d;
+    -steel-500:    #4b5863;
+    /* --- type ----------------------------------------------------------- */
+    -text-100:     #e8edf2;
+    -text-300:     #c3ccd6;
+    -text-400:     #a7b2bd;
+    /* --- accent + status ------------------------------------------------ */
+    -amber:        #f0a028;
+    -amber-dim:    #c9821c;
+    -amber-glow:   rgba(240, 160, 40, 0.18);
+    -ok:           #4caf7d;
+    -danger:       #e2564a;
+
+    /* Modena overrides so stock controls inherit the theme. */
+    -fx-base: -surface-800;
+    -fx-background: -surface-850;
+    -fx-control-inner-background: -surface-750;
+    -fx-text-background-color: -text-100;
+    -fx-text-fill: -text-300;
+    -fx-accent: -amber;
+    -fx-default-button: -amber-dim;
+    -fx-focus-color: -amber;
+    -fx-faint-focus-color: -amber-glow;
+    -fx-selection-bar: -amber;
+    -fx-selection-bar-non-focused: -steel-600;
+
+    -fx-font-family: "Helvetica Neue", "Segoe UI", "Inter", sans-serif;
+    -fx-font-size: 13px;
+    -fx-background-color: -ink-900;
+    -fx-font-smoothing-type: gray;
+}
+
+.label {
+    -fx-text-fill: -text-300;
+}
+
+.separator .line {
+    -fx-border-color: -steel-600 transparent transparent transparent;
+}
+
+/* --- menu bar ---------------------------------------------------------- */
+
+.menu-bar {
+    -fx-background-color: -surface-850;
+    -fx-border-color: transparent transparent -steel-600 transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 2 6 2 6;
+}
+
+.menu-bar .label {
+    -fx-text-fill: -text-300;
+    -fx-font-size: 12px;
+}
+
+.menu-bar > .container > .menu-button {
+    -fx-background-color: transparent;
+    -fx-padding: 4 9 4 9;
+    -fx-background-radius: 3;
+}
+
+.menu-bar > .container > .menu-button:hover,
+.menu-bar > .container > .menu-button:showing {
+    -fx-background-color: -surface-750;
+}
+
+.menu-bar > .container > .menu-button:hover > .label,
+.menu-bar > .container > .menu-button:showing > .label {
+    -fx-text-fill: -amber;
+}
+
+.context-menu {
+    -fx-background-color: -surface-800;
+    -fx-border-color: -steel-600;
+    -fx-border-width: 1;
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+    -fx-padding: 4;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.55), 18, 0.15, 0, 6);
+}
+
+.menu-item {
+    -fx-background-color: transparent;
+    -fx-background-radius: 3;
+    -fx-padding: 4 10 4 10;
+}
+
+.menu-item .label {
+    -fx-text-fill: -text-100;
+    -fx-font-size: 12px;
+}
+
+.menu-item:focused {
+    -fx-background-color: -surface-700;
+}
+
+.menu-item:focused .label {
+    -fx-text-fill: -amber;
+}
+
+.menu-item:disabled .label {
+    -fx-text-fill: -steel-500;
+}
+
+/* --- shell: search row ------------------------------------------------- */
+
+.search-bar {
+    -fx-background-color: -surface-850;
+    -fx-border-color: transparent transparent -steel-600 transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 8 10 8 10;
+}
+
+.search-field {
+    -fx-background-color: -ink-900;
+    -fx-background-insets: 0;
+    -fx-background-radius: 4;
+    -fx-border-color: -steel-600;
+    -fx-border-radius: 4;
+    -fx-border-width: 1;
+    -fx-text-fill: -text-100;
+    -fx-prompt-text-fill: -steel-500;
+    -fx-padding: 6 10 6 10;
+    -fx-font-size: 12px;
+}
+
+.search-field:focused {
+    -fx-border-color: -amber;
+    -fx-effect: dropshadow(gaussian, -amber-glow, 8, 0.2, 0, 0);
+}
+
+.label.status {
+    -fx-font-family: "SF Mono", "Menlo", "Consolas", monospace;
+    -fx-font-size: 11px;
+    -fx-text-fill: -text-400;
+    -fx-padding: 4 2 2 2;
+}
+
+/* --- tabs -------------------------------------------------------------- */
+
+.tab-pane > .tab-header-area {
+    -fx-padding: 6 0 0 6;
+}
+
+.tab-pane > .tab-header-area > .tab-header-background {
+    -fx-background-color: -surface-850;
+    -fx-border-color: transparent transparent -steel-600 transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab {
+    -fx-background-color: -surface-800;
+    -fx-background-insets: 0;
+    -fx-background-radius: 4 4 0 0;
+    -fx-border-color: -steel-600 -steel-600 transparent -steel-600;
+    -fx-border-width: 1 1 0 1;
+    -fx-border-radius: 4 4 0 0;
+    -fx-padding: 5 10 5 10;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab:hover {
+    -fx-background-color: -surface-750;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab:selected {
+    -fx-background-color: -surface-750;
+    -fx-border-color: -amber -steel-600 transparent -steel-600;
+    -fx-border-width: 2 1 0 1;
+}
+
+.tab-pane .tab .tab-label {
+    -fx-text-fill: -text-400;
+    -fx-font-size: 12px;
+}
+
+.tab-pane .tab:selected .tab-label {
+    -fx-text-fill: -text-100;
+    -fx-font-weight: bold;
+}
+
+.tab-pane .tab .tab-close-button {
+    -fx-background-color: -text-400;
+    -fx-opacity: 0.55;
+}
+
+.tab-pane .tab:hover .tab-close-button {
+    -fx-background-color: -danger;
+    -fx-opacity: 1;
+}
+
+.tab-pane > .tab-content-area {
+    -fx-background-color: -ink-900;
+    -fx-padding: 8;
+}
+
+/* --- tables ------------------------------------------------------------ */
+
+.table-view {
+    -fx-background-color: -surface-800;
+    -fx-background-insets: 0;
+    -fx-border-color: -steel-600;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 1;
+    -fx-table-cell-border-color: transparent;
+    -fx-selection-bar: -amber-glow;
+    -fx-selection-bar-non-focused: -surface-700;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: -surface-750;
+    -fx-background-radius: 3 3 0 0;
+}
+
+.table-view .column-header-background .filler {
+    -fx-background-color: transparent;
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent -steel-600 transparent transparent;
+    -fx-border-width: 0 1 1 0;
+    -fx-size: 32;
+    -fx-padding: 0 8 0 8;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: -text-400;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-alignment: center-left;
+}
+
+.table-view .column-header:hover .label {
+    -fx-text-fill: -amber;
+}
+
+.table-view .arrow {
+    -fx-background-color: -amber;
+}
+
+.table-view .table-row-cell {
+    -fx-background-color: -surface-800;
+    -fx-border-color: transparent transparent rgba(255, 255, 255, 0.035) transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-table-cell-border-color: transparent;
+    -fx-cell-size: 28;
+}
+
+.table-view .table-row-cell:odd {
+    -fx-background-color: -surface-850;
+}
+
+.table-view .table-row-cell:hover {
+    -fx-background-color: -surface-750;
+}
+
+/* Rows past the last record are placeholders: keep the surface flat so a
+   short list doesn't read as a zebra wall. */
+.table-view .table-row-cell:empty {
+    -fx-background-color: -surface-800;
+    -fx-border-color: transparent;
+}
+
+.table-view .table-row-cell:empty:hover {
+    -fx-background-color: -surface-800;
+}
+
+.table-view .table-row-cell:selected {
+    -fx-background-color: -amber-glow;
+    -fx-border-color: transparent transparent transparent -amber;
+    -fx-border-width: 0 0 0 2;
+}
+
+.table-view .table-cell {
+    -fx-text-fill: -text-100;
+    -fx-font-size: 12px;
+    -fx-padding: 0 8 0 8;
+    -fx-border-color: transparent;
+}
+
+.table-view .table-row-cell:selected .table-cell {
+    -fx-text-fill: #ffffff;
+}
+
+.table-view .placeholder .label {
+    -fx-text-fill: -steel-500;
+    -fx-font-size: 12px;
+}
+
+/* --- drawer ------------------------------------------------------------ */
+
+.action-drawer {
+    -fx-background-color: -surface-850;
+    -fx-border-color: transparent transparent transparent -steel-600;
+    -fx-border-width: 0 0 0 1;
+}
+
+.drawer-caption {
+    -fx-text-fill: -amber;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+}
+
+.drawer-title {
+    -fx-text-fill: -text-100;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.drawer-hint {
+    -fx-text-fill: -text-400;
+    -fx-font-size: 11px;
+}
+
+.drawer-toggle {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-text-fill: -text-400;
+    -fx-font-size: 14px;
+    -fx-padding: 0 4 0 4;
+}
+
+.drawer-toggle:hover {
+    -fx-text-fill: -amber;
+    -fx-background-color: transparent;
+}
+
+.drawer-action {
+    -fx-background-color: -surface-800;
+    -fx-border-color: -steel-600;
+    -fx-border-width: 1;
+    -fx-border-radius: 3;
+    -fx-background-radius: 3;
+    -fx-text-fill: -text-300;
+    -fx-font-size: 12px;
+    -fx-padding: 5 10 5 10;
+    -fx-alignment: center-left;
+}
+
+.drawer-action:hover {
+    -fx-background-color: -surface-700;
+    -fx-border-color: -amber;
+    -fx-text-fill: -text-100;
+}
+
+/* --- buttons ----------------------------------------------------------- */
+
+.button {
+    -fx-background-color: -surface-750;
+    -fx-background-insets: 0;
+    -fx-background-radius: 4;
+    -fx-border-color: -steel-600;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-text-fill: -text-100;
+    -fx-font-size: 12px;
+    -fx-padding: 5 12 5 12;
+}
+
+.button:hover {
+    -fx-background-color: -surface-700;
+    -fx-border-color: -steel-500;
+}
+
+.button:pressed {
+    -fx-background-color: -surface-850;
+}
+
+.button:focused {
+    -fx-border-color: -amber;
+}
+
+.button:disabled {
+    -fx-opacity: 0.45;
+}
+
+.button.primary {
+    -fx-background-color: -amber;
+    -fx-border-color: -amber-dim;
+    -fx-text-fill: #14181c;
+    -fx-font-weight: bold;
+}
+
+.button.primary:hover {
+    -fx-background-color: #ffb342;
+    -fx-border-color: -amber;
+}
+
+.button.primary:pressed {
+    -fx-background-color: -amber-dim;
+}
+
+.button.chip {
+    -fx-background-color: -surface-800;
+    -fx-border-color: -steel-600 -steel-600 -steel-600 -amber;
+    -fx-border-width: 1 1 1 3;
+    -fx-border-radius: 3;
+    -fx-background-radius: 3;
+    -fx-padding: 8 16 8 14;
+    -fx-text-fill: -text-100;
+}
+
+.button.chip:hover {
+    -fx-background-color: -surface-750;
+    -fx-border-color: -steel-500 -steel-500 -steel-500 -amber;
+}
+
+/* --- welcome panel ----------------------------------------------------- */
+
+.welcome-panel {
+    -fx-background-color: -ink-900;
+}
+
+.welcome-title {
+    -fx-text-fill: -text-100;
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+}
+
+.welcome-subtitle {
+    -fx-text-fill: -text-400;
+    -fx-font-size: 13px;
+}
+
+/* --- text inputs ------------------------------------------------------- */
+
+.text-field, .text-area {
+    -fx-background-color: -surface-850;
+    -fx-background-insets: 0;
+    -fx-background-radius: 4;
+    -fx-border-color: -steel-600;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-text-fill: -text-100;
+    -fx-prompt-text-fill: -steel-500;
+    -fx-highlight-fill: -amber-glow;
+    -fx-highlight-text-fill: -text-100;
+    -fx-padding: 5 8 5 8;
+}
+
+.text-field:focused, .text-area:focused {
+    -fx-border-color: -amber;
+}
+
+.text-area .content {
+    -fx-background-color: -surface-850;
+}
+
+/* --- combos, dates, choices -------------------------------------------- */
+
+.combo-box, .date-picker, .choice-box {
+    -fx-background-color: -surface-850;
+    -fx-background-insets: 0;
+    -fx-background-radius: 4;
+    -fx-border-color: -steel-600;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-padding: 1 2 1 2;
+}
+
+.combo-box:focused, .date-picker:focused, .choice-box:focused {
+    -fx-border-color: -amber;
+}
+
+.combo-box .list-cell, .choice-box .label {
+    -fx-text-fill: -text-100;
+    -fx-font-size: 12px;
+    -fx-padding: 3 6 3 6;
+}
+
+.combo-box .arrow, .choice-box .arrow, .date-picker .arrow {
+    -fx-background-color: -text-400;
+}
+
+.combo-box-popup .list-view {
+    -fx-background-color: -surface-800;
+    -fx-border-color: -steel-600;
+    -fx-border-width: 1;
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+}
+
+.combo-box-popup .list-view .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: -text-100;
+    -fx-padding: 5 10 5 10;
+}
+
+.combo-box-popup .list-view .list-cell:filled:hover,
+.combo-box-popup .list-view .list-cell:filled:selected {
+    -fx-background-color: -surface-700;
+    -fx-text-fill: -amber;
+}
+
+.date-picker > .text-field {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.check-box .box, .radio-button .radio {
+    -fx-background-color: -surface-850;
+    -fx-border-color: -steel-500;
+    -fx-border-width: 1;
+    -fx-border-radius: 2;
+    -fx-background-radius: 2;
+}
+
+.check-box:selected .mark, .radio-button:selected .dot {
+    -fx-background-color: -amber;
+}
+
+/* --- scrollbars -------------------------------------------------------- */
+
+.scroll-bar {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar > .track {
+    -fx-background-color: -surface-850;
+    -fx-background-radius: 4;
+    -fx-border-color: transparent;
+}
+
+.scroll-bar > .thumb {
+    -fx-background-color: -steel-600;
+    -fx-background-radius: 4;
+}
+
+.scroll-bar > .thumb:hover {
+    -fx-background-color: -steel-500;
+}
+
+.scroll-bar > .increment-button,
+.scroll-bar > .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 2;
+}
+
+.scroll-bar > .increment-button > .increment-arrow,
+.scroll-bar > .decrement-button > .decrement-arrow {
+    -fx-background-color: -steel-500;
+}
+
+/* --- misc -------------------------------------------------------------- */
+
+.tooltip {
+    -fx-background-color: -surface-700;
+    -fx-text-fill: -text-100;
+    -fx-border-color: -steel-600;
+    -fx-border-width: 1;
+    -fx-background-radius: 3;
+    -fx-border-radius: 3;
+    -fx-font-size: 11px;
+    -fx-padding: 4 8 4 8;
+}
+
+.dialog-pane {
+    -fx-background-color: -surface-800;
+}
+
+.dialog-pane .header-panel {
+    -fx-background-color: -surface-750;
+}
+
+.dialog-pane .header-panel .label {
+    -fx-text-fill: -text-100;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.dialog-pane .content.label {
+    -fx-text-fill: -text-300;
+}
+
+.progress-bar > .bar {
+    -fx-background-color: -amber;
+}
+
+.progress-bar > .track {
+    -fx-background-color: -surface-750;
+}
+
+.form-panel {
+    -fx-background-color: -ink-900;
+    -fx-padding: 22 24 22 24;
+}
+
+.form-title {
+    -fx-text-fill: -text-100;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.section-header {
+    -fx-text-fill: -text-400;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+}
+
+.form-label {
+    -fx-text-fill: -text-400;
+    -fx-font-size: 11px;
+}
+
+.status-ok {
+    -fx-text-fill: -ok;
+}
+
+.status-error {
+    -fx-text-fill: -danger;
+}

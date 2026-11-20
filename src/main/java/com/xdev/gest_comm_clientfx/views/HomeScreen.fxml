@@ -71,12 +71,12 @@
         </menus>
     </MenuBar>
 
-    <HBox spacing="6.0" alignment="CENTER_LEFT">
+    <HBox styleClass="search-bar" spacing="6.0" alignment="CENTER_LEFT">
         <padding>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
         </padding>
-        <TextField fx:id="searchField" text="Recherche" HBox.hgrow="ALWAYS" />
-        <Label fx:id="searchScope" text="" />
+        <TextField fx:id="searchField" styleClass="search-field" text="Recherche" HBox.hgrow="ALWAYS" />
+        <Label fx:id="searchScope" styleClass="status" text="" />
     </HBox>
 
     <BorderPane VBox.vgrow="ALWAYS">
@@ -92,23 +92,23 @@
     <VBox fx:id="panelStore" managed="false" visible="false">
         <VBox fx:id="clientsPanel" spacing="5.0">
             <TableView fx:id="clientTable" VBox.vgrow="ALWAYS" />
-            <Label fx:id="clientStatus" text="" />
+            <Label fx:id="clientStatus" styleClass="status" text="" />
         </VBox>
         <VBox fx:id="articlesPanel" spacing="5.0">
             <TableView fx:id="articleTable" VBox.vgrow="ALWAYS" />
-            <Label fx:id="articleStatus" text="" />
+            <Label fx:id="articleStatus" styleClass="status" text="" />
         </VBox>
         <VBox fx:id="devisPanel" spacing="5.0">
             <TableView fx:id="devisTable" VBox.vgrow="ALWAYS" />
-            <Label fx:id="devisStatus" text="" />
+            <Label fx:id="devisStatus" styleClass="status" text="" />
         </VBox>
         <VBox fx:id="facturesPanel" spacing="5.0">
             <TableView fx:id="factureTable" VBox.vgrow="ALWAYS" />
-            <Label fx:id="factureStatus" text="" />
+            <Label fx:id="factureStatus" styleClass="status" text="" />
         </VBox>
         <VBox fx:id="bonlivsPanel" spacing="5.0">
             <TableView fx:id="bonlivTable" VBox.vgrow="ALWAYS" />
-            <Label fx:id="bonlivStatus" text="" />
+            <Label fx:id="bonlivStatus" styleClass="status" text="" />
         </VBox>
     </VBox>
 </VBox>
