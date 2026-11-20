@@ -1,0 +1,32 @@
+{
+  "feature": "login-profile-settings",
+  "status": "running",
+  "iterations": 0,
+  "updated": "2026-11-20T17:12:34Z",
+  "waves": {
+    "1": {
+      "status": "in-progress",
+      "branch": "feat/login-profile-settings-w1",
+      "pr": "\u2014",
+      "evidence": "\u2014",
+      "updated": "2026-11-20T17:12:34Z"
+    }
+  },
+  "gates": {
+    "G1": {
+      "status": "met",
+      "evidence": "file:specs/login-profile-settings/DECISION-REVIEW.md \u2014 verdict ACCEPT (7 lenses; 3 concerns folded into SPEC)",
+      "updated": "2026-11-20T17:11:35Z"
+    },
+    "G2": {
+      "status": "met",
+      "evidence": "backend: python manage.py test -> Ran 56 tests OK; client: mvn -B package -> 30 tests BUILD SUCCESS",
+      "updated": "2026-11-20T17:12:34Z"
+    }
+  },
+  "events": [
+    "2026-11-20T17:11:35Z gate G1 met: file:specs/login-profile-settings/DECISION-REVIEW.md \u2014 verdict ACCEPT (7 lenses; 3 concerns folded into SPEC)",
+    "2026-11-20T17:12:34Z gate G2 met: backend: python manage.py test -> Ran 56 tests OK; client: mvn -B package -> 30 tests BUILD SUCCESS",
+    "2026-11-20T17:12:34Z start wave 1 on feat/login-profile-settings-w1"
+  ]
+}
