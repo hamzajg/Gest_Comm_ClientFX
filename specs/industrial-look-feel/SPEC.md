@@ -36,6 +36,21 @@ industrial-grade tool instead of a Java sample.
 
 ## Scope (in)
 
+- Paths: `src/main/java/com/xdev/gest_comm_clientfx/views/industrial.css`,
+  `src/main/java/com/xdev/gest_comm_clientfx/ui/Theme.java`,
+  `src/main/java/com/xdev/gest_comm_clientfx/ui/ActionDrawer.java`,
+  `src/main/java/com/xdev/gest_comm_clientfx/app/StartApp.java`,
+  `src/main/java/com/xdev/gest_comm_clientfx/controllers/HomeScreenCtrl.java`,
+  `src/test/java/com/xdev/gest_comm_clientfx/ui/ThemeTest.java`,
+  `tools/ThemeStates.java`, `tools/Screenshots.java`, `pom.xml`,
+  `src/main/java/com/xdev/gest_comm_clientfx/views/HomeScreen.fxml`,
+  `src/main/java/com/xdev/gest_comm_clientfx/views/Assistant.fxml`,
+  `src/main/java/com/xdev/gest_comm_clientfx/views/ConfigScreen.fxml`,
+  `src/main/java/com/xdev/gest_comm_clientfx/views/NouveauClient.fxml`,
+  `src/main/java/com/xdev/gest_comm_clientfx/views/NouvelArticle.fxml`,
+  `src/main/java/com/xdev/gest_comm_clientfx/views/NouveauDevis.fxml`,
+  `src/main/java/com/xdev/gest_comm_clientfx/views/NouvelFacture.fxml`,
+  `src/main/java/com/xdev/gest_comm_clientfx/views/NouveauBonLiv.fxml`
 - One app-owned stylesheet (tokens + component rules) bundled as a classpath
   resource and applied to the single application `Scene`.
 - Industrial palette: graphite surfaces, steel borders, a single amber accent,

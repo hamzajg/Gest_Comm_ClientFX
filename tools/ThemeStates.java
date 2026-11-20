@@ -19,6 +19,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -42,6 +43,8 @@ public class ThemeStates {
     private static File outDir;
 
     public static void main(String[] args) {
+        // Mirror StartApp: JavaFX's own strings must be French here too.
+        Locale.setDefault(Locale.FRANCE);
         outDir = new File(args.length > 0 ? args[0] : "docs/walkthrough");
         outDir.mkdirs();
         Platform.startup(() -> new Thread(() -> {
@@ -146,12 +149,50 @@ public class ThemeStates {
         Thread.sleep(600);
         shoot(h[0], "42-form-tab-min.png");
 
+        // 6e. Empty table: its caption must read in French. Select the
+        // Clients tab first — opening a form leaves the form tab active.
+        fx(() -> ((HomeScreenCtrl) h[2]).getClass()
+            .getMethod("showClients").invoke(h[2]));
+        Thread.sleep(600);
+        // Filter to a term nothing matches: a real empty list, real status.
+        fx(() -> {
+            TextField search = (TextField) ((Node) h[0]).lookup("#searchField");
+            search.setText("zzz-aucun-resultat");
+            invokeSearch(h[2]);
+            layout((Node) h[0]);
+        });
+        Thread.sleep(400);
+        shoot(h[0], "43-empty-table-fr.png");
+        fx(() -> {
+            ((TextField) ((Node) h[0]).lookup("#searchField")).setText("");
+            invokeSearch(h[2]);
+        });
+
+        // 6f. A form at a short height must scroll, not clip its buttons.
+        shootShortForm("NouveauClient.fxml", "44-form-scroll-short.png");
+
         // 7/8. The tallest forms inside a tab-sized area at the floor width.
         shootForm("NouveauClient.fxml", "37-form-min-client.png");
         shootForm("NouvelArticle.fxml", "38-form-min-article.png");
         shootForm("NouveauDevis.fxml", "39-form-min-devis.png");
 
         System.out.println("theme states written to " + outDir.getAbsolutePath());
+    }
+
+    /** A form in the tab scroller at a height too short to fit it. */
+    private static void shootShortForm(String fxml, String name) throws Exception {
+        final Object[] holder = new Object[1];
+        fx(() -> {
+            Object[] pair = load(fxml);
+            javafx.scene.control.ScrollPane scroller =
+                new javafx.scene.control.ScrollPane((Parent) pair[0]);
+            scroller.setFitToWidth(true);
+            scroller.getStyleClass().add("tab-scroll");
+            holder[0] = scroller;
+            scene(scroller, 1000, 300);
+        });
+        Thread.sleep(700);
+        shoot(holder[0], name);
     }
 
     /** A form rendered in the space a tab gives it at 1024x640. */
@@ -180,6 +221,18 @@ public class ThemeStates {
         Scene scene = new Scene(root, w, h);
         Theme.install(scene);
         return scene;
+    }
+
+    /** applySearch is private @FXML wiring; the probe drives it directly. */
+    private static void invokeSearch(Object ctrl) {
+        try {
+            java.lang.reflect.Method m = ctrl.getClass()
+                .getDeclaredMethod("applySearch");
+            m.setAccessible(true);
+            m.invoke(ctrl);
+        } catch (Exception e) {
+            System.out.println("  applySearch failed: " + e);
+        }
     }
 
     private static String bg(Node n) {

@@ -153,6 +153,12 @@ decimals arrive as strings (`"100.00"`) — Jackson handles that into
 
 ## Agent rules
 
+- `StartApp.main` sets `Locale.FRANCE`: JavaFX's own strings (table
+  placeholder, default dialog buttons) must match the French UI. Every date
+  in the client is an ISO text field, not a `DatePicker` — keep it that way,
+  or the locale starts affecting date parsing.
+- Form tabs are opened inside a `ScrollPane` (`.tab-scroll`, `fitToWidth`) so
+  a form taller than the window scrolls instead of clipping its buttons.
 - Colours belong in `views/industrial.css` (palette tokens on `.root`),
   never in `setStyle` or FXML `style=` — inline styles beat the stylesheet
   in JavaFX. Java only adds style classes; `ui/Theme` attaches the sheet.

@@ -19,7 +19,7 @@
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
 
-    <Label text="Paramètres de l'application — connexion à PyGestComm" />
+    <Label styleClass="form-title" text="Paramètres de l'application — connexion à PyGestComm" />
 
     <GridPane hgap="10.0" vgap="10.0">
         <columnConstraints>
@@ -41,5 +41,5 @@
         <Button mnemonicParsing="false" onAction="#closeWindow" text="Fermer" />
     </HBox>
 
-    <Label fx:id="statusLabel" text="" wrapText="true" />
+    <Label fx:id="statusLabel" styleClass="status" text="" wrapText="true" />
 </VBox>

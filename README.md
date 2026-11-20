@@ -120,7 +120,7 @@ by the `maven-resources-plugin` resource entry in `pom.xml`, which is why
 | HTTP client | `api/ApiClient` — list/post/put/delete/patch + `convertDevis` + `askAssistant` (all routes) |
 | Tests | 29 JUnit 5 tests (model accessors, JSON mapping, API error parsing + French phrasing, home-screen layout, null-safe screen formatting, tab workspace policy, theme stylesheet) |
 | Navigation | Panels open as tabs (close ×, pin ★); only Bienvenue opens at startup; the right-hand drawer carries the active tab's actions and collapses to a rail instead of hiding |
-| Look and feel | Industrial theme in `views/industrial.css` (graphite surfaces, steel borders, one amber accent), applied once by `ui/Theme` — forms, lists and dialogs share it; window minimum 1024×640 |
+| Look and feel | Industrial theme in `views/industrial.css` (graphite surfaces, steel borders, one amber accent), applied once by `ui/Theme` — forms, lists and dialogs share it; window minimum 1024×640, form tabs scroll rather than clip, JavaFX's own strings follow the French locale |
 
 ## Continuous integration
 
