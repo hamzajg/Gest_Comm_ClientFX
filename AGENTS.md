@@ -152,6 +152,10 @@ decimals arrive as strings (`"100.00"`) — Jackson handles that into
 ## Agent rules
 
 - Branch from `master`; name branches `feat/*`, `fix/*`, `chore/*`, `docs/*`.
+- Never add AI/assistant attribution to commit messages, PR bodies,
+  reviews or comments: no "generated with …" footer, no `Co-Authored-By:`
+  agent trailer, no robot-emoji signature line. A commit message ends at its
+  own last line, with no trailer block.
 - Docs-only changes still go through a PR; never commit to `master` directly.
 - Verify before claiming: `mvn -B package` must pass; there are 21 tests —
   say so.
