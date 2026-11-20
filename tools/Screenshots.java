@@ -57,6 +57,8 @@ public class Screenshots {
     private static File outDir;
 
     public static void main(String[] args) {
+        // Same French defaults as StartApp, so captures match the app.
+        java.util.Locale.setDefault(java.util.Locale.FRANCE);
         String baseUrl = args.length > 0 ? args[0] : "http://localhost:8000";
         String user = args.length > 1 ? args[1] : "admin";
         String pass = args.length > 2 ? args[2] : "admin";

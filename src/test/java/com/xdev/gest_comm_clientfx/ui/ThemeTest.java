@@ -64,7 +64,9 @@ class ThemeTest {
             ".menu-bar", ".search-field", ".tab-pane", ".table-view",
             ".table-row-cell:selected", ".action-drawer", ".drawer-action",
             ".drawer-toggle", ".button.chip", ".welcome-title",
-            ".table-view:focused", ".form-panel", ".form-title"
+            ".table-view:focused", ".form-panel", ".form-title",
+            ".form-panel .label", ".tab-scroll", ".transcript",
+            ".assistant-hint"
         }) {
             assertTrue(css.contains(selector), "missing rule for " + selector);
         }

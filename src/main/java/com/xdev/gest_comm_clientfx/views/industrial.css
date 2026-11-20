@@ -639,6 +639,58 @@
     -fx-font-weight: bold;
 }
 
+/* Form field labels sit quieter than the values they introduce. The panel
+   rule out-specifies `.label`, so the title and the status line are restored
+   explicitly below. */
+.form-panel .label {
+    -fx-text-fill: -text-400;
+    -fx-font-size: 12px;
+}
+
+.form-panel .form-title {
+    -fx-text-fill: -text-100;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.form-panel .label.status {
+    -fx-font-family: "SF Mono", "Menlo", "Consolas", monospace;
+    -fx-font-size: 11px;
+    -fx-text-fill: -text-400;
+}
+
+/* Form tab content scrolls when the window is short (minimum size) instead
+   of clipping its buttons. */
+.tab-scroll,
+.tab-scroll > .viewport {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.tab-scroll:focused {
+    -fx-border-color: transparent;
+}
+
+/* Assistant transcript: a reading surface, not an input field. */
+.transcript {
+    -fx-font-size: 12px;
+    -fx-text-fill: -text-300;
+}
+
+.transcript .content {
+    -fx-background-color: -surface-850;
+    -fx-background-radius: 4;
+    -fx-border-color: -steel-600;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+}
+
+.assistant-hint {
+    -fx-text-fill: -text-400;
+    -fx-font-size: 12px;
+}
+
 .section-header {
     -fx-text-fill: -text-400;
     -fx-font-size: 10px;

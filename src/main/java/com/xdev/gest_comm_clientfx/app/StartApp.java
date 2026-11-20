@@ -5,6 +5,8 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.util.Locale;
+
 public class StartApp extends Application {
 
     @Override
@@ -22,6 +24,10 @@ public class StartApp extends Application {
 
 
     public static void main(String[] args) {
+        // French UI: JavaFX's own strings (table "no content" placeholder,
+        // dialog buttons) must match the app's language. Safe here — every
+        // date in the client is an ISO text field, not a DatePicker.
+        Locale.setDefault(Locale.FRANCE);
         launch(args);
     }
 }

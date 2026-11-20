@@ -23,6 +23,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableCell;
@@ -231,11 +232,16 @@ public class HomeScreenCtrl {
         try {
             URL url = getClass().getResource(fxml);
             FXMLLoader loader = new FXMLLoader(url);
-            Parent root = loader.load();
+            Parent form = loader.load();
             C ctrl = ctrlType.cast(loader.getController());
+            // A form taller than the window (devis with many lines, or a
+            // 1024x640 minimum window) must scroll, never clip its actions.
+            ScrollPane scroller = new ScrollPane(form);
+            scroller.setFitToWidth(true);
+            scroller.getStyleClass().add("tab-scroll");
             Tab tab = workspace.open(
                 WorkspacePolicy.formKey(title, ++formSequence),
-                title, root);
+                title, scroller);
             if (ctrl instanceof ApiDialog d) {
                 d.setApi(api);
                 d.setOnSaved(onSaved);

@@ -9,7 +9,7 @@
 | 3 | Tables follow the theme (header, rows, selection, empty area) | Tables follow the theme | 1 | ThemeTest.java + capture 02/04 |
 | 4 | Drawer styled expanded and collapsed | Drawer is styled expanded and collapsed | 1 | capture 01/18 |
 | 5 | No inline colour in Java or FXML views | Colours live only in the stylesheet | 1 | `grep -rE -- "-fx-(background|text-fill|border|font)-" src/main/java \| grep -v industrial.css` → 0 hits |
-| 6 | Usable at the 1024×640 minimum | Window respects the minimum size | 2 | probe `31-min-shell`, `41-rail-min`, `42-form-tab-min` at 1024×640 |
+| 6 | Usable at the 1024×640 minimum | Window respects the minimum size | 2 | probe `31-min-shell`, `41-rail-min`, `42-form-tab-min`, `44-form-scroll-short` |
 | 7 | Suite green | — | 1–2 | `mvn -B package` → 28 tests, 0 failures |
 | 8 | Forms/settings/assistant inherit the shell | Forms inherit the theme | 2 | captures 08, 17, 37–39, 42 |
 
@@ -88,6 +88,27 @@ fills so the states are checked as data as well as pixels.
 | Tall forms at 1000×520 | `37`–`39-form-min-*.png` | client/article/devis forms fit; no clipped buttons | ok |
 
 Not verified: hover/pressed with a literal OS pointer (pseudo-classes are set
-programmatically), and any colour-blind contrast audit. A separate defect was
-noticed but left out of scope: JavaFX's default table placeholder renders in
-English ("No content in table") in this French UI.
+programmatically), and any colour-blind contrast audit.
+
+## Wave 2 — minimum size and dialog/assistant polish (2026-11-20)
+
+| Check | How | Observed |
+|---|---|---|
+| Minimum size honoured | `StartApp` sets 1024×640; shell probe `31-min-shell.png` | menu bar, search row, tabs, table, drawer and status all fit at 1024×640 |
+| Rail at minimum size | `41-rail-min.png` | 30px rail, `‹` reachable, table spans the freed width |
+| Form in a tab at minimum size | `42-form-tab-min.png` | 7 rows + actions + drawer visible, no clipping |
+| Short window scrolls instead of clipping | `44-form-scroll-short.png` (form in the tab scroller at 1000×300) | vertical scrollbar appears, action row reachable by scrolling |
+| Form labels | `07-config`, `42-form-tab-min` | muted 12px labels, 16px titles, amber primary action |
+| Assistant | `16-assistant.png` | amber *Poser*, muted hint, bordered transcript surface |
+| Settings | `07-config.png` | styled title, muted field labels, primary *Enregistrer* |
+| French empty state | `43-empty-table-fr.png` (filter matching nothing) | `Aucun contenu dans la table` + `0 clients chargé(s).` — the English JavaFX placeholder is gone |
+
+Implementation notes: form tabs are hosted in a `ScrollPane` (`tab-scroll`,
+`fitToWidth`), and `StartApp.main` sets `Locale.FRANCE` so JavaFX's own
+strings (table placeholder, default dialog buttons) match the French UI. Every
+client date is an ISO text field, so the locale change cannot alter date
+parsing.
+
+Not verified in wave 2: scrolling with a real wheel/trackpad (the scrollbar is
+proven by the capture), and hover/pressed states on the assistant and settings
+buttons.

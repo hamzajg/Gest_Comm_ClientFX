@@ -18,16 +18,16 @@
     </padding>
 
     <Label text="Assistant" styleClass="form-title" />
-    <Label text="Posez une question sur les clients, articles, devis ou factures — ex. « combien de clients », « trouver devis D001 »." wrapText="true" />
+    <Label styleClass="assistant-hint" text="Posez une question sur les clients, articles, devis ou factures — ex. « combien de clients », « trouver devis D001 »." wrapText="true" />
 
     <HBox spacing="8.0">
         <TextField fx:id="questionField" HBox.hgrow="ALWAYS"
                    promptText="Votre question…" />
-        <Button mnemonicParsing="false" onAction="#ask" text="Poser" />
+        <Button mnemonicParsing="false" onAction="#ask" styleClass="primary" text="Poser" />
     </HBox>
 
-    <TextArea fx:id="logArea" editable="false" wrapText="true"
+    <TextArea fx:id="logArea" editable="false" styleClass="transcript" wrapText="true"
               VBox.vgrow="ALWAYS" prefRowCount="12" />
 
-    <Label fx:id="statusLabel" text="" wrapText="true" />
+    <Label fx:id="statusLabel" styleClass="status" text="" wrapText="true" />
 </VBox>
