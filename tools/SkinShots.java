@@ -71,6 +71,8 @@ public class SkinShots {
         shootPair("04-config", SkinShots::config, 700);
         shootPair("05-welcome", SkinShots::welcome, 500);
         shootPair("06-rail-min", SkinShots::railAtMinimum, 500);
+        shootPair("07-login", SkinShots::login, 300);
+        shootPair("08-login-refused", SkinShots::loginRefused, 300);
         System.out.println("skin captures written to " + outDir.getAbsolutePath());
     }
 
@@ -117,6 +119,28 @@ public class SkinShots {
                 + "Q: quel client a le plus gros encours ?\n"
                 + "R: Atelier Moreau SARL, avec 12 480,00 € de factures "
                 + "non réglées.\n");
+        }
+        return scene;
+    }
+
+    /** The gate in front of the workspace, in both palettes. */
+    private static Scene login() throws Exception {
+        FXMLLoader loader = loader("LoginView.fxml");
+        Parent root = loader.load();
+        javafx.scene.control.TextField username =
+            (javafx.scene.control.TextField) root.lookup("#usernameField");
+        if (username != null) {
+            username.setText("operateur");
+        }
+        return new Scene(root, 1024, 640);
+    }
+
+    private static Scene loginRefused() throws Exception {
+        Scene scene = login();
+        Label status = label(scene.getRoot(), "#statusLabel");
+        if (status != null) {
+            status.setText(
+                "Nom d'utilisateur ou mot de passe incorrect.");
         }
         return scene;
     }

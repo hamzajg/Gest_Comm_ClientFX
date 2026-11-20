@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane xmlns="http://javafx.com/javafx"
+           xmlns:fx="http://javafx.com/fxml"
+           fx:controller="com.xdev.gest_comm_clientfx.controllers.LoginCtrl"
+           styleClass="login-panel">
+    <VBox alignment="CENTER" maxHeight="-1.0" maxWidth="420.0" spacing="16.0"
+          styleClass="login-card">
+        <Label styleClass="login-title" text="Gestion commerciale" />
+        <Label styleClass="login-subtitle" wrapText="true"
+               text="Connectez-vous pour ouvrir votre espace de travail." />
+
+        <VBox spacing="6.0">
+            <Label styleClass="form-label" text="Serveur (URL)" />
+            <TextField fx:id="baseUrlField" promptText="http://localhost:8000" />
+        </VBox>
+
+        <VBox spacing="6.0">
+            <Label styleClass="form-label" text="Utilisateur" />
+            <TextField fx:id="usernameField" />
+        </VBox>
+
+        <VBox spacing="6.0">
+            <Label styleClass="form-label" text="Mot de passe" />
+            <PasswordField fx:id="passwordField" />
+        </VBox>
+
+        <HBox alignment="CENTER_LEFT" spacing="12.0">
+            <Button fx:id="signInButton" defaultButton="true" mnemonicParsing="false"
+                    onAction="#signIn" styleClass="primary" text="Se connecter" />
+        </HBox>
+
+        <Label fx:id="statusLabel" maxWidth="Infinity" styleClass="status"
+               text="" wrapText="true" />
+    </VBox>
+    <padding>
+        <Insets bottom="48.0" left="48.0" right="48.0" top="48.0" />
+    </padding>
+</StackPane>

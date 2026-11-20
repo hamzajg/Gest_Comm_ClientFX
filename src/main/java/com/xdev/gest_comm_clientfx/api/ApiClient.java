@@ -6,6 +6,7 @@ import com.xdev.gest_comm_clientfx.models.BonLiv;
 import com.xdev.gest_comm_clientfx.models.Client;
 import com.xdev.gest_comm_clientfx.models.Devis;
 import com.xdev.gest_comm_clientfx.models.Facture;
+import com.xdev.gest_comm_clientfx.models.UserProfile;
 
 import java.io.IOException;
 import java.net.URI;
@@ -297,6 +298,36 @@ public class ApiClient {
             config.setRefreshToken("");
             config.save();
         }
+    }
+
+    /** GET /api/me — identity (and role) of the signed-in account. */
+    public UserProfile profile() throws ApiException {
+        String body = send("GET", "/api/me", null);
+        try {
+            return mapper.readValue(body, UserProfile.class);
+        } catch (IOException e) {
+            throw new ApiException("Cannot parse /api/me response", e);
+        }
+    }
+
+    /**
+     * Sign in: exchange credentials for a token pair, then read identity.
+     *
+     * The credentials are used for this exchange only and are not written
+     * to disk; the session then rides on the persisted, rotating refresh
+     * token (specs/login-profile-settings D3).
+     */
+    public UserProfile signIn(String baseUrl, String username,
+                              String password) throws ApiException {
+        config.setBaseUrl(baseUrl);
+        config.setUsername(username);
+        config.setPassword(password);
+        config.setRefreshToken("");
+        accessToken = null;
+        obtainTokens();
+        UserProfile profile = profile();
+        config.save();
+        return profile;
     }
 
     private void storeTokens(String body) throws ApiException {
