@@ -60,7 +60,8 @@ public class AssistantCtrl implements ApiDialog {
                                 Map<String, Object> response) {
         StringBuilder sb = new StringBuilder(logArea.getText());
         sb.append("Q: ").append(question).append('\n');
-        sb.append("R: ").append(response.get("answer")).append('\n');
+        sb.append("R: ").append(Display.cell(response.get("answer")))
+            .append('\n');
         Object data = response.get("data");
         if (data != null) {
             try {

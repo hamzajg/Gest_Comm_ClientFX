@@ -28,6 +28,20 @@ public final class ApiMessages {
         return "Erreur : " + detail;
     }
 
+    /**
+     * Message for a failure that is not an API refusal (a bug, a missing
+     * value). Never renders the literal "null": a {@code Throwable} with
+     * no message falls back to its type.
+     */
+    public static String unexpected(Throwable e) {
+        String message = e == null ? null : e.getMessage();
+        if (message == null || message.isBlank()) {
+            return "Erreur inattendue : "
+                + (e == null ? "inconnue" : e.getClass().getSimpleName());
+        }
+        return "Erreur inattendue : " + message;
+    }
+
     /** Message for a failed read (list load, picker prefill). */
     public static String loadFailed(ApiException e) {
         if (e.getStatusCode() == 401 || e.getStatusCode() == 403) {

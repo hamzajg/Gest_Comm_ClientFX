@@ -21,7 +21,7 @@ Verified 2026-11-17 against CI (`.github/workflows/ci.yml`) and README.
 |---|---|
 | Build | `mvn -B package` (CI: JDK 17) |
 | Run app | `mvn javafx:run` |
-| Tests | `mvn -B package` runs JUnit 5 tests (14) |
+| Tests | `mvn -B package` runs JUnit 5 tests (21) |
 
 Requires: JDK 17 only — JavaFX and Jackson come from Maven. The app also
 needs a running PyGestComm backend (`python manage.py runserver` in that
@@ -48,14 +48,17 @@ src/main/java/com/xdev/gest_comm_clientfx/
                         status code + backend `detail` parsed from DRF
                         bodies (`fromResponse`)
   controllers/
+    Display             what a screen shows for an absent value:
+                        fields → empty (never the literal "null"),
+                        cells/labels → "—" (legacy null-on-screen bug)
     ApiMessages         French phrasing for API failures (409 →
                         "Suppression impossible : …", 400 → "Action
                         refusée : …"), shared by every controller
-    HomeScreenCtrl      @FXML: tabs (Bienvenue/Clients/Articles/Devis/
-                        Factures), table columns, menu actions incl.
-                        dialog launchers + convertSelectedDevis; loads
-                        run on a background thread, UI updates via
-                        Platform.runLater
+    HomeScreenCtrl      @FXML: home shell — table columns, menu actions,
+                        drawer wiring + convertSelectedDevis; loads run
+                        on a background thread, UI updates via
+                        Platform.runLater. Every panel opens through
+                        TabWorkspace (a tab, never a Stage)
     ConfigScreenCtrl    @FXML: server URL/user/password fields, save,
                         test-connection
     NouveauClientCtrl   @FXML: client create form → POST /api/client
@@ -67,6 +70,13 @@ src/main/java/com/xdev/gest_comm_clientfx/
                         NouveauDevisCtrl.LigneDraft), optional devis
                         picker that prefills client/date/lines, POST
                         /api/facture with nested lignes
+  ui/
+    WorkspacePolicy     tab keys, titles, which panels are singletons,
+                        which scope the search (no JavaFX — unit tested)
+    TabWorkspace        opens/closes tabs, reuses singleton panels,
+                        pin (★ removes the close button)
+    ActionDrawer        right-hand pane with the active tab's actions;
+                        expands/collapses to a 30px rail, never hides
   models/               Article + Client + Devis + LigneDevis + Facture +
                         LigneFacture + BonLiv + LigneBonLiv POJOs
   views/                *.fxml layouts (HomeScreen, ConfigScreen)
@@ -142,8 +152,12 @@ decimals arrive as strings (`"100.00"`) — Jackson handles that into
 ## Agent rules
 
 - Branch from `master`; name branches `feat/*`, `fix/*`, `chore/*`, `docs/*`.
+- Never add AI/assistant attribution to commit messages, PR bodies,
+  reviews or comments: no "generated with …" footer, no `Co-Authored-By:`
+  agent trailer, no robot-emoji signature line. A commit message ends at its
+  own last line, with no trailer block.
 - Docs-only changes still go through a PR; never commit to `master` directly.
-- Verify before claiming: `mvn -B package` must pass; there are 14 tests —
+- Verify before claiming: `mvn -B package` must pass; there are 21 tests —
   say so.
 - Keep changes minimal and consistent with surrounding code. No drive-by
   refactors.

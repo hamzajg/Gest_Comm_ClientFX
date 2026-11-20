@@ -124,7 +124,7 @@ public class NouveauDevisCtrl implements ApiDialog {
     public void setEditing(Devis devis) {
         this.editing = devis;
         this.pendingClientId = devis.getClient();
-        codeDevisField.setText(devis.getCodeDevis());
+        codeDevisField.setText(Display.text(devis.getCodeDevis()));
         dateDevisField.setText(textOr(devis.getDateDevis(), ""));
         observationField.setText(textOr(devis.getObservationDevis(), ""));
         if (devis.getStatutDevis() != null) {
@@ -213,14 +213,14 @@ public class NouveauDevisCtrl implements ApiDialog {
         if (article == null) {
             return;
         }
-        designationField.setText(article.getDesc_article());
+        designationField.setText(Display.text(article.getDesc_article()));
         prixField.setText(textOr(article.getPrix_vente_unitaire(), "0"));
         remiseField.setText(textOr(article.getRemise_vente(), "0"));
         tvaField.setText(textOr(article.getTva_vente(), "0"));
     }
 
     private static String textOr(Object value, String fallback) {
-        return value != null ? String.valueOf(value) : fallback;
+        return Display.text(value, fallback);
     }
 
     @FXML
@@ -339,7 +339,21 @@ public class NouveauDevisCtrl implements ApiDialog {
         closeWindow();
     }
 
+    private Runnable onClosed;
+
+    @Override
+    public void setOnClosed(Runnable onClosed) {
+        this.onClosed = onClosed;
+    }
+
     private void closeWindow() {
+        if (onClosed != null) {
+            onClosed.run();
+            return;
+        }
+        if (statusLabel.getScene() == null) {
+            return;
+        }
         Stage stage = (Stage) statusLabel.getScene().getWindow();
         stage.close();
     }

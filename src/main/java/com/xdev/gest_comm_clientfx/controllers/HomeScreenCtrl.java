@@ -9,39 +9,49 @@ import com.xdev.gest_comm_clientfx.models.BonLiv;
 import com.xdev.gest_comm_clientfx.models.Client;
 import com.xdev.gest_comm_clientfx.models.Devis;
 import com.xdev.gest_comm_clientfx.models.Facture;
+import com.xdev.gest_comm_clientfx.ui.ActionDrawer;
+import com.xdev.gest_comm_clientfx.ui.TabWorkspace;
+import com.xdev.gest_comm_clientfx.ui.WorkspacePolicy;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+/**
+ * Home shell. Panels open as tabs in the workspace, never as windows: the
+ * menu and the drawer both route into {@link TabWorkspace#open}, and the
+ * drawer lists what can be done on the tab that is currently open.
+ */
 public class HomeScreenCtrl {
 
     @FXML private TabPane tabs;
-    @FXML private Tab clientsTab;
-    @FXML private Tab articlesTab;
-    @FXML private Tab devisTab;
-    @FXML private Tab factureTab;
-    @FXML private Tab bonlivTab;
+    @FXML private VBox drawerHost;
     @FXML private TableView<Client> clientTable;
     @FXML private TableView<Article> articleTable;
     @FXML private TableView<Devis> devisTable;
@@ -53,9 +63,19 @@ public class HomeScreenCtrl {
     @FXML private Label factureStatus;
     @FXML private Label bonlivStatus;
     @FXML private TextField searchField;
+    @FXML private Label searchScope;
+    @FXML private VBox clientsPanel;
+    @FXML private VBox articlesPanel;
+    @FXML private VBox devisPanel;
+    @FXML private VBox facturesPanel;
+    @FXML private VBox bonlivsPanel;
+    @FXML private VBox panelStore;
 
     private final ApiClient api = new ApiClient(ApiConfig.load());
+    private final ActionDrawer drawer = new ActionDrawer();
+    private TabWorkspace workspace;
     private String searchTerm = "";
+    private int formSequence = 0;
 
     @FXML
     public void initialize() {
@@ -95,26 +115,245 @@ public class HomeScreenCtrl {
             column("Nom", "nomPrenomClient", 200),
             column("Statut", "statutBonLiv", 90),
             column("Total TTC", "totalTTC", 100));
+
         searchField.setOnAction(e -> applySearch());
+
+        workspace = new TabWorkspace(tabs);
+        drawerHost.getChildren().add(drawer.getRoot());
+        tabs.getSelectionModel().selectedItemProperty()
+            .addListener((o, old, tab) -> updateDrawer(tab));
+        tabs.getTabs().addListener(
+            (javafx.collections.ListChangeListener<Tab>) change -> {
+                if (tabs.getTabs().isEmpty()) {
+                    // The workspace without any tab would leave the user
+                    // with no surface at all: fall back to Bienvenue.
+                    showWelcome();
+                }
+            });
+        showWelcome();
     }
 
-    /** Re-run the list load for whichever tab is selected, with the
-     *  toolbar search term as ?search=. */
+    // --- tabs --------------------------------------------------------
+
+    /** Only Bienvenue is open at startup. */
+    @FXML
+    public void showWelcome() {
+        Tab tab = workspace.open(WorkspacePolicy.WELCOME,
+            WorkspacePolicy.title(WorkspacePolicy.WELCOME), welcomePanel());
+        updateDrawer(tab);
+    }
+
+    private Node welcomePanel() {
+        Label title = new Label("Bienvenue");
+        title.setStyle("-fx-font-size: 22px; -fx-font-weight: bold;");
+        Label subtitle = new Label(
+            "Ouvrez un panneau depuis les menus ou les raccourcis ci-dessous. "
+            + "Chaque panneau s'ouvre dans un onglet : les onglets se ferment "
+            + "avec × et s'épinglent avec ★. Les actions du panneau ouvert "
+            + "apparaissent à droite.");
+        subtitle.setWrapText(true);
+        subtitle.setMaxWidth(720);
+
+        HBox shortcuts = new HBox(8,
+            shortcut("Clients", this::showClients),
+            shortcut("Articles", this::showArticles),
+            shortcut("Devis", this::showDevis),
+            shortcut("Factures", this::showFactures),
+            shortcut("Bons de livraison", this::showBonLivs));
+        VBox box = new VBox(12, title, subtitle, shortcuts);
+        box.setPadding(new Insets(24));
+        return box;
+    }
+
+    private Button shortcut(String label, Runnable action) {
+        Button b = new Button(label);
+        b.setOnAction(e -> action.run());
+        return b;
+    }
+
+    private void openList(String key, Node panel, Runnable refresh) {
+        workspace.open(key, WorkspacePolicy.title(key), panel);
+        updateDrawer(workspace.active());
+        refresh.run();
+    }
+
+    @FXML
+    public void showClients() {
+        openList(WorkspacePolicy.CLIENTS, clientsPanel, this::refreshClients);
+    }
+
+    @FXML
+    public void showArticles() {
+        openList(WorkspacePolicy.ARTICLES, articlesPanel,
+            this::refreshArticles);
+    }
+
+    @FXML
+    public void showDevis() {
+        openList(WorkspacePolicy.DEVIS, devisPanel, this::refreshDevis);
+    }
+
+    @FXML
+    public void showFactures() {
+        openList(WorkspacePolicy.FACTURES, facturesPanel,
+            this::refreshFactures);
+    }
+
+    @FXML
+    public void showBonLivs() {
+        openList(WorkspacePolicy.BONLIVS, bonlivsPanel, this::refreshBonLivs);
+    }
+
+    @FXML
+    public void openConfig() {
+        try {
+            Node root = new ConfigScreen().getRootView();
+            Tab tab = workspace.open(WorkspacePolicy.CONFIG,
+                WorkspacePolicy.title(WorkspacePolicy.CONFIG), root);
+            updateDrawer(tab);
+        } catch (IOException e) {
+            clientStatus.setText(
+                "Erreur : impossible d'ouvrir la configuration.");
+        }
+    }
+
+    /** Loads a form FXML into a tab instead of its own window. */
+    private <C> void openForm(String fxml, String title, Class<C> ctrlType,
+                              Runnable onSaved) {
+        openForm(fxml, title, ctrlType, onSaved, c -> { });
+    }
+
+    private <C> void openForm(String fxml, String title, Class<C> ctrlType,
+                              Runnable onSaved, Consumer<C> configure) {
+        try {
+            URL url = getClass().getResource(fxml);
+            FXMLLoader loader = new FXMLLoader(url);
+            Parent root = loader.load();
+            C ctrl = ctrlType.cast(loader.getController());
+            Tab tab = workspace.open(
+                WorkspacePolicy.formKey(title, ++formSequence),
+                title, root);
+            if (ctrl instanceof ApiDialog d) {
+                d.setApi(api);
+                d.setOnSaved(onSaved);
+                // Fermer / Enregistrer close this tab, not a window.
+                d.setOnClosed(() -> workspace.close(tab));
+            }
+            configure.accept(ctrl);
+            updateDrawer(tab);
+        } catch (IOException e) {
+            clientStatus.setText(
+                "Erreur : impossible d'ouvrir le formulaire.");
+        }
+    }
+
+    // --- drawer ------------------------------------------------------
+
+    private void updateDrawer(Tab tab) {
+        if (tab == null) {
+            drawer.show("—", List.of());
+            return;
+        }
+        String key = workspace.keyOf(tab);
+        String name = Display.text(tab.getText()).replace("★ ", "")
+            .replace(" — ", "");
+        drawer.show(name, actionsFor(key, tab));
+        searchScope.setText(WorkspacePolicy.isList(key)
+            ? "Recherche : " + name : "");
+    }
+
+    private List<ActionDrawer.Action> actionsFor(String key, Tab tab) {
+        if (key == null) {
+            return tabActions(tab, List.of());
+        }
+        List<ActionDrawer.Action> base = switch (key) {
+            case WorkspacePolicy.WELCOME -> List.of(
+                action("Clients", this::showClients),
+                action("Articles", this::showArticles),
+                action("Devis", this::showDevis),
+                action("Factures", this::showFactures),
+                action("Bons de livraison", this::showBonLivs));
+            case WorkspacePolicy.CLIENTS -> List.of(
+                action("Actualiser", this::refreshClients),
+                action("Nouveau client", this::showNewClient),
+                action("Modifier", this::editSelectedClient),
+                action("Supprimer", this::deleteSelectedClient));
+            case WorkspacePolicy.ARTICLES -> List.of(
+                action("Actualiser", this::refreshArticles),
+                action("Nouvel article", this::showNewArticle),
+                action("Modifier", this::editSelectedArticle),
+                action("Supprimer", this::deleteSelectedArticle));
+            case WorkspacePolicy.DEVIS -> List.of(
+                action("Actualiser", this::refreshDevis),
+                action("Nouveau devis", this::showNewDevis),
+                action("Modifier", this::editSelectedDevis),
+                action("Valider", this::validerDevis),
+                action("Refuser", this::refuserDevis),
+                action("Convertir en facture", this::convertSelectedDevis),
+                action("Supprimer", this::deleteSelectedDevis));
+            case WorkspacePolicy.FACTURES -> List.of(
+                action("Actualiser", this::refreshFactures),
+                action("Nouvelle facture", this::showNewFacture),
+                action("Modifier", this::editSelectedFacture),
+                action("Valider", this::validerFacture),
+                action("Marquer payée", this::payerFacture),
+                action("Annuler", this::annulerFacture),
+                action("Supprimer", this::deleteSelectedFacture));
+            case WorkspacePolicy.BONLIVS -> List.of(
+                action("Actualiser", this::refreshBonLivs),
+                action("Nouveau bon liv", this::showNewBonLiv),
+                action("Modifier", this::editSelectedBonLiv),
+                action("Valider", this::validerBonLiv),
+                action("Marquer livré", this::livrerBonLiv),
+                action("Annuler", this::annulerBonLiv),
+                action("Supprimer", this::deleteSelectedBonLiv));
+            case WorkspacePolicy.CONFIG -> List.of();
+            default -> List.of();
+        };
+        return tabActions(tab, base);
+    }
+
+    /** Pin and close are offered on every tab, so the drawer replaces the ×/★. */
+    private List<ActionDrawer.Action> tabActions(
+            Tab tab, List<ActionDrawer.Action> base) {
+        List<ActionDrawer.Action> all = new ArrayList<>(base);
+        all.add(action(workspace.isPinned(tab) ? "Désépingler" : "Épingler",
+            () -> {
+                workspace.togglePin(tab);
+                updateDrawer(tab);
+            }));
+        all.add(action("Fermer l'onglet", () -> workspace.close(tab)));
+        return all;
+    }
+
+    private static ActionDrawer.Action action(String label, Runnable r) {
+        return new ActionDrawer.Action(label, r);
+    }
+
+    @FXML
+    public void toggleDrawer() {
+        drawer.toggle();
+    }
+
+    // --- search ------------------------------------------------------
+
     private void applySearch() {
         searchTerm = searchField.getText().trim();
-        Tab selected = tabs.getSelectionModel().getSelectedItem();
-        if (selected == clientsTab) {
+        String key = workspace.activeKey();
+        if (WorkspacePolicy.CLIENTS.equals(key)) {
             refreshClients();
-        } else if (selected == articlesTab) {
+        } else if (WorkspacePolicy.ARTICLES.equals(key)) {
             refreshArticles();
-        } else if (selected == devisTab) {
+        } else if (WorkspacePolicy.DEVIS.equals(key)) {
             refreshDevis();
-        } else if (selected == factureTab) {
+        } else if (WorkspacePolicy.FACTURES.equals(key)) {
             refreshFactures();
-        } else if (selected == bonlivTab) {
+        } else if (WorkspacePolicy.BONLIVS.equals(key)) {
             refreshBonLivs();
         }
     }
+
+    // --- tables ------------------------------------------------------
 
     /**
      * Constrained resize: the tables declare exactly the columns their data
@@ -129,26 +368,34 @@ public class HomeScreenCtrl {
             String title, String property, double width) {
         TableColumn<T, Object> col = new TableColumn<>(title);
         col.setCellValueFactory(new PropertyValueFactory<>(property));
+        // A missing field is shown as "—": an empty cell reads as a
+        // rendering bug (the legacy "null" report), a dash reads as "this
+        // record has no value here".
+        col.setCellFactory(c -> new TableCell<T, Object>() {
+            @Override
+            protected void updateItem(Object item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty ? null : Display.cell(item));
+            }
+        });
         col.setPrefWidth(width);
         return col;
     }
 
+    // --- list loading ------------------------------------------------
+
     @FXML
-    public void showClients() {
-        tabs.getSelectionModel().select(clientsTab);
-        refreshClients();
+    public void refreshClients() {
+        load("clients", clientStatus,
+            () -> FXCollections.observableArrayList(api.listClients(searchTerm)),
+            clientTable::setItems);
     }
 
     @FXML
-    public void showArticles() {
-        tabs.getSelectionModel().select(articlesTab);
-        refreshArticles();
-    }
-
-    @FXML
-    public void showDevis() {
-        tabs.getSelectionModel().select(devisTab);
-        refreshDevis();
+    public void refreshArticles() {
+        load("articles", articleStatus,
+            () -> FXCollections.observableArrayList(api.listArticles(searchTerm)),
+            articleTable::setItems);
     }
 
     @FXML
@@ -159,10 +406,47 @@ public class HomeScreenCtrl {
     }
 
     @FXML
+    public void refreshFactures() {
+        load("facture", factureStatus,
+            () -> FXCollections.observableArrayList(api.listFactures(searchTerm)),
+            factureTable::setItems);
+    }
+
+    @FXML
+    public void refreshBonLivs() {
+        load("bon de livraison", bonlivStatus,
+            () -> FXCollections.observableArrayList(api.listBonLivs(searchTerm)),
+            bonlivTable::setItems);
+    }
+
+    private <T> void load(String label, Label status,
+                          Supplier<javafx.collections.ObservableList<T>> fetch,
+                          java.util.function.Consumer<
+                              javafx.collections.ObservableList<T>> apply) {
+        status.setText("Chargement…");
+        new Thread(() -> {
+            try {
+                var data = fetch.get();
+                Platform.runLater(() -> {
+                    apply.accept(data);
+                    status.setText(data.size() + " " + label + " chargé(s).");
+                });
+            } catch (ApiException e) {
+                Platform.runLater(() ->
+                    status.setText(ApiMessages.loadFailed(e)));
+            } catch (Exception e) {
+                Platform.runLater(() ->
+                    status.setText(ApiMessages.unexpected(e)));
+            }
+        }).start();
+    }
+
+    // --- documents ---------------------------------------------------
+
+    @FXML
     public void showNewDevis() {
-        showDialog("/com/xdev/gest_comm_clientfx/views/NouveauDevis.fxml",
-            "Nouveau devis", 720, 560, NouveauDevisCtrl.class,
-            this::refreshDevis);
+        openForm("/com/xdev/gest_comm_clientfx/views/NouveauDevis.fxml",
+            "Nouveau devis", NouveauDevisCtrl.class, this::refreshDevis);
     }
 
     @FXML
@@ -179,7 +463,7 @@ public class HomeScreenCtrl {
                     Map.of());
                 Platform.runLater(() -> {
                     devisStatus.setText("Devis converti → facture "
-                        + f.getCodeFacture());
+                        + Display.cell(f.getCodeFacture()));
                     refreshDevis();
                     refreshFactures();
                 });
@@ -191,42 +475,16 @@ public class HomeScreenCtrl {
     }
 
     @FXML
-    public void showFactures() {
-        tabs.getSelectionModel().select(factureTab);
-        refreshFactures();
-    }
-
-    @FXML
-    public void refreshFactures() {
-        load("facture", factureStatus,
-            () -> FXCollections.observableArrayList(api.listFactures(searchTerm)),
-            factureTable::setItems);
-    }
-
-    @FXML
     public void showNewFacture() {
-        showDialog("/com/xdev/gest_comm_clientfx/views/NouvelFacture.fxml",
-            "Nouvelle facture", 720, 580, NouvelFactureCtrl.class,
+        openForm("/com/xdev/gest_comm_clientfx/views/NouvelFacture.fxml",
+            "Nouvelle facture", NouvelFactureCtrl.class,
             this::refreshFactures);
     }
 
     @FXML
-    public void showBonLivs() {
-        tabs.getSelectionModel().select(bonlivTab);
-        refreshBonLivs();
-    }
-
-    @FXML
-    public void refreshBonLivs() {
-        load("bon de livraison", bonlivStatus,
-            () -> FXCollections.observableArrayList(api.listBonLivs(searchTerm)),
-            bonlivTable::setItems);
-    }
-
-    @FXML
     public void showNewBonLiv() {
-        showDialog("/com/xdev/gest_comm_clientfx/views/NouveauBonLiv.fxml",
-            "Nouveau bon de livraison", 720, 560, NouveauBonLivCtrl.class,
+        openForm("/com/xdev/gest_comm_clientfx/views/NouveauBonLiv.fxml",
+            "Nouveau bon de livraison", NouveauBonLivCtrl.class,
             this::refreshBonLivs);
     }
 
@@ -254,10 +512,9 @@ public class HomeScreenCtrl {
             bonlivStatus.setText("Sélectionnez un bon de livraison.");
             return;
         }
-        showDialog("/com/xdev/gest_comm_clientfx/views/NouveauBonLiv.fxml",
-            "Modifier le bon de livraison", 720, 560,
-            NouveauBonLivCtrl.class, this::refreshBonLivs,
-            c -> c.setEditing(b));
+        openForm("/com/xdev/gest_comm_clientfx/views/NouveauBonLiv.fxml",
+            "Modifier le bon de livraison", NouveauBonLivCtrl.class,
+            this::refreshBonLivs, c -> c.setEditing(b));
     }
 
     @FXML
@@ -267,7 +524,8 @@ public class HomeScreenCtrl {
             bonlivStatus.setText("Sélectionnez un bon de livraison.");
             return;
         }
-        if (!confirmDelete("le bon de livraison " + b.getCodeBonLiv())) {
+        if (!confirmDelete("le bon de livraison "
+                + Display.cell(b.getCodeBonLiv()))) {
             return;
         }
         mutate(bonlivStatus, "Bon de livraison supprimé.", "Suppression",
@@ -275,54 +533,18 @@ public class HomeScreenCtrl {
             this::refreshBonLivs);
     }
 
-    @FXML
-    public void refreshClients() {
-        load("clients", clientStatus,
-            () -> FXCollections.observableArrayList(api.listClients(searchTerm)),
-            clientTable::setItems);
-    }
-
-    @FXML
-    public void refreshArticles() {
-        load("articles", articleStatus,
-            () -> FXCollections.observableArrayList(api.listArticles(searchTerm)),
-            articleTable::setItems);
-    }
-
-    private <T> void load(String label, Label status,
-                          Supplier<javafx.collections.ObservableList<T>> fetch,
-                          java.util.function.Consumer<
-                              javafx.collections.ObservableList<T>> apply) {
-        status.setText("Chargement…");
-        new Thread(() -> {
-            try {
-                var data = fetch.get();
-                Platform.runLater(() -> {
-                    apply.accept(data);
-                    status.setText(data.size() + " " + label + " chargé(s).");
-                });
-            } catch (ApiException e) {
-                Platform.runLater(() ->
-                    status.setText(ApiMessages.loadFailed(e)));
-            } catch (Exception e) {
-                Platform.runLater(() -> status.setText(
-                    "Erreur : " + e.getClass().getSimpleName() + " " + e.getMessage()));
-            }
-        }).start();
-    }
+    // --- clients / articles ------------------------------------------
 
     @FXML
     public void showNewClient() {
-        showDialog("/com/xdev/gest_comm_clientfx/views/NouveauClient.fxml",
-            "Nouveau client", 480, 460, NouveauClientCtrl.class,
-            this::refreshClients);
+        openForm("/com/xdev/gest_comm_clientfx/views/NouveauClient.fxml",
+            "Nouveau client", NouveauClientCtrl.class, this::refreshClients);
     }
 
     @FXML
     public void showNewArticle() {
-        showDialog("/com/xdev/gest_comm_clientfx/views/NouvelArticle.fxml",
-            "Nouvel article", 480, 520, NouvelArticleCtrl.class,
-            this::refreshArticles);
+        openForm("/com/xdev/gest_comm_clientfx/views/NouvelArticle.fxml",
+            "Nouvel article", NouvelArticleCtrl.class, this::refreshArticles);
     }
 
     // --- row actions: edit / delete / statut -------------------------
@@ -360,8 +582,8 @@ public class HomeScreenCtrl {
             clientStatus.setText("Sélectionnez un client.");
             return;
         }
-        showDialog("/com/xdev/gest_comm_clientfx/views/NouveauClient.fxml",
-            "Modifier le client", 480, 460, NouveauClientCtrl.class,
+        openForm("/com/xdev/gest_comm_clientfx/views/NouveauClient.fxml",
+            "Modifier le client", NouveauClientCtrl.class,
             this::refreshClients, d -> d.setEditing(c));
     }
 
@@ -372,7 +594,7 @@ public class HomeScreenCtrl {
             clientStatus.setText("Sélectionnez un client.");
             return;
         }
-        if (!confirmDelete("le client " + c.getCodeClient())) {
+        if (!confirmDelete("le client " + Display.cell(c.getCodeClient()))) {
             return;
         }
         mutate(clientStatus, "Client supprimé.", "Suppression",
@@ -387,8 +609,8 @@ public class HomeScreenCtrl {
             articleStatus.setText("Sélectionnez un article.");
             return;
         }
-        showDialog("/com/xdev/gest_comm_clientfx/views/NouvelArticle.fxml",
-            "Modifier l'article", 480, 520, NouvelArticleCtrl.class,
+        openForm("/com/xdev/gest_comm_clientfx/views/NouvelArticle.fxml",
+            "Modifier l'article", NouvelArticleCtrl.class,
             this::refreshArticles, d -> d.setEditing(a));
     }
 
@@ -399,7 +621,8 @@ public class HomeScreenCtrl {
             articleStatus.setText("Sélectionnez un article.");
             return;
         }
-        if (!confirmDelete("l'article " + a.getRef_article())) {
+        if (!confirmDelete("l'article "
+                + Display.cell(a.getRef_article()))) {
             return;
         }
         mutate(articleStatus, "Article supprimé.", "Suppression",
@@ -429,8 +652,8 @@ public class HomeScreenCtrl {
             devisStatus.setText("Sélectionnez un devis.");
             return;
         }
-        showDialog("/com/xdev/gest_comm_clientfx/views/NouveauDevis.fxml",
-            "Modifier le devis", 720, 560, NouveauDevisCtrl.class,
+        openForm("/com/xdev/gest_comm_clientfx/views/NouveauDevis.fxml",
+            "Modifier le devis", NouveauDevisCtrl.class,
             this::refreshDevis, c -> c.setEditing(d));
     }
 
@@ -441,7 +664,7 @@ public class HomeScreenCtrl {
             devisStatus.setText("Sélectionnez un devis.");
             return;
         }
-        if (!confirmDelete("le devis " + d.getCodeDevis())) {
+        if (!confirmDelete("le devis " + Display.cell(d.getCodeDevis()))) {
             return;
         }
         mutate(devisStatus, "Devis supprimé.", "Suppression",
@@ -473,8 +696,8 @@ public class HomeScreenCtrl {
             factureStatus.setText("Sélectionnez une facture.");
             return;
         }
-        showDialog("/com/xdev/gest_comm_clientfx/views/NouvelFacture.fxml",
-            "Modifier la facture", 720, 580, NouvelFactureCtrl.class,
+        openForm("/com/xdev/gest_comm_clientfx/views/NouvelFacture.fxml",
+            "Modifier la facture", NouvelFactureCtrl.class,
             this::refreshFactures, c -> c.setEditing(f));
     }
 
@@ -485,7 +708,7 @@ public class HomeScreenCtrl {
             factureStatus.setText("Sélectionnez une facture.");
             return;
         }
-        if (!confirmDelete("la facture " + f.getCodeFacture())) {
+        if (!confirmDelete("la facture " + Display.cell(f.getCodeFacture()))) {
             return;
         }
         mutate(factureStatus, "Facture supprimée.", "Suppression",
@@ -493,38 +716,10 @@ public class HomeScreenCtrl {
             this::refreshFactures);
     }
 
-    private <C> void showDialog(String fxml, String title, double w,
-                                double h, Class<C> ctrlType,
-                                Runnable onSaved) {
-        showDialog(fxml, title, w, h, ctrlType, onSaved, c -> { });
-    }
-
-    private <C> void showDialog(String fxml, String title, double w,
-                                double h, Class<C> ctrlType,
-                                Runnable onSaved, Consumer<C> configure) {
-        try {
-            URL url = getClass().getResource(fxml);
-            FXMLLoader loader = new FXMLLoader(url);
-            Parent root = loader.load();
-            C ctrl = ctrlType.cast(loader.getController());
-            if (ctrl instanceof ApiDialog d) {
-                d.setApi(api);
-                d.setOnSaved(onSaved);
-            }
-            configure.accept(ctrl);
-            Stage stage = new Stage();
-            stage.setTitle(title);
-            stage.setScene(new Scene(root, w, h));
-            stage.show();
-        } catch (IOException e) {
-            clientStatus.setText("Erreur : impossible d'ouvrir le formulaire.");
-        }
-    }
-
     @FXML
     public void showAssistant() {
-        showDialog("/com/xdev/gest_comm_clientfx/views/Assistant.fxml",
-            "Assistant", 640, 520, AssistantCtrl.class, () -> { });
+        openForm("/com/xdev/gest_comm_clientfx/views/Assistant.fxml",
+            "Assistant", AssistantCtrl.class, () -> { });
     }
 
     @FXML
@@ -537,15 +732,11 @@ public class HomeScreenCtrl {
         }).start();
     }
 
-    @FXML
-    public void openConfig() {
-        try {
-            Stage stage = new Stage();
-            stage.setTitle("Paramètres de l'application");
-            stage.setScene(new Scene(new ConfigScreen().getRootView(), 560, 320));
-            stage.show();
-        } catch (IOException e) {
-            clientStatus.setText("Erreur : impossible d'ouvrir la configuration.");
+    /** Kept for callers that still hold a Stage (tests, tools). */
+    static void closeStage(Node node) {
+        if (node.getScene() != null
+                && node.getScene().getWindow() instanceof Stage stage) {
+            stage.close();
         }
     }
 }

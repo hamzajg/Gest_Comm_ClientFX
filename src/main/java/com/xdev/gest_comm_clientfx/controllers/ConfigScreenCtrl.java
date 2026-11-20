@@ -52,13 +52,28 @@ public class ConfigScreenCtrl {
                         + " client(s)."));
             } catch (ApiException e) {
                 javafx.application.Platform.runLater(() ->
-                    statusLabel.setText("Échec : " + e.getMessage()));
+                    statusLabel.setText("Échec : "
+                        + Display.text(e.getMessage(),
+                            "connexion impossible")));
             }
         }).start();
     }
 
+    private Runnable onClosed;
+
+    public void setOnClosed(Runnable onClosed) {
+        this.onClosed = onClosed;
+    }
+
     @FXML
     public void closeWindow() {
+        if (onClosed != null) {
+            onClosed.run();
+            return;
+        }
+        if (statusLabel.getScene() == null) {
+            return;
+        }
         Stage stage = (Stage) statusLabel.getScene().getWindow();
         stage.close();
     }

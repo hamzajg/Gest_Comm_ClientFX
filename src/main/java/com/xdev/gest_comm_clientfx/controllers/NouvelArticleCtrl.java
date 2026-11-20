@@ -45,7 +45,7 @@ public class NouvelArticleCtrl implements ApiDialog {
     }
 
     private static String textOr(Object value) {
-        return value != null ? String.valueOf(value) : "";
+        return Display.text(value);
     }
 
     public void setApi(ApiClient api) {
@@ -135,7 +135,21 @@ public class NouvelArticleCtrl implements ApiDialog {
         closeWindow();
     }
 
+    private Runnable onClosed;
+
+    @Override
+    public void setOnClosed(Runnable onClosed) {
+        this.onClosed = onClosed;
+    }
+
     private void closeWindow() {
+        if (onClosed != null) {
+            onClosed.run();
+            return;
+        }
+        if (statusLabel.getScene() == null) {
+            return;
+        }
         Stage stage = (Stage) statusLabel.getScene().getWindow();
         stage.close();
     }
