@@ -149,7 +149,7 @@ public class ThemeStates {
         Thread.sleep(600);
         shoot(h[0], "42-form-tab-min.png");
 
-        // 6e. Empty table: the placeholder must read in French. Select the
+        // 6e. Empty table: its caption must read in French. Select the
         // Clients tab first — opening a form leaves the form tab active.
         fx(() -> ((HomeScreenCtrl) h[2]).getClass()
             .getMethod("showClients").invoke(h[2]));

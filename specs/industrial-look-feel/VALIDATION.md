@@ -31,13 +31,16 @@
 3. Collapse the drawer with `›` — the rail keeps the workspace and the table reclaims the width.
 4. Menu → Client → Nouveau client — the form is themed, *Enregistrer* is the amber primary action.
 
-## Gaps
+## Accepted limitations (not gaps)
 
-- No automated visual diff: acceptance for colour/layout rests on the 18
-  walkthrough captures rendered by the capture driver (kept outside this
-  repository, in the workspace scratch area).
-- Minimum-size behaviour and hover/pressed pseudo-states were not exercised by
-  hand; they are declared in the stylesheet and in `StartApp`.
+- There is no automated visual diff; colour/layout acceptance rests on the
+  walkthrough captures rendered by the capture driver, plus computed-fill
+  assertions from the state probe.
+- States are exercised through pseudo-class injection, not a literal OS
+  pointer: accepted because JavaFX applies exactly those pseudo-classes on
+  real input, and the probe prints the resulting fills as data.
+- Minimum-size behaviour is verified by capture at 1024×640 and by the short
+  (1000×300) scroller capture; a live drag-resize was not scripted.
 
 ## Outcome follow-up
 
@@ -68,7 +71,7 @@ Before/after: the Modena captures are kept beside the new ones in the
 workspace scratch folder as `01-bienvenue-modena.png` and
 `02-clients-modena.png`.
 
-### State probe — `tools/ThemeStates`, 2026-11-20
+### State probe — `tools/ThemeStates.java`, 2026-11-20
 
 A real pointer cannot be scripted into a JavaFX window from CI, so the probe
 renders the shell at **1024×640** and sets the same `hover` / `pressed` /
