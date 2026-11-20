@@ -16,12 +16,12 @@
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.xdev.gest_comm_clientfx.controllers.NouveauDevisCtrl"
       spacing="8.0"
-      style="-fx-padding: 16;">
+      styleClass="form-panel" maxWidth="900.0">
     <padding>
         <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
     </padding>
 
-    <Label text="Nouveau devis" style="-fx-font-weight: bold;" />
+    <Label text="Nouveau devis" styleClass="form-title" />
 
     <GridPane hgap="10.0" vgap="6.0">
         <columnConstraints>
@@ -42,7 +42,7 @@
         <TextField fx:id="observationField" GridPane.columnIndex="1" GridPane.rowIndex="4" />
     </GridPane>
 
-    <Label text="Lignes" style="-fx-font-weight: bold;" />
+    <Label text="Lignes" styleClass="form-title" />
 
     <TableView fx:id="linesTable" prefHeight="140.0">
         <columns>
@@ -85,7 +85,7 @@
     </HBox>
 
     <HBox spacing="10.0">
-        <Button mnemonicParsing="false" onAction="#save" text="Enregistrer" />
+        <Button mnemonicParsing="false" onAction="#save" styleClass="primary" text="Enregistrer" />
         <Button mnemonicParsing="false" onAction="#cancel" text="Annuler" />
     </HBox>
 

@@ -13,12 +13,12 @@
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.xdev.gest_comm_clientfx.controllers.NouveauClientCtrl"
       spacing="10.0"
-      style="-fx-padding: 20;">
+      styleClass="form-panel" maxWidth="900.0">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
 
-    <Label text="Nouveau client" style="-fx-font-weight: bold;" />
+    <Label text="Nouveau client" styleClass="form-title" />
 
     <GridPane hgap="10.0" vgap="8.0">
         <columnConstraints>
@@ -42,7 +42,7 @@
     </GridPane>
 
     <HBox spacing="10.0">
-        <Button mnemonicParsing="false" onAction="#save" text="Enregistrer" />
+        <Button mnemonicParsing="false" onAction="#save" styleClass="primary" text="Enregistrer" />
         <Button mnemonicParsing="false" onAction="#cancel" text="Annuler" />
     </HBox>
 

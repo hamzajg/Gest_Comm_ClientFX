@@ -145,12 +145,13 @@ public class HomeScreenCtrl {
 
     private Node welcomePanel() {
         Label title = new Label("Bienvenue");
-        title.setStyle("-fx-font-size: 22px; -fx-font-weight: bold;");
+        title.getStyleClass().add("welcome-title");
         Label subtitle = new Label(
             "Ouvrez un panneau depuis les menus ou les raccourcis ci-dessous. "
             + "Chaque panneau s'ouvre dans un onglet : les onglets se ferment "
             + "avec × et s'épinglent avec ★. Les actions du panneau ouvert "
             + "apparaissent à droite.");
+        subtitle.getStyleClass().add("welcome-subtitle");
         subtitle.setWrapText(true);
         subtitle.setMaxWidth(720);
 
@@ -161,12 +162,14 @@ public class HomeScreenCtrl {
             shortcut("Factures", this::showFactures),
             shortcut("Bons de livraison", this::showBonLivs));
         VBox box = new VBox(12, title, subtitle, shortcuts);
+        box.getStyleClass().add("welcome-panel");
         box.setPadding(new Insets(24));
         return box;
     }
 
     private Button shortcut(String label, Runnable action) {
         Button b = new Button(label);
+        b.getStyleClass().add("chip");
         b.setOnAction(e -> action.run());
         return b;
     }

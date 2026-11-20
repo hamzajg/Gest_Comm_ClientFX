@@ -12,12 +12,12 @@
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.xdev.gest_comm_clientfx.controllers.AssistantCtrl"
       spacing="8.0"
-      style="-fx-padding: 16;">
+      styleClass="form-panel">
     <padding>
         <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
     </padding>
 
-    <Label text="Assistant" style="-fx-font-weight: bold;" />
+    <Label text="Assistant" styleClass="form-title" />
     <Label text="Posez une question sur les clients, articles, devis ou factures — ex. « combien de clients », « trouver devis D001 »." wrapText="true" />
 
     <HBox spacing="8.0">
