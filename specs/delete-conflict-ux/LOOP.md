@@ -2,11 +2,11 @@
 
 Status: running
 Iterations: 1
-Updated: 2026-11-20T09:07:23Z
+Updated: 2026-11-20T09:22:01Z
 
 | Wave | Status | Branch | PR | Evidence | Updated |
 |------|--------|--------|----|----------|---------|
-| 1 | in-progress | feat/delete-conflict-ux-w1 | — | — | 2026-11-20T09:07:23Z |
+| 1 | done | feat/delete-conflict-ux-w1 | — | ApiException status+detail, ApiMessages helper, FXML header fix, constrained columns; mvn package BUILD SUCCESS 12/12 te | 2026-11-20T09:22:01Z |
 
 ## Gates
 
@@ -18,3 +18,4 @@ Updated: 2026-11-20T09:07:23Z
 
 - 2026-11-20T09:06:20Z gate G1 met: file:specs/delete-conflict-ux/DECISION-REVIEW.md — verdict ACCEPT (7 lens scored)
 - 2026-11-20T09:07:23Z start wave 1 on feat/delete-conflict-ux-w1
+- 2026-11-20T09:22:01Z complete wave 1 (—): ApiException status+detail, ApiMessages helper, FXML header fix, constrained columns; mvn package BUILD SUCCESS 12/12 te

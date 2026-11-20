@@ -21,7 +21,7 @@ Verified 2026-11-17 against CI (`.github/workflows/ci.yml`) and README.
 |---|---|
 | Build | `mvn -B package` (CI: JDK 17) |
 | Run app | `mvn javafx:run` |
-| Tests | `mvn -B package` runs JUnit 5 tests (12) |
+| Tests | `mvn -B package` runs JUnit 5 tests (14) |
 
 Requires: JDK 17 only — JavaFX and Jackson come from Maven. The app also
 needs a running PyGestComm backend (`python manage.py runserver` in that
@@ -143,7 +143,7 @@ decimals arrive as strings (`"100.00"`) — Jackson handles that into
 
 - Branch from `master`; name branches `feat/*`, `fix/*`, `chore/*`, `docs/*`.
 - Docs-only changes still go through a PR; never commit to `master` directly.
-- Verify before claiming: `mvn -B package` must pass; there are 12 tests —
+- Verify before claiming: `mvn -B package` must pass; there are 14 tests —
   say so.
 - Keep changes minimal and consistent with surrounding code. No drive-by
   refactors.
