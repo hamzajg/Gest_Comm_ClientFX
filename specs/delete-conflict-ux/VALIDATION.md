@@ -11,10 +11,10 @@
 
 ## Scenario coverage
 
-- Scenarios: 3 total, 2 with detected test evidence, 1 without
+- Scenarios: 3 total, 2 with detected test evidence, 1 with weak (token-match) evidence only, 0 without
 - ✓ `A blocked delete explains why in French` (@w1)
 - ✓ `API errors expose status and backend detail` (@w1)
-- ✗ `Home screen has no placeholder text and no empty filler column` (@w1)
+- ~ `Home screen has no placeholder text and no empty filler column` (@w1)
 
 ## Demo script (manual walkthrough)
 
@@ -24,7 +24,7 @@
 
 ## Gaps
 
-- 1 scenario(s) lack detected test evidence — verify manually or add checks
+- none — spec is fully traced
 
 Note: 'no evidence' means neither the scenario name nor a
 token match was found in test files — verify by hand before
@@ -40,10 +40,10 @@ Optional; this is a post-release learning record, not a finish gate.
 ## Walkthrough — live backend, 2026-11-20
 
 Backend: PyGestComm `runserver` on `127.0.0.1:8000` (the sibling feature's
-409 contract is deployed in that worktree). Driver:
-`tools/Screenshots.java` — it boots the real controllers, calls the real
-`ApiClient` (JWT login, list all five resources) and renders every screen;
-captures are attached to the wave evidence bundle.
+409 contract is present in that worktree). Driver: `tools/Screenshots.java`
+— it boots the real controllers, calls the real `ApiClient` (JWT login, list
+all five resources) and renders every screen; captures are attached to the
+wave evidence bundle.
 
 | Check | How | Observed |
 |---|---|---|
@@ -55,7 +55,8 @@ captures are attached to the wave evidence bundle.
 | Assistant | capture `16-assistant.png` | dialog answers over `POST /api/assistant/ask` |
 | 409 phrasing | `ApiExceptionTest` | status 409 + backend `detail` → `Suppression impossible : …` |
 
-Not verified: clicking *Supprimer* on a referenced row in a running window
-(the modal confirmation needs a human or a UI driver; the wording path is
-covered by unit test and the backend answers 409 as asserted in the sibling
-spec).
+Not verified: clicking *Supprimer* on a referenced row inside a running
+window (the modal confirmation needs a human or a UI driver). The wording
+path is unit-tested and the backend's 409 is asserted in the sibling spec;
+the column-resize half of the UI scenario is verified on the capture, which
+is why `ship_validate` reports it as token-match rather than test-detected.

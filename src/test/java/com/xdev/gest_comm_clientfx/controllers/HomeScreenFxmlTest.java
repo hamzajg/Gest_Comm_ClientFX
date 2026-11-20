@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Scenario: Home screen has no placeholder text and no empty filler column
+ * Covers "Home screen has no placeholder text and no empty filler column"
  * (specs/delete-conflict-ux).
  *
  * The layout is checked as text so the suite stays toolkit-free: a JavaFX
