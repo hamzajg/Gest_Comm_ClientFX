@@ -9,9 +9,9 @@
 | 3 | Tables follow the theme (header, rows, selection, empty area) | Tables follow the theme | 1 | ThemeTest.java + capture 02/04 |
 | 4 | Drawer styled expanded and collapsed | Drawer is styled expanded and collapsed | 1 | capture 01/18 |
 | 5 | No inline colour in Java or FXML views | Colours live only in the stylesheet | 1 | `grep -rE -- "-fx-(background|text-fill|border|font)-" src/main/java \| grep -v industrial.css` → 0 hits |
-| 6 | Usable at the 1024×640 minimum | Window respects the minimum size | 2 | `StartApp.setMinWidth/Height`; not exercised by hand |
+| 6 | Usable at the 1024×640 minimum | Window respects the minimum size | 2 | probe `31-min-shell`, `41-rail-min`, `42-form-tab-min` at 1024×640 |
 | 7 | Suite green | — | 1–2 | `mvn -B package` → 28 tests, 0 failures |
-| 8 | Forms/settings/assistant inherit the shell | Forms inherit the theme | 2 | capture 08 and 17 |
+| 8 | Forms/settings/assistant inherit the shell | Forms inherit the theme | 2 | captures 08, 17, 37–39, 42 |
 
 ## Scenario coverage
 
@@ -68,5 +68,26 @@ Before/after: the Modena captures are kept beside the new ones in the
 workspace scratch folder as `01-bienvenue-modena.png` and
 `02-clients-modena.png`.
 
-Not verified: hover/pressed/focus visual states on a live pointer, window
-resize to the 1024×640 floor, and any colour-blind contrast audit.
+### State probe — `tools/ThemeStates`, 2026-11-20
+
+A real pointer cannot be scripted into a JavaFX window from CI, so the probe
+renders the shell at **1024×640** and sets the same `hover` / `pressed` /
+`focused` pseudo-classes JavaFX applies on real input, printing the computed
+fills so the states are checked as data as well as pixels.
+
+| Check | Probe | Observed | Verdict |
+|---|---|---|---|
+| Tab hover | `32-tab-hover.png` + computed fill | rest `#1f252b` → hover `#252c33` | **bug found and fixed** — a short `.tab:hover` lost to the full base selector and never painted; the hover rule now repeats the full selector |
+| Drawer hover | `33-drawer-hover.png` | button lightens to `-surface-700`, amber border | ok |
+| Drawer pressed | `34-drawer-pressed.png` + fill | `#12161a` dark inset, amber-dim border, amber label | **bug found and fixed** — generic `.button:pressed` was invisible against the drawer surface |
+| Drawer focus ring | `40-drawer-focus.png` | amber 1px ring | **bug found and fixed** — no focus rule existed for drawer buttons |
+| Search focus | `35-search-focus.png` | amber border + soft glow | ok |
+| Row selection | `36-row-selected.png` | amber wash, amber left bar, white text | ok |
+| Rail at minimum size | `41-rail-min.png` | 30px rail, `‹` visible, table spans the freed width | ok |
+| Form in a tab at minimum size | `42-form-tab-min.png` | 7 rows + actions visible, no clipping | ok |
+| Tall forms at 1000×520 | `37`–`39-form-min-*.png` | client/article/devis forms fit; no clipped buttons | ok |
+
+Not verified: hover/pressed with a literal OS pointer (pseudo-classes are set
+programmatically), and any colour-blind contrast audit. A separate defect was
+noticed but left out of scope: JavaFX's default table placeholder renders in
+English ("No content in table") in this French UI.

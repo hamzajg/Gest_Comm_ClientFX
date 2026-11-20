@@ -21,7 +21,7 @@ Verified 2026-11-17 against CI (`.github/workflows/ci.yml`) and README.
 |---|---|
 | Build | `mvn -B package` (CI: JDK 17) |
 | Run app | `mvn javafx:run` |
-| Tests | `mvn -B package` runs JUnit 5 tests (28) |
+| Tests | `mvn -B package` runs JUnit 5 tests (29) |
 
 Requires: JDK 17 only — JavaFX and Jackson come from Maven. The app also
 needs a running PyGestComm backend (`python manage.py runserver` in that
@@ -162,8 +162,12 @@ decimals arrive as strings (`"100.00"`) — Jackson handles that into
   agent trailer, no robot-emoji signature line. A commit message ends at its
   own last line, with no trailer block.
 - Docs-only changes still go through a PR; never commit to `master` directly.
-- Verify before claiming: `mvn -B package` must pass; there are 28 tests —
+- Verify before claiming: `mvn -B package` must pass; there are 29 tests —
   say so.
+- CSS state rules must repeat the full selector: a short `.tab:hover` loses
+  to the base `.tab-pane > … > .tab` rule and silently never paints. Probe
+  states with `tools/ThemeStates.java` (sets hover/pressed/focused
+  pseudo-classes at 1024×640) before claiming a state works.
 - Keep changes minimal and consistent with surrounding code. No drive-by
   refactors.
 - Update AGENTS.md / docs/ARCHITECTURE.md when controllers get wired, the

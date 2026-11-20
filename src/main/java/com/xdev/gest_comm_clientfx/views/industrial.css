@@ -175,8 +175,15 @@
     -fx-padding: 5 10 5 10;
 }
 
+/* Full selector on purpose: the base .tab rule above out-specifies a short
+   `.tab:hover`, so the hover state never painted. */
 .tab-pane > .tab-header-area > .headers-region > .tab:hover {
     -fx-background-color: -surface-750;
+    -fx-border-color: -steel-500 -steel-500 transparent -steel-500;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab:hover .tab-label {
+    -fx-text-fill: -text-100;
 }
 
 .tab-pane > .tab-header-area > .headers-region > .tab:selected {
@@ -301,6 +308,10 @@
     -fx-text-fill: #ffffff;
 }
 
+.table-view:focused {
+    -fx-border-color: -amber;
+}
+
 .table-view .placeholder .label {
     -fx-text-fill: -steel-500;
     -fx-font-size: 12px;
@@ -344,6 +355,11 @@
     -fx-background-color: transparent;
 }
 
+.drawer-toggle:focused {
+    -fx-border-color: -amber;
+    -fx-border-radius: 3;
+}
+
 .drawer-action {
     -fx-background-color: -surface-800;
     -fx-border-color: -steel-600;
@@ -360,6 +376,19 @@
     -fx-background-color: -surface-700;
     -fx-border-color: -amber;
     -fx-text-fill: -text-100;
+}
+
+/* Explicit pressed/focus states: the generic `.button:pressed` was too weak
+   to read against the drawer surface. */
+.button.drawer-action:pressed {
+    -fx-background-color: -ink-900;
+    -fx-border-color: -amber-dim;
+    -fx-text-fill: -amber;
+}
+
+.button.drawer-action:focused {
+    -fx-border-color: -amber;
+    -fx-background-insets: 0;
 }
 
 /* --- buttons ----------------------------------------------------------- */

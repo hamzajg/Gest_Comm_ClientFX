@@ -45,12 +45,26 @@ class ThemeTest {
     }
 
     @Test
+    void stateRulesOutSpecifyTheBaseRules() throws IOException {
+        String css = sheet();
+        // Regression: a short `.tab:hover` loses to the full base selector, so
+        // the hover state silently never painted (found by tools/ThemeStates).
+        assertTrue(css.contains(".headers-region > .tab:hover"),
+            "tab hover must repeat the full selector or it never applies");
+        assertTrue(css.contains(".button.drawer-action:pressed"),
+            "drawer pressed needs its own rule to read against the drawer surface");
+        assertTrue(css.contains(".button.drawer-action:focused"),
+            "drawer buttons need a visible focus ring");
+    }
+
+    @Test
     void componentRulesCoverTheShellTablesAndDrawer() throws IOException {
         String css = sheet();
         for (String selector : new String[] {
             ".menu-bar", ".search-field", ".tab-pane", ".table-view",
             ".table-row-cell:selected", ".action-drawer", ".drawer-action",
-            ".drawer-toggle", ".button.chip", ".welcome-title"
+            ".drawer-toggle", ".button.chip", ".welcome-title",
+            ".table-view:focused", ".form-panel", ".form-title"
         }) {
             assertTrue(css.contains(selector), "missing rule for " + selector);
         }
