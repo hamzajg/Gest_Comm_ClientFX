@@ -2,14 +2,14 @@
   "feature": "industrial-look-feel",
   "status": "running",
   "iterations": 4,
-  "updated": "2026-11-20T14:08:21Z",
+  "updated": "2026-11-20T14:12:06Z",
   "waves": {
     "1": {
-      "status": "in-progress",
+      "status": "done",
       "branch": "feat/industrial-look-feel-w1",
-      "pr": "\u2014",
-      "evidence": "\u2014",
-      "updated": "2026-11-20T14:08:21Z"
+      "pr": "#9",
+      "evidence": "industrial.css + Theme + shell/tables/drawer/forms; mvn -B package BUILD SUCCESS 28/28; evidence bundle verified (5 capt",
+      "updated": "2026-11-20T14:12:06Z"
     }
   },
   "gates": {
@@ -21,6 +21,7 @@
   },
   "events": [
     "2026-11-20T14:05:05Z gate G1 met: file:specs/industrial-look-feel/DECISION-REVIEW.md \u2014 verdict ACCEPT (7 lenses scored)",
-    "2026-11-20T14:08:21Z start wave 1 on feat/industrial-look-feel-w1"
+    "2026-11-20T14:08:21Z start wave 1 on feat/industrial-look-feel-w1",
+    "2026-11-20T14:12:06Z complete wave 1 (#9): industrial.css + Theme + shell/tables/drawer/forms; mvn -B package BUILD SUCCESS 28/28; evidence bundle verified (5 capt"
   ]
 }
