@@ -59,8 +59,21 @@ public class ConfigScreenCtrl {
         }).start();
     }
 
+    private Runnable onClosed;
+
+    public void setOnClosed(Runnable onClosed) {
+        this.onClosed = onClosed;
+    }
+
     @FXML
     public void closeWindow() {
+        if (onClosed != null) {
+            onClosed.run();
+            return;
+        }
+        if (statusLabel.getScene() == null) {
+            return;
+        }
         Stage stage = (Stage) statusLabel.getScene().getWindow();
         stage.close();
     }

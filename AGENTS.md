@@ -54,11 +54,11 @@ src/main/java/com/xdev/gest_comm_clientfx/
     ApiMessages         French phrasing for API failures (409 →
                         "Suppression impossible : …", 400 → "Action
                         refusée : …"), shared by every controller
-    HomeScreenCtrl      @FXML: tabs (Bienvenue/Clients/Articles/Devis/
-                        Factures), table columns, menu actions incl.
-                        dialog launchers + convertSelectedDevis; loads
-                        run on a background thread, UI updates via
-                        Platform.runLater
+    HomeScreenCtrl      @FXML: home shell — table columns, menu actions,
+                        drawer wiring + convertSelectedDevis; loads run
+                        on a background thread, UI updates via
+                        Platform.runLater. Every panel opens through
+                        TabWorkspace (a tab, never a Stage)
     ConfigScreenCtrl    @FXML: server URL/user/password fields, save,
                         test-connection
     NouveauClientCtrl   @FXML: client create form → POST /api/client
@@ -70,6 +70,12 @@ src/main/java/com/xdev/gest_comm_clientfx/
                         NouveauDevisCtrl.LigneDraft), optional devis
                         picker that prefills client/date/lines, POST
                         /api/facture with nested lignes
+  ui/
+    WorkspacePolicy     tab keys, titles, which panels are singletons,
+                        which scope the search (no JavaFX — unit tested)
+    TabWorkspace        opens/closes tabs, reuses singleton panels,
+                        pin (★ removes the close button)
+    ActionDrawer        right-hand pane with the active tab's actions
   models/               Article + Client + Devis + LigneDevis + Facture +
                         LigneFacture + BonLiv + LigneBonLiv POJOs
   views/                *.fxml layouts (HomeScreen, ConfigScreen)

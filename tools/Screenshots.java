@@ -161,11 +161,12 @@ public class Screenshots {
     private static void shootHome(List<Client> clients, List<Devis> devis,
                                   List<Facture> factures,
                                   List<BonLiv> bonlivs) throws Exception {
-        final Object[] holder = new Object[2];
+        final Object[] holder = new Object[3];
         fx(() -> {
             Object[] pair = loadScene("HomeScreen.fxml");
             holder[0] = pair[0];
             holder[1] = new Scene((Parent) pair[0], 1280, 800);
+            holder[2] = pair[1];
             HomeScreenCtrl ctrl = (HomeScreenCtrl) pair[1];
             ctrl.refreshClients();
             ctrl.refreshArticles();
@@ -174,31 +175,27 @@ public class Screenshots {
             ctrl.refreshBonLivs();
         });
         Thread.sleep(3500);
-        String[] tabTexts = {"Clients", "Articles", "Devis",
-            "Factures", "Bons de livraison"};
+        // Default state: the workspace opens with Bienvenue only.
+        fx(() -> savePng((Node) holder[0], new File(outDir, "01-bienvenue.png")));
+        // Tabs are opened by the workspace, so drive them through the
+        // controller (the old build had one static tab per panel).
+        String[] methods = {"showClients", "showArticles", "showDevis",
+            "showFactures", "showBonLivs"};
         String[] names = {"02-clients.png", "03-articles.png",
             "04-devis.png", "05-factures.png", "06-bonlivs.png"};
-        for (int i = 0; i < tabTexts.length; i++) {
-            final String tabText = tabTexts[i];
+        for (int i = 0; i < methods.length; i++) {
+            final String method = methods[i];
             final String fileName = names[i];
-            fx(() -> {
-                TabPane tp = (TabPane) ((Node) holder[0]).lookup("#tabs");
-                for (Tab t : tp.getTabs()) {
-                    if (t.getText().equals(tabText)) {
-                        tp.getSelectionModel().select(t);
-                    }
-                }
-            });
-            Thread.sleep(400);
+            fx(() -> ((HomeScreenCtrl) holder[2]).getClass()
+                .getMethod(method).invoke(holder[2]));
+            Thread.sleep(1200);
             fx(() -> savePng((Node) holder[0], new File(outDir, fileName)));
         }
-        // Bienvenue tab first for the walkthrough order.
-        fx(() -> {
-            TabPane tp = (TabPane) ((Node) holder[0]).lookup("#tabs");
-            tp.getSelectionModel().select(0);
-        });
-        Thread.sleep(300);
-        fx(() -> savePng((Node) holder[0], new File(outDir, "01-bienvenue.png")));
+        // A form hosted in a tab, with the drawer alongside it.
+        fx(() -> ((HomeScreenCtrl) holder[2]).getClass()
+            .getMethod("showNewClient").invoke(holder[2]));
+        Thread.sleep(1500);
+        fx(() -> savePng((Node) holder[0], new File(outDir, "17-form-tab.png")));
         System.out.println("  home tabs done (" + clients.size() + "c/"
             + devis.size() + "d/" + factures.size() + "f/"
             + bonlivs.size() + "bl)");
