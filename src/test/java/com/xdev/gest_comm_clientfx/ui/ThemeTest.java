@@ -7,6 +7,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -17,6 +19,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class ThemeTest {
 
+    /** Every token the component rules may read; each skin must define all. */
+    private static final String[] PALETTE = {
+        "-ink-900", "-surface-850", "-surface-800", "-surface-750",
+        "-surface-700", "-steel-600", "-steel-500", "-text-100",
+        "-text-300", "-text-400", "-amber", "-amber-dim", "-amber-glow",
+        "-ok", "-danger", "-shadow", "-row-rule", "-press",
+        "-on-accent", "-primary-hover"
+    };
+
     private static String sheet() throws IOException {
         URL url = Theme.class.getResource(Theme.STYLESHEET);
         assertNotNull(url, "industrial.css must be on the classpath at " + Theme.STYLESHEET);
@@ -25,23 +36,59 @@ class ThemeTest {
         }
     }
 
+    /** The base palette block, up to the light block. */
+    private static String darkBlock(String css) {
+        int start = css.indexOf(".root {");
+        int lightStart = css.indexOf(".root.light {");
+        assertTrue(start >= 0 && lightStart > start,
+            "expected the base .root block before .root.light");
+        return css.substring(start, lightStart);
+    }
+
+    /** The light palette block. */
+    private static String lightBlock(String css) {
+        int start = css.indexOf(".root.light {");
+        assertTrue(start >= 0, "the light skin must override the .root token block");
+        return css.substring(start, css.indexOf('}', start) + 1);
+    }
+
+    private static int count(String haystack, String needle) {
+        int n = 0;
+        for (int i = haystack.indexOf(needle); i >= 0;
+                i = haystack.indexOf(needle, i + 1)) {
+            n++;
+        }
+        return n;
+    }
+
     @Test
     void stylesheetShipsOnTheClasspath() throws IOException {
         assertTrue(sheet().length() > 2_000, "the sheet should carry the full component rules");
     }
 
     @Test
-    void paletteIsDefinedOnceAsLookedUpColours() throws IOException {
+    void paletteIsDeclaredOncePerSkin() throws IOException {
         String css = sheet();
-        for (String token : new String[] {
-            "-ink-900:", "-surface-850:", "-surface-800:", "-surface-750:",
-            "-steel-600:", "-text-100:", "-text-400:", "-amber:"
-        }) {
-            assertTrue(css.contains(token), "missing palette token " + token);
+        String dark = darkBlock(css);
+        String light = lightBlock(css);
+        for (String token : PALETTE) {
+            assertEquals(1, count(dark, token + ":"),
+                token + " must be declared once in the dark block");
+            assertEquals(1, count(light, token + ":"),
+                token + " must be declared once in the light block");
         }
-        // Tokens are declared, not consumed, exactly once on .root.
-        assertTrue(css.indexOf("-amber:") == css.lastIndexOf("-amber:"),
-            "-amber must be declared once and only consumed elsewhere");
+    }
+
+    @Test
+    void noColourIsHardcodedOutsideTheTokenBlocks() throws IOException {
+        String css = sheet();
+        String rules = css.replace(darkBlock(css), "")
+            .replace(lightBlock(css), "")
+            .replaceAll("(?s)/\\*.*?\\*/", "");
+        // A raw colour in a component rule cannot be re-skinned: every colour
+        // has to resolve through a token the light block can override.
+        assertFalse(rules.contains("#"), "hard-coded colour outside a token block");
+        assertFalse(rules.contains("rgba("), "hard-coded colour outside a token block");
     }
 
     @Test

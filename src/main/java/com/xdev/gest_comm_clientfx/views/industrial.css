@@ -28,6 +28,12 @@
     -amber-glow:   rgba(240, 160, 40, 0.18);
     -ok:           #4caf7d;
     -danger:       #e2564a;
+    /* --- effects + states ------------------------------------------------*/
+    -shadow:       rgba(0, 0, 0, 0.55);
+    -row-rule:     rgba(255, 255, 255, 0.035);
+    -press:        #171c21;
+    -on-accent:    #14181c;
+    -primary-hover: #ffb342;
 
     /* Modena overrides so stock controls inherit the theme. */
     -fx-base: -surface-800;
@@ -46,6 +52,59 @@
     -fx-font-size: 13px;
     -fx-background-color: -ink-900;
     -fx-font-smoothing-type: gray;
+}
+
+/*
+ * Light skin (prototype).
+ *
+ * Deliberately the same token names: Theme.install(scene, Skin.LIGHT) adds
+ * the `light` class to the scene root, so this block is the whole second
+ * skin. Surfaces invert (page well -> pale steel, panels -> white) and the
+ * accent darkens so accent text and the primary button stay readable on
+ * white instead of glowing on graphite.
+ */
+.root.light {
+    /* --- surfaces ------------------------------------------------------- */
+    -ink-900:      #e6eaee;
+    -surface-850:  #f1f4f6;
+    -surface-800:  #ffffff;
+    -surface-750:  #f7f9fa;
+    -surface-700:  #e8edf1;
+    /* --- steel ---------------------------------------------------------- */
+    -steel-600:    #c2ccd4;
+    -steel-500:    #8d9aa5;
+    /* --- type ----------------------------------------------------------- */
+    -text-100:     #101519;
+    -text-300:     #2b343c;
+    -text-400:     #5b6673;
+    /* --- accent + status ------------------------------------------------ */
+    -amber:        #a2620a;
+    -amber-dim:    #7d4b06;
+    /* Slightly stronger than the dark wash: on white a 14% tint read as
+       near-white, so the selected row relied on its accent bar alone. */
+    -amber-glow:   rgba(162, 98, 10, 0.22);
+    -ok:           #1f7a45;
+    -danger:       #b3261e;
+    /* --- effects + states ----------------------------------------------- */
+    -shadow:       rgba(16, 21, 25, 0.16);
+    -row-rule:     rgba(16, 21, 25, 0.07);
+    -press:        #dae1e7;
+    -on-accent:    #ffffff;
+    -primary-hover: #b5710c;
+
+    /* Modena overrides so stock controls inherit the light skin. */
+    -fx-base: -surface-800;
+    -fx-background: -surface-850;
+    -fx-control-inner-background: -surface-750;
+    -fx-text-background-color: -text-100;
+    -fx-text-fill: -text-300;
+    -fx-accent: -amber;
+    -fx-default-button: -amber;
+    -fx-focus-color: -amber;
+    -fx-faint-focus-color: -amber-glow;
+    -fx-selection-bar: -amber;
+    -fx-selection-bar-non-focused: -steel-600;
+    -fx-background-color: -ink-900;
 }
 
 .label {
@@ -93,7 +152,7 @@
     -fx-background-radius: 4;
     -fx-border-radius: 4;
     -fx-padding: 4;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.55), 18, 0.15, 0, 6);
+    -fx-effect: dropshadow(gaussian, -shadow, 18, 0.15, 0, 6);
 }
 
 .menu-item {
@@ -266,7 +325,7 @@
 
 .table-view .table-row-cell {
     -fx-background-color: -surface-800;
-    -fx-border-color: transparent transparent rgba(255, 255, 255, 0.035) transparent;
+    -fx-border-color: transparent transparent -row-rule transparent;
     -fx-border-width: 0 0 1 0;
     -fx-table-cell-border-color: transparent;
     -fx-cell-size: 28;
@@ -305,7 +364,7 @@
 }
 
 .table-view .table-row-cell:selected .table-cell {
-    -fx-text-fill: #ffffff;
+    -fx-text-fill: -text-100;
 }
 
 .table-view:focused {
@@ -381,7 +440,7 @@
 /* Explicit pressed/focus states: the generic `.button:pressed` was too weak
    to read against the drawer surface. */
 .button.drawer-action:pressed {
-    -fx-background-color: -ink-900;
+    -fx-background-color: -press;
     -fx-border-color: -amber-dim;
     -fx-text-fill: -amber;
 }
@@ -411,7 +470,7 @@
 }
 
 .button:pressed {
-    -fx-background-color: -surface-850;
+    -fx-background-color: -press;
 }
 
 .button:focused {
@@ -425,12 +484,12 @@
 .button.primary {
     -fx-background-color: -amber;
     -fx-border-color: -amber-dim;
-    -fx-text-fill: #14181c;
+    -fx-text-fill: -on-accent;
     -fx-font-weight: bold;
 }
 
 .button.primary:hover {
-    -fx-background-color: #ffb342;
+    -fx-background-color: -primary-hover;
     -fx-border-color: -amber;
 }
 
