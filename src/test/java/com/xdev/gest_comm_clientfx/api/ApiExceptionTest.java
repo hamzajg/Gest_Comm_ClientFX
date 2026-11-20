@@ -52,6 +52,16 @@ class ApiExceptionTest {
     }
 
     @Test
+    void anUnexpectedFailureNeverRendersTheLiteralNull() {
+        assertEquals("Erreur inattendue : IllegalStateException",
+            ApiMessages.unexpected(new IllegalStateException()));
+        assertEquals("Erreur inattendue : boom",
+            ApiMessages.unexpected(new RuntimeException("boom")));
+        assertEquals("Erreur inattendue : inconnue",
+            ApiMessages.unexpected(null));
+    }
+
+    @Test
     void transportFailuresCarryNoStatus() {
         ApiException e = new ApiException("Cannot reach http://x — down");
 

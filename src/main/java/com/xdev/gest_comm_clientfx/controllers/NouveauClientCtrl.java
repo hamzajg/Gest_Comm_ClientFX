@@ -30,11 +30,11 @@ public class NouveauClientCtrl implements ApiDialog {
     /** Prefill the form for editing an existing client (PUT on save). */
     public void setEditing(Client client) {
         this.editing = client;
-        codeClientField.setText(client.getCodeClient());
-        nomPrenomField.setText(client.getNomPrenomClient());
-        matFiscalField.setText(client.getMatFiscalClient());
-        adresse1Field.setText(client.getAddresseClient1());
-        adresse2Field.setText(client.getAddresseClient2());
+        codeClientField.setText(Display.text(client.getCodeClient()));
+        nomPrenomField.setText(Display.text(client.getNomPrenomClient()));
+        matFiscalField.setText(Display.text(client.getMatFiscalClient()));
+        adresse1Field.setText(Display.text(client.getAddresseClient1()));
+        adresse2Field.setText(Display.text(client.getAddresseClient2()));
         tel1Field.setText(phoneText(client.getNumTelClient1()));
         tel2Field.setText(phoneText(client.getNumTelClient2()));
     }

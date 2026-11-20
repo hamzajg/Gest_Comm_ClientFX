@@ -62,7 +62,7 @@ public class NouveauBonLivCtrl implements ApiDialog {
     public void setEditing(BonLiv bonliv) {
         this.editing = bonliv;
         this.pendingClientId = bonliv.getClient();
-        codeBonLivField.setText(bonliv.getCodeBonLiv());
+        codeBonLivField.setText(Display.text(bonliv.getCodeBonLiv()));
         dateBonLivField.setText(textOr(bonliv.getDateBonLiv(), ""));
         observationField.setText(
             textOr(bonliv.getObservationBonLiv(), ""));
@@ -152,14 +152,14 @@ public class NouveauBonLivCtrl implements ApiDialog {
         if (article == null) {
             return;
         }
-        designationField.setText(article.getDesc_article());
+        designationField.setText(Display.text(article.getDesc_article()));
         prixField.setText(textOr(article.getPrix_vente_unitaire(), "0"));
         remiseField.setText(textOr(article.getRemise_vente(), "0"));
         tvaField.setText(textOr(article.getTva_vente(), "0"));
     }
 
     private static String textOr(Object value, String fallback) {
-        return value != null ? String.valueOf(value) : fallback;
+        return Display.text(value, fallback);
     }
 
     @FXML

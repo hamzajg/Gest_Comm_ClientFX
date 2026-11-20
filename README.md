@@ -118,7 +118,7 @@ by the `maven-resources-plugin` resource entry in `pom.xml`, which is why
 | Row actions | edit (PUT), delete (DELETE + confirm), statut PATCH on devis/factures |
 | Assistant | Help → Assistant dialog over `POST /api/assistant/ask` |
 | HTTP client | `api/ApiClient` — list/post/put/delete/patch + `convertDevis` + `askAssistant` (all routes) |
-| Tests | 14 JUnit 5 tests (model accessors, JSON mapping, API error parsing + French phrasing, home-screen layout) |
+| Tests | 21 JUnit 5 tests (model accessors, JSON mapping, API error parsing + French phrasing, home-screen layout, null-safe screen formatting) |
 
 ## Continuous integration
 

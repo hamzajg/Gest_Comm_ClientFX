@@ -65,7 +65,7 @@ public class NouvelFactureCtrl implements ApiDialog {
         this.editing = facture;
         this.pendingClientId = facture.getClient();
         this.pendingDevisId = facture.getDevis();
-        codeFactureField.setText(facture.getCodeFacture());
+        codeFactureField.setText(Display.text(facture.getCodeFacture()));
         dateFactureField.setText(textOr(facture.getDateFacture(), ""));
         observationField.setText(
             textOr(facture.getObservationFacture(), ""));
@@ -180,12 +180,13 @@ public class NouvelFactureCtrl implements ApiDialog {
                 break;
             }
         }
-        if (devis.getDateDevis() != null && !devis.getDateDevis().isBlank()) {
-            dateFactureField.setText(devis.getDateDevis());
+        String devisDate = Display.text(devis.getDateDevis());
+        if (!devisDate.isBlank()) {
+            dateFactureField.setText(devisDate);
         }
-        if (devis.getObservationDevis() != null
-                && !devis.getObservationDevis().isBlank()) {
-            observationField.setText(devis.getObservationDevis());
+        String devisObservation = Display.text(devis.getObservationDevis());
+        if (!devisObservation.isBlank()) {
+            observationField.setText(devisObservation);
         }
         lines.clear();
         if (devis.getLignes() != null) {
@@ -205,14 +206,14 @@ public class NouvelFactureCtrl implements ApiDialog {
         if (article == null) {
             return;
         }
-        designationField.setText(article.getDesc_article());
+        designationField.setText(Display.text(article.getDesc_article()));
         prixField.setText(textOr(article.getPrix_vente_unitaire(), "0"));
         remiseField.setText(textOr(article.getRemise_vente(), "0"));
         tvaField.setText(textOr(article.getTva_vente(), "0"));
     }
 
     private static String textOr(Object value, String fallback) {
-        return value != null ? String.valueOf(value) : fallback;
+        return Display.text(value, fallback);
     }
 
     @FXML

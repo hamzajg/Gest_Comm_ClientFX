@@ -18,6 +18,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.Tab;
@@ -129,6 +130,16 @@ public class HomeScreenCtrl {
             String title, String property, double width) {
         TableColumn<T, Object> col = new TableColumn<>(title);
         col.setCellValueFactory(new PropertyValueFactory<>(property));
+        // A missing field is shown as "—": an empty cell reads as a
+        // rendering bug (the legacy "null" report), a dash reads as "this
+        // record has no value here".
+        col.setCellFactory(c -> new TableCell<T, Object>() {
+            @Override
+            protected void updateItem(Object item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty ? null : Display.cell(item));
+            }
+        });
         col.setPrefWidth(width);
         return col;
     }
@@ -179,7 +190,7 @@ public class HomeScreenCtrl {
                     Map.of());
                 Platform.runLater(() -> {
                     devisStatus.setText("Devis converti → facture "
-                        + f.getCodeFacture());
+                        + Display.cell(f.getCodeFacture()));
                     refreshDevis();
                     refreshFactures();
                 });
@@ -267,7 +278,8 @@ public class HomeScreenCtrl {
             bonlivStatus.setText("Sélectionnez un bon de livraison.");
             return;
         }
-        if (!confirmDelete("le bon de livraison " + b.getCodeBonLiv())) {
+        if (!confirmDelete("le bon de livraison "
+                + Display.cell(b.getCodeBonLiv()))) {
             return;
         }
         mutate(bonlivStatus, "Bon de livraison supprimé.", "Suppression",
@@ -305,8 +317,8 @@ public class HomeScreenCtrl {
                 Platform.runLater(() ->
                     status.setText(ApiMessages.loadFailed(e)));
             } catch (Exception e) {
-                Platform.runLater(() -> status.setText(
-                    "Erreur : " + e.getClass().getSimpleName() + " " + e.getMessage()));
+                Platform.runLater(() ->
+                    status.setText(ApiMessages.unexpected(e)));
             }
         }).start();
     }
@@ -372,7 +384,7 @@ public class HomeScreenCtrl {
             clientStatus.setText("Sélectionnez un client.");
             return;
         }
-        if (!confirmDelete("le client " + c.getCodeClient())) {
+        if (!confirmDelete("le client " + Display.cell(c.getCodeClient()))) {
             return;
         }
         mutate(clientStatus, "Client supprimé.", "Suppression",
@@ -399,7 +411,8 @@ public class HomeScreenCtrl {
             articleStatus.setText("Sélectionnez un article.");
             return;
         }
-        if (!confirmDelete("l'article " + a.getRef_article())) {
+        if (!confirmDelete("l'article "
+                + Display.cell(a.getRef_article()))) {
             return;
         }
         mutate(articleStatus, "Article supprimé.", "Suppression",
@@ -441,7 +454,7 @@ public class HomeScreenCtrl {
             devisStatus.setText("Sélectionnez un devis.");
             return;
         }
-        if (!confirmDelete("le devis " + d.getCodeDevis())) {
+        if (!confirmDelete("le devis " + Display.cell(d.getCodeDevis()))) {
             return;
         }
         mutate(devisStatus, "Devis supprimé.", "Suppression",
@@ -485,7 +498,7 @@ public class HomeScreenCtrl {
             factureStatus.setText("Sélectionnez une facture.");
             return;
         }
-        if (!confirmDelete("la facture " + f.getCodeFacture())) {
+        if (!confirmDelete("la facture " + Display.cell(f.getCodeFacture()))) {
             return;
         }
         mutate(factureStatus, "Facture supprimée.", "Suppression",

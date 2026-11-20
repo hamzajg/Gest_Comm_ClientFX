@@ -52,7 +52,9 @@ public class ConfigScreenCtrl {
                         + " client(s)."));
             } catch (ApiException e) {
                 javafx.application.Platform.runLater(() ->
-                    statusLabel.setText("Échec : " + e.getMessage()));
+                    statusLabel.setText("Échec : "
+                        + Display.text(e.getMessage(),
+                            "connexion impossible")));
             }
         }).start();
     }

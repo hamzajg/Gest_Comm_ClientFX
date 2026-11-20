@@ -45,7 +45,7 @@ public class NouvelArticleCtrl implements ApiDialog {
     }
 
     private static String textOr(Object value) {
-        return value != null ? String.valueOf(value) : "";
+        return Display.text(value);
     }
 
     public void setApi(ApiClient api) {

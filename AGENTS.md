@@ -21,7 +21,7 @@ Verified 2026-11-17 against CI (`.github/workflows/ci.yml`) and README.
 |---|---|
 | Build | `mvn -B package` (CI: JDK 17) |
 | Run app | `mvn javafx:run` |
-| Tests | `mvn -B package` runs JUnit 5 tests (14) |
+| Tests | `mvn -B package` runs JUnit 5 tests (21) |
 
 Requires: JDK 17 only — JavaFX and Jackson come from Maven. The app also
 needs a running PyGestComm backend (`python manage.py runserver` in that
@@ -48,6 +48,9 @@ src/main/java/com/xdev/gest_comm_clientfx/
                         status code + backend `detail` parsed from DRF
                         bodies (`fromResponse`)
   controllers/
+    Display             what a screen shows for an absent value:
+                        fields → empty (never the literal "null"),
+                        cells/labels → "—" (legacy null-on-screen bug)
     ApiMessages         French phrasing for API failures (409 →
                         "Suppression impossible : …", 400 → "Action
                         refusée : …"), shared by every controller
@@ -143,7 +146,7 @@ decimals arrive as strings (`"100.00"`) — Jackson handles that into
 
 - Branch from `master`; name branches `feat/*`, `fix/*`, `chore/*`, `docs/*`.
 - Docs-only changes still go through a PR; never commit to `master` directly.
-- Verify before claiming: `mvn -B package` must pass; there are 14 tests —
+- Verify before claiming: `mvn -B package` must pass; there are 21 tests —
   say so.
 - Keep changes minimal and consistent with surrounding code. No drive-by
   refactors.
