@@ -72,9 +72,6 @@
                 </menus>
             </MenuBar>
               <BorderPane>
-                  <left>
-                      <Label text="Text Here" />
-                  </left>
                   <right>
                       <TextField fx:id="searchField" text="Recherche" />
                   </right>

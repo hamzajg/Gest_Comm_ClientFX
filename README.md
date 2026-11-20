@@ -13,8 +13,10 @@ opens a quote form with a client picker, article-driven line items and
 live totals that POSTs nested `lignes` to `/api/devis`. The Facture menu
 adds a matching invoice form (optionally prefilled from a devis) and a
 *Convertir en facture* action on the Devis tab that calls
-`POST /api/devis/<id>/convertir`. Bon Liv and edit/delete are still
-stubs.
+`POST /api/devis/<id>/convertir`. Bons de livraison, edit (PUT) and
+delete are wired too; a refused action is explained in French with the
+backend's own reason (e.g. *Suppression impossible : this client cannot
+be deleted…*), see `controllers/ApiMessages`.
 
 ## Run it
 
@@ -116,7 +118,7 @@ by the `maven-resources-plugin` resource entry in `pom.xml`, which is why
 | Row actions | edit (PUT), delete (DELETE + confirm), statut PATCH on devis/factures |
 | Assistant | Help → Assistant dialog over `POST /api/assistant/ask` |
 | HTTP client | `api/ApiClient` — list/post/put/delete/patch + `convertDevis` + `askAssistant` (all routes) |
-| Tests | 8 JUnit 5 tests (model accessors + JSON mapping) |
+| Tests | 12 JUnit 5 tests (model accessors, JSON mapping, API error parsing + French phrasing) |
 
 ## Continuous integration
 

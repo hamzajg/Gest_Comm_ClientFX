@@ -173,9 +173,10 @@ public class ApiClient {
             response = sendOnce(method, path, payload, false);
         }
         if (response.statusCode() >= 400) {
-            throw new ApiException("HTTP " + response.statusCode()
-                + " from " + url(path) + " — "
-                + abbreviate(response.body()));
+            // Status + backend detail travel together so the UI can say
+            // *why* an action was refused (see ApiException/ApiMessages).
+            throw ApiException.fromResponse(
+                url(path), response.statusCode(), response.body());
         }
         return response.body();
     }
@@ -245,10 +246,8 @@ public class ApiClient {
                    "password", config.getPassword()),
             false);
         if (response.statusCode() >= 400) {
-            throw new ApiException("HTTP " + response.statusCode()
-                + " from " + url("/api/token")
-                + " — check username/password — "
-                + abbreviate(response.body()));
+            throw ApiException.fromResponse(
+                url("/api/token"), response.statusCode(), response.body());
         }
         storeTokens(response.body());
     }
@@ -314,8 +313,4 @@ public class ApiClient {
         }
     }
 
-    private static String abbreviate(String body) {
-        return body != null && body.length() > 200
-            ? body.substring(0, 200) + "…" : body;
-    }
 }
