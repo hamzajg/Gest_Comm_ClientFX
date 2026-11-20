@@ -191,6 +191,14 @@ public class Screenshots {
             Thread.sleep(1200);
             fx(() -> savePng((Node) holder[0], new File(outDir, fileName)));
         }
+        // The drawer collapsed to its rail (it expands back, never closes).
+        fx(() -> ((HomeScreenCtrl) holder[2]).getClass()
+            .getMethod("toggleDrawer").invoke(holder[2]));
+        Thread.sleep(400);
+        fx(() -> savePng((Node) holder[0], new File(outDir, "18-drawer-collapsed.png")));
+        fx(() -> ((HomeScreenCtrl) holder[2]).getClass()
+            .getMethod("toggleDrawer").invoke(holder[2]));
+        Thread.sleep(300);
         // A form hosted in a tab, with the drawer alongside it.
         fx(() -> ((HomeScreenCtrl) holder[2]).getClass()
             .getMethod("showNewClient").invoke(holder[2]));

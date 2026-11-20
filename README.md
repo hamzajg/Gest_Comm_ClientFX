@@ -119,7 +119,7 @@ by the `maven-resources-plugin` resource entry in `pom.xml`, which is why
 | Assistant | Help → Assistant dialog over `POST /api/assistant/ask` |
 | HTTP client | `api/ApiClient` — list/post/put/delete/patch + `convertDevis` + `askAssistant` (all routes) |
 | Tests | 25 JUnit 5 tests (model accessors, JSON mapping, API error parsing + French phrasing, home-screen layout, null-safe screen formatting, tab workspace policy) |
-| Navigation | Panels open as tabs (close ×, pin ★); only Bienvenue opens at startup; the right-hand drawer carries the active tab's actions |
+| Navigation | Panels open as tabs (close ×, pin ★); only Bienvenue opens at startup; the right-hand drawer carries the active tab's actions and collapses to a rail instead of hiding |
 
 ## Continuous integration
 

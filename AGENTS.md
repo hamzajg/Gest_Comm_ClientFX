@@ -75,7 +75,8 @@ src/main/java/com/xdev/gest_comm_clientfx/
                         which scope the search (no JavaFX — unit tested)
     TabWorkspace        opens/closes tabs, reuses singleton panels,
                         pin (★ removes the close button)
-    ActionDrawer        right-hand pane with the active tab's actions
+    ActionDrawer        right-hand pane with the active tab's actions;
+                        expands/collapses to a 30px rail, never hides
   models/               Article + Client + Devis + LigneDevis + Facture +
                         LigneFacture + BonLiv + LigneBonLiv POJOs
   views/                *.fxml layouts (HomeScreen, ConfigScreen)
