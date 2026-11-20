@@ -21,7 +21,7 @@ Verified 2026-11-17 against CI (`.github/workflows/ci.yml`) and README.
 |---|---|
 | Build | `mvn -B package` (CI: JDK 17) |
 | Run app | `mvn javafx:run` |
-| Tests | `mvn -B package` runs JUnit 5 tests (8) |
+| Tests | `mvn -B package` runs JUnit 5 tests (14) |
 
 Requires: JDK 17 only — JavaFX and Jackson come from Maven. The app also
 needs a running PyGestComm backend (`python manage.py runserver` in that
@@ -44,8 +44,13 @@ src/main/java/com/xdev/gest_comm_clientfx/
                         resources, convertDevis(), getList()/post()/send()
     ApiConfig.java      baseUrl + credentials in java.util.prefs
                         (Preferences.userNodeForPackage — no plaintext file)
-    ApiException.java   transport/HTTP error type (RuntimeException)
+    ApiException.java   transport/HTTP error type (RuntimeException) —
+                        status code + backend `detail` parsed from DRF
+                        bodies (`fromResponse`)
   controllers/
+    ApiMessages         French phrasing for API failures (409 →
+                        "Suppression impossible : …", 400 → "Action
+                        refusée : …"), shared by every controller
     HomeScreenCtrl      @FXML: tabs (Bienvenue/Clients/Articles/Devis/
                         Factures), table columns, menu actions incl.
                         dialog launchers + convertSelectedDevis; loads
@@ -138,7 +143,7 @@ decimals arrive as strings (`"100.00"`) — Jackson handles that into
 
 - Branch from `master`; name branches `feat/*`, `fix/*`, `chore/*`, `docs/*`.
 - Docs-only changes still go through a PR; never commit to `master` directly.
-- Verify before claiming: `mvn -B package` must pass; there are 7 tests —
+- Verify before claiming: `mvn -B package` must pass; there are 14 tests —
   say so.
 - Keep changes minimal and consistent with surrounding code. No drive-by
   refactors.

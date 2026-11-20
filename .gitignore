@@ -55,3 +55,6 @@ target/
 
 # Generated evidence captures (tools/Screenshots.java)
 docs/walkthrough/
+
+# OpenHarness local scratch (evidence bundles, run logs)
+.openharness/

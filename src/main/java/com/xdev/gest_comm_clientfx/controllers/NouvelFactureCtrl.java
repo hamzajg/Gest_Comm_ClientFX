@@ -165,8 +165,8 @@ public class NouvelFactureCtrl implements ApiDialog {
                 statusLabel.setText("");
             });
         } catch (ApiException e) {
-            Platform.runLater(() -> statusLabel.setText(
-                "Erreur de chargement : " + e.getMessage()));
+            Platform.runLater(() ->
+                statusLabel.setText(ApiMessages.loadFailed(e)));
         }
     }
 
@@ -307,8 +307,8 @@ public class NouvelFactureCtrl implements ApiDialog {
                     closeWindow();
                 });
             } catch (ApiException e) {
-                Platform.runLater(() ->
-                    statusLabel.setText("Erreur : " + e.getMessage()));
+                Platform.runLater(() -> statusLabel.setText(
+                    ApiMessages.refused("Enregistrement", e)));
             }
         }).start();
     }

@@ -50,8 +50,8 @@ public class AssistantCtrl implements ApiDialog {
                     statusLabel.setText("");
                 });
             } catch (ApiException e) {
-                Platform.runLater(() -> statusLabel.setText(
-                    "Erreur : " + e.getMessage()));
+                Platform.runLater(() ->
+                    statusLabel.setText(ApiMessages.loadFailed(e)));
             }
         }).start();
     }

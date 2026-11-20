@@ -59,6 +59,10 @@ public class HomeScreenCtrl {
 
     @FXML
     public void initialize() {
+        for (TableView<?> table : new TableView<?>[]{clientTable,
+                articleTable, devisTable, factureTable, bonlivTable}) {
+            applyColumnPolicy(table);
+        }
         clientTable.getColumns().addAll(
             column("Code", "codeClient", 100),
             column("Nom", "nomPrenomClient", 220),
@@ -110,6 +114,15 @@ public class HomeScreenCtrl {
         } else if (selected == bonlivTab) {
             refreshBonLivs();
         }
+    }
+
+    /**
+     * Constrained resize: the tables declare exactly the columns their data
+     * warrants, so the default unconstrained policy must not append an
+     * empty filler column at the right edge.
+     */
+    static void applyColumnPolicy(TableView<?> table) {
+        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     }
 
     private static <T> TableColumn<T, Object> column(
@@ -171,8 +184,8 @@ public class HomeScreenCtrl {
                     refreshFactures();
                 });
             } catch (ApiException e) {
-                Platform.runLater(() ->
-                    devisStatus.setText("Erreur : " + e.getMessage()));
+                Platform.runLater(() -> devisStatus.setText(
+                    ApiMessages.refused("Conversion", e)));
             }
         }).start();
     }
@@ -224,6 +237,7 @@ public class HomeScreenCtrl {
             return;
         }
         mutate(bonlivStatus, "Statut du bon de livraison mis à jour.",
+            "Mise à jour",
             () -> api.patch("/api/bonliv/" + b.getIdBonLiv(),
                 Map.of("statutBonLiv", statut)),
             this::refreshBonLivs);
@@ -256,7 +270,7 @@ public class HomeScreenCtrl {
         if (!confirmDelete("le bon de livraison " + b.getCodeBonLiv())) {
             return;
         }
-        mutate(bonlivStatus, "Bon de livraison supprimé.",
+        mutate(bonlivStatus, "Bon de livraison supprimé.", "Suppression",
             () -> api.delete("/api/bonliv/" + b.getIdBonLiv()),
             this::refreshBonLivs);
     }
@@ -288,7 +302,8 @@ public class HomeScreenCtrl {
                     status.setText(data.size() + " " + label + " chargé(s).");
                 });
             } catch (ApiException e) {
-                Platform.runLater(() -> status.setText("Erreur : " + e.getMessage()));
+                Platform.runLater(() ->
+                    status.setText(ApiMessages.loadFailed(e)));
             } catch (Exception e) {
                 Platform.runLater(() -> status.setText(
                     "Erreur : " + e.getClass().getSimpleName() + " " + e.getMessage()));
@@ -312,8 +327,8 @@ public class HomeScreenCtrl {
 
     // --- row actions: edit / delete / statut -------------------------
 
-    private void mutate(Label status, String okMessage, Runnable call,
-                        Runnable refresh) {
+    private void mutate(Label status, String okMessage, String action,
+                        Runnable call, Runnable refresh) {
         status.setText("Enregistrement…");
         new Thread(() -> {
             try {
@@ -324,7 +339,7 @@ public class HomeScreenCtrl {
                 });
             } catch (ApiException e) {
                 Platform.runLater(() ->
-                    status.setText("Erreur : " + e.getMessage()));
+                    status.setText(ApiMessages.refused(action, e)));
             }
         }).start();
     }
@@ -360,7 +375,7 @@ public class HomeScreenCtrl {
         if (!confirmDelete("le client " + c.getCodeClient())) {
             return;
         }
-        mutate(clientStatus, "Client supprimé.",
+        mutate(clientStatus, "Client supprimé.", "Suppression",
             () -> api.delete("/api/client/" + c.getIdClient()),
             this::refreshClients);
     }
@@ -387,7 +402,7 @@ public class HomeScreenCtrl {
         if (!confirmDelete("l'article " + a.getRef_article())) {
             return;
         }
-        mutate(articleStatus, "Article supprimé.",
+        mutate(articleStatus, "Article supprimé.", "Suppression",
             () -> api.delete("/api/article/" + a.getId_article()),
             this::refreshArticles);
     }
@@ -398,7 +413,7 @@ public class HomeScreenCtrl {
             devisStatus.setText("Sélectionnez un devis.");
             return;
         }
-        mutate(devisStatus, "Statut du devis mis à jour.",
+        mutate(devisStatus, "Statut du devis mis à jour.", "Mise à jour",
             () -> api.patch("/api/devis/" + d.getIdDevis(),
                 Map.of("statutDevis", statut)),
             this::refreshDevis);
@@ -429,7 +444,7 @@ public class HomeScreenCtrl {
         if (!confirmDelete("le devis " + d.getCodeDevis())) {
             return;
         }
-        mutate(devisStatus, "Devis supprimé.",
+        mutate(devisStatus, "Devis supprimé.", "Suppression",
             () -> api.delete("/api/devis/" + d.getIdDevis()),
             this::refreshDevis);
     }
@@ -441,6 +456,7 @@ public class HomeScreenCtrl {
             return;
         }
         mutate(factureStatus, "Statut de la facture mis à jour.",
+            "Mise à jour",
             () -> api.patch("/api/facture/" + f.getIdFacture(),
                 Map.of("statutFacture", statut)),
             this::refreshFactures);
@@ -472,7 +488,7 @@ public class HomeScreenCtrl {
         if (!confirmDelete("la facture " + f.getCodeFacture())) {
             return;
         }
-        mutate(factureStatus, "Facture supprimée.",
+        mutate(factureStatus, "Facture supprimée.", "Suppression",
             () -> api.delete("/api/facture/" + f.getIdFacture()),
             this::refreshFactures);
     }

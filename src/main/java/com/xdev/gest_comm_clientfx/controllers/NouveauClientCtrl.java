@@ -84,8 +84,8 @@ public class NouveauClientCtrl implements ApiDialog {
                     closeWindow();
                 });
             } catch (ApiException e) {
-                Platform.runLater(() ->
-                    statusLabel.setText("Erreur : " + e.getMessage()));
+                Platform.runLater(() -> statusLabel.setText(
+                    ApiMessages.refused("Enregistrement", e)));
             }
         }).start();
     }
