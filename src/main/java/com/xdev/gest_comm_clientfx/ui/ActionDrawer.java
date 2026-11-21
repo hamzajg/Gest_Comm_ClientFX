@@ -1,5 +1,6 @@
 package com.xdev.gest_comm_clientfx.ui;
 
+import com.xdev.gest_comm_clientfx.i18n.Messages;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -36,7 +37,7 @@ public final class ActionDrawer {
     private final VBox actions = new VBox(6);
     private final Label hint = new Label();
     private final Button collapse = new Button();
-    private final Label caption = new Label("ACTIONS");
+    private final Label caption = new Label(Messages.get("drawer.caption"));
     private final Region headerSpacer = spacer();
     private final HBox header;
     private boolean collapsed;
@@ -82,8 +83,7 @@ public final class ActionDrawer {
             b.setAlignment(Pos.CENTER_LEFT);
             actions.getChildren().add(b);
         }
-        hint.setText(entries.isEmpty()
-            ? "Aucune action pour cet onglet." : "");
+        hint.setText(entries.isEmpty() ? Messages.get("drawer.empty") : "");
     }
 
     public void setHint(String text) {
@@ -111,9 +111,8 @@ public final class ActionDrawer {
         headerSpacer.setManaged(!collapsed);
         header.setAlignment(collapsed ? Pos.CENTER : Pos.CENTER_LEFT);
         collapse.setText(collapsed ? "‹" : "›");
-        collapse.setTooltip(new Tooltip(collapsed
-            ? "Déplier le panneau d'actions"
-            : "Replier le panneau d'actions"));
+        collapse.setTooltip(new Tooltip(Messages.get(collapsed
+            ? "drawer.expand" : "drawer.collapse")));
         // The rail keeps the toggle vertically available.
         root.setAlignment(collapsed ? Pos.TOP_CENTER : Pos.TOP_LEFT);
     }

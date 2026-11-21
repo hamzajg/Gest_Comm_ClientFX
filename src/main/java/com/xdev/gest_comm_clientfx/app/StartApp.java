@@ -2,7 +2,10 @@ package com.xdev.gest_comm_clientfx.app;
 
 import com.xdev.gest_comm_clientfx.api.ApiConfig;
 import com.xdev.gest_comm_clientfx.controllers.LoginCtrl;
+import com.xdev.gest_comm_clientfx.i18n.Messages;
+import com.xdev.gest_comm_clientfx.ui.AppPreferences;
 import com.xdev.gest_comm_clientfx.ui.Theme;
+import com.xdev.gest_comm_clientfx.ui.Views;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -14,16 +17,13 @@ import java.util.Locale;
 
 public class StartApp extends Application {
 
-    private static final String LOGIN_VIEW =
-        "/com/xdev/gest_comm_clientfx/views/LoginView.fxml";
-
     private Stage stage;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
 
         stage = primaryStage;
-        primaryStage.setTitle("Gestion Commerciale");
+        primaryStage.setTitle(Messages.get("app.title"));
         primaryStage.setMinWidth(1024);
         primaryStage.setMinHeight(640);
         // The workspace does not exist until someone has signed in
@@ -46,10 +46,10 @@ public class StartApp extends Application {
     /** The login gate: shows who you are before any commercial data exists. */
     public void showLogin() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(LOGIN_VIEW));
+            FXMLLoader loader = Views.loader(getClass(), "LoginView.fxml");
             Parent root = loader.load();
             Scene scene = new Scene(root, 1024, 640);
-            Theme.install(scene);
+            Theme.install(scene, AppPreferences.load().skin());
             LoginCtrl ctrl = loader.getController();
             ctrl.setOnSignedIn(this::showWorkspace);
             stage.setScene(scene);
@@ -65,8 +65,10 @@ public class StartApp extends Application {
             // Sign-out is the same scene swap as a launch without a session:
             // the workspace is discarded, the gate is rebuilt (US3, D2).
             home.setOnSignedOut(this::signOut);
+            // A language change reloads this scene with the new bundle (D6).
+            home.setOnLanguageChanged(this::showWorkspace);
             Scene scene = new Scene(home.getRootView(), 1200, 700);
-            Theme.install(scene);
+            Theme.install(scene, AppPreferences.load().skin());
             stage.setScene(scene);
         } catch (IOException e) {
             throw new IllegalStateException("Cannot open the workspace", e);
@@ -79,10 +81,10 @@ public class StartApp extends Application {
     }
 
     public static void main(String[] args) {
-        // French UI: JavaFX's own strings (the table's "no content" caption,
-        // dialog buttons) must match the app's language. Safe here — every
-        // date in the client is an ISO text field, not a DatePicker.
-        Locale.setDefault(Locale.FRANCE);
+        // The chosen language governs JavaFX's own strings too (table
+        // placeholder, dialog buttons). Every date in the client is an ISO
+        // text field, not a DatePicker, so the locale is safe to switch.
+        Locale.setDefault(Messages.locale());
         launch(args);
     }
 }

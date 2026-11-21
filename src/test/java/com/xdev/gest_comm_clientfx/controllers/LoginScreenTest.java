@@ -1,11 +1,13 @@
 package com.xdev.gest_comm_clientfx.controllers;
 
 import com.xdev.gest_comm_clientfx.api.ApiException;
+import com.xdev.gest_comm_clientfx.i18n.Messages;
 import org.junit.jupiter.api.Test;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -61,18 +63,21 @@ class LoginScreenTest {
         ApiException wrongPassword = ApiException.fromResponse(
             "http://localhost:8000/api/token", 401,
             "{\"detail\":\"No active account found\"}");
-        assertTrue(LoginCtrl.message(wrongPassword)
-            .contains("incorrect"), "401 must read as wrong credentials");
+        assertEquals(Messages.get("login.refused"),
+            LoginCtrl.message(wrongPassword),
+            "401 must read as wrong credentials");
 
         ApiException offline = new ApiException(
             "Cannot reach http://localhost:8000/api/token");
-        assertTrue(LoginCtrl.message(offline).contains("serveur"),
+        assertEquals(Messages.get("login.unreachable", offline.getDetail()),
+            LoginCtrl.message(offline),
             "a transport failure must point at the server address");
 
         ApiException refused = ApiException.fromResponse(
             "http://localhost:8000/api/token", 400,
             "{\"detail\":\"Bad request\"}");
-        assertTrue(LoginCtrl.message(refused).contains("Bad request"),
+        assertEquals(Messages.get("login.denied", "Bad request"),
+            LoginCtrl.message(refused),
             "other refusals keep the backend's own explanation");
     }
 }

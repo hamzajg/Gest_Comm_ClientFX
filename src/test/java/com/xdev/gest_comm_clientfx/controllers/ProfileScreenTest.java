@@ -33,13 +33,17 @@ class ProfileScreenTest {
             "the profile view must be driven by ProfileCtrl");
         for (String id : new String[] {
             "nameLabel", "usernameLabel", "emailLabel", "roleLabel",
-            "signOutButton", "statusLabel"
+            "signOutButton", "statusLabel", "themeBox", "languageBox",
+            "currentPasswordField", "newPasswordField",
+            "confirmPasswordField", "changePasswordButton"
         }) {
             assertTrue(fxml.contains("fx:id=\"" + id + "\""),
                 "missing profile field " + id);
         }
         assertTrue(fxml.contains("onAction=\"#signOut\""),
             "the profile must offer signing out");
+        assertTrue(fxml.contains("onAction=\"#changePassword\""),
+            "the profile must offer changing the password");
         assertTrue(fxml.contains("styleClass=\"role-badge\""),
             "the role is a badge, not a bare label");
     }
@@ -62,7 +66,7 @@ class ProfileScreenTest {
         String fxml = view("HomeScreen.fxml");
         assertTrue(fxml.contains("onAction=\"#showProfile\""),
             "the shell must expose the profile tab");
-        assertTrue(fxml.contains("text=\"Mon profil\""),
-            "the menu entry must be readable");
+        assertTrue(fxml.contains("text=\"%menu.profile\""),
+            "the menu entry must come from the language bundle");
     }
 }

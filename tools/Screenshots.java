@@ -158,6 +158,9 @@ public class Screenshots {
     private static Object[] loadScene(String fxml) throws Exception {
         FXMLLoader loader = new FXMLLoader(
             Screenshots.class.getResource(VIEWS + fxml));
+        // Views use text="%key"; without the bundle the FXML will not load.
+        loader.setResources(com.xdev.gest_comm_clientfx.i18n.Messages
+            .resourceBundle());
         Object root = loader.load();
         return new Object[]{root, loader.getController()};
     }

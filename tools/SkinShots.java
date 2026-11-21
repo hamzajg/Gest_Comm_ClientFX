@@ -1,4 +1,5 @@
 import com.xdev.gest_comm_clientfx.controllers.HomeScreenCtrl;
+import com.xdev.gest_comm_clientfx.i18n.Messages;
 import com.xdev.gest_comm_clientfx.models.Client;
 import com.xdev.gest_comm_clientfx.ui.Theme;
 
@@ -273,7 +274,11 @@ public class SkinShots {
     // ---------- helpers ----------
 
     private static FXMLLoader loader(String fxml) {
-        return new FXMLLoader(SkinShots.class.getResource(VIEWS + fxml));
+        FXMLLoader loader = new FXMLLoader(
+            SkinShots.class.getResource(VIEWS + fxml));
+        // Views use text="%key"; without the bundle the FXML will not load.
+        loader.setResources(Messages.resourceBundle());
+        return loader;
     }
 
     @SuppressWarnings("unchecked")
