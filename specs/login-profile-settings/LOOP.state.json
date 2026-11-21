@@ -1,8 +1,8 @@
 {
   "feature": "login-profile-settings",
   "status": "running",
-  "iterations": 0,
-  "updated": "2026-11-21T12:45:57Z",
+  "iterations": 1,
+  "updated": "2026-11-21T13:32:29Z",
   "waves": {
     "1": {
       "status": "done",
@@ -26,11 +26,11 @@
       "updated": "2026-11-21T12:44:19Z"
     },
     "4": {
-      "status": "in-progress",
+      "status": "done",
       "branch": "feat/login-profile-settings-w4",
-      "pr": "\u2014",
-      "evidence": "\u2014",
-      "updated": "2026-11-21T12:45:57Z"
+      "pr": "#16",
+      "evidence": "five record tables + eight record forms externalized to the fr/en bundles (headers, tab titles, status, validation, conf",
+      "updated": "2026-11-21T13:32:29Z"
     }
   },
   "gates": {
@@ -54,6 +54,7 @@
     "2026-11-21T12:09:47Z complete wave 2 (#13): profile tab (/api/me identity, e-mail, role badge), sign-out to the login gate, password no longer persisted, settings r",
     "2026-11-21T12:19:09Z start wave 3 on feat/login-profile-settings-w3",
     "2026-11-21T12:44:19Z complete wave 3 (#14): theme + language preferences (fr/en bundles, shell rebuild), password change form, login/shell/drawer externalized; clie",
-    "2026-11-21T12:45:57Z start wave 4 on feat/login-profile-settings-w4"
+    "2026-11-21T12:45:57Z start wave 4 on feat/login-profile-settings-w4",
+    "2026-11-21T13:32:29Z complete wave 4 (#16): five record tables + eight record forms externalized to the fr/en bundles (headers, tab titles, status, validation, conf"
   ]
 }
