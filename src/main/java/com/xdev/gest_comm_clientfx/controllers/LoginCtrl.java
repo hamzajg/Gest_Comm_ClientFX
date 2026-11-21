@@ -3,6 +3,7 @@ package com.xdev.gest_comm_clientfx.controllers;
 import com.xdev.gest_comm_clientfx.api.ApiClient;
 import com.xdev.gest_comm_clientfx.api.ApiConfig;
 import com.xdev.gest_comm_clientfx.api.ApiException;
+import com.xdev.gest_comm_clientfx.i18n.Messages;
 import com.xdev.gest_comm_clientfx.models.UserProfile;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -51,26 +52,26 @@ public class LoginCtrl {
             ? "" : passwordField.getText();
 
         if (username.isEmpty() || password.isEmpty()) {
-            statusLabel.setText(
-                "Saisissez votre nom d'utilisateur et votre mot de passe.");
+            statusLabel.setText(Messages.get("login.missing"));
             usernameField.requestFocus();
             return;
         }
         if (baseUrl.isEmpty()) {
-            statusLabel.setText("Saisissez l'adresse du serveur.");
+            statusLabel.setText(Messages.get("login.missingServer"));
             baseUrlField.requestFocus();
             return;
         }
 
         setBusy(true);
-        statusLabel.setText("Connexion…");
+        statusLabel.setText(Messages.get("login.connecting"));
         new Thread(() -> {
             try {
                 UserProfile profile =
                     new ApiClient(config).signIn(baseUrl, username, password);
                 Platform.runLater(() -> {
                     setBusy(false);
-                    statusLabel.setText("Connecté : " + profile.getDisplayName());
+                    statusLabel.setText(Messages.get("login.connected",
+                        profile.getDisplayName()));
                     if (onSignedIn != null) {
                         onSignedIn.run();
                     }
@@ -89,13 +90,12 @@ public class LoginCtrl {
     /** Refusal wording: the backend's own message when it gave one. */
     static String message(ApiException e) {
         if (e.getStatusCode() == 401) {
-            return "Nom d'utilisateur ou mot de passe incorrect.";
+            return Messages.get("login.refused");
         }
         if (e.getStatusCode() == 0) {
-            return "Connexion impossible : " + e.getDetail()
-                + " — vérifiez l'adresse du serveur.";
+            return Messages.get("login.unreachable", e.getDetail());
         }
-        return "Connexion refusée : " + e.getDetail();
+        return Messages.get("login.denied", e.getDetail());
     }
 
     private void setBusy(boolean busy) {

@@ -20,22 +20,22 @@
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
 
-    <Label styleClass="form-title" text="Paramètres de l'application — serveur PyGestComm" />
+    <Label styleClass="form-title" text="%settings.title" />
 
     <GridPane hgap="10.0" vgap="10.0">
         <columnConstraints>
             <ColumnConstraints minWidth="110.0" prefWidth="110.0" />
             <ColumnConstraints hgrow="ALWAYS" />
         </columnConstraints>
-        <Label text="Serveur (URL)" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+        <Label text="%settings.server" GridPane.columnIndex="0" GridPane.rowIndex="0" />
         <TextField fx:id="baseUrlField" promptText="http://localhost:8000"
                    GridPane.columnIndex="1" GridPane.rowIndex="0" />
     </GridPane>
 
     <HBox spacing="10.0">
-        <Button mnemonicParsing="false" onAction="#saveConfig" styleClass="primary" text="Enregistrer" />
-        <Button mnemonicParsing="false" onAction="#testConnection" text="Tester la connexion" />
-        <Button mnemonicParsing="false" onAction="#closeWindow" text="Fermer" />
+        <Button mnemonicParsing="false" onAction="#saveConfig" styleClass="primary" text="%settings.save" />
+        <Button mnemonicParsing="false" onAction="#testConnection" text="%settings.test" />
+        <Button mnemonicParsing="false" onAction="#closeWindow" text="%settings.close" />
     </HBox>
 
     <Label fx:id="statusLabel" styleClass="status" text="" wrapText="true" />

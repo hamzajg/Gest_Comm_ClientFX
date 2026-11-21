@@ -25,48 +25,48 @@
 
     <MenuBar>
         <menus>
-            <Menu mnemonicParsing="false" text="Application">
+            <Menu mnemonicParsing="false" text="%menu.application">
                 <items>
-                    <MenuItem mnemonicParsing="false" onAction="#showWelcome" text="Bienvenue" />
-                    <MenuItem mnemonicParsing="false" onAction="#showProfile" text="Mon profil" />
-                    <MenuItem mnemonicParsing="false" onAction="#openConfig" text="Parametre de l'application" />
-                    <MenuItem mnemonicParsing="false" onAction="#toggleDrawer" text="Panneau d'actions" />
+                    <MenuItem mnemonicParsing="false" onAction="#showWelcome" text="%menu.welcome" />
+                    <MenuItem mnemonicParsing="false" onAction="#showProfile" text="%menu.profile" />
+                    <MenuItem mnemonicParsing="false" onAction="#openConfig" text="%menu.settings" />
+                    <MenuItem mnemonicParsing="false" onAction="#toggleDrawer" text="%menu.drawer" />
                     <SeparatorMenuItem/>
-                    <MenuItem mnemonicParsing="false" onAction="#logout" text="Se déconnecter" />
+                    <MenuItem mnemonicParsing="false" onAction="#logout" text="%menu.signout" />
                 </items>
             </Menu>
-            <Menu mnemonicParsing="false" text="Article">
+            <Menu mnemonicParsing="false" text="%menu.article">
                 <items>
-                    <MenuItem mnemonicParsing="false" onAction="#showNewArticle" text="Nouveau article" />
-                    <MenuItem mnemonicParsing="false" onAction="#showArticles" text="Liste des articles" />
+                    <MenuItem mnemonicParsing="false" onAction="#showNewArticle" text="%menu.newArticle" />
+                    <MenuItem mnemonicParsing="false" onAction="#showArticles" text="%menu.articles" />
                 </items>
             </Menu>
-            <Menu mnemonicParsing="false" text="Client">
+            <Menu mnemonicParsing="false" text="%menu.client">
                 <items>
-                    <MenuItem mnemonicParsing="false" onAction="#showNewClient" text="Nouveau client" />
-                    <MenuItem mnemonicParsing="false" onAction="#showClients" text="Liste des clients" />
+                    <MenuItem mnemonicParsing="false" onAction="#showNewClient" text="%menu.newClient" />
+                    <MenuItem mnemonicParsing="false" onAction="#showClients" text="%menu.clients" />
                     <SeparatorMenuItem/>
-                    <MenuItem mnemonicParsing="false" onAction="#showNewBonLiv" text="Nouveau Bon Liv" />
-                    <MenuItem mnemonicParsing="false" onAction="#showBonLivs" text="Liste des Bon Livs" />
+                    <MenuItem mnemonicParsing="false" onAction="#showNewBonLiv" text="%menu.newBonLiv" />
+                    <MenuItem mnemonicParsing="false" onAction="#showBonLivs" text="%menu.bonLivs" />
                 </items>
             </Menu>
-            <Menu mnemonicParsing="false" text="Devis">
+            <Menu mnemonicParsing="false" text="%menu.devis">
                 <items>
-                    <MenuItem mnemonicParsing="false" onAction="#showNewDevis" text="Nouveau devis" />
-                    <MenuItem mnemonicParsing="false" onAction="#showDevis" text="Liste des devis" />
+                    <MenuItem mnemonicParsing="false" onAction="#showNewDevis" text="%menu.newDevis" />
+                    <MenuItem mnemonicParsing="false" onAction="#showDevis" text="%menu.devisList" />
                     <SeparatorMenuItem/>
-                    <MenuItem mnemonicParsing="false" onAction="#convertSelectedDevis" text="Convertir en facture" />
+                    <MenuItem mnemonicParsing="false" onAction="#convertSelectedDevis" text="%menu.convert" />
                 </items>
             </Menu>
-            <Menu mnemonicParsing="false" text="Facture">
+            <Menu mnemonicParsing="false" text="%menu.facture">
                 <items>
-                    <MenuItem mnemonicParsing="false" onAction="#showNewFacture" text="Nouvelle facture" />
-                    <MenuItem mnemonicParsing="false" onAction="#showFactures" text="Liste des factures" />
+                    <MenuItem mnemonicParsing="false" onAction="#showNewFacture" text="%menu.newFacture" />
+                    <MenuItem mnemonicParsing="false" onAction="#showFactures" text="%menu.factures" />
                 </items>
             </Menu>
-            <Menu mnemonicParsing="false" text="Help">
+            <Menu mnemonicParsing="false" text="%menu.help">
                 <items>
-                    <MenuItem mnemonicParsing="false" onAction="#showAssistant" text="Assistant" />
+                    <MenuItem mnemonicParsing="false" onAction="#showAssistant" text="%menu.assistant" />
                 </items>
             </Menu>
         </menus>
@@ -76,7 +76,7 @@
         <padding>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
         </padding>
-        <TextField fx:id="searchField" styleClass="search-field" text="Recherche" HBox.hgrow="ALWAYS" />
+        <TextField fx:id="searchField" promptText="%search.prompt" styleClass="search-field" HBox.hgrow="ALWAYS" />
         <Label fx:id="searchScope" styleClass="status" text="" />
     </HBox>
 

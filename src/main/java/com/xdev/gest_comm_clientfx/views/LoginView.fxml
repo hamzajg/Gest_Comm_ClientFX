@@ -15,28 +15,28 @@
            styleClass="login-panel">
     <VBox alignment="CENTER" maxHeight="-1.0" maxWidth="420.0" spacing="16.0"
           styleClass="login-card">
-        <Label styleClass="login-title" text="Gestion commerciale" />
+        <Label styleClass="login-title" text="%login.title" />
         <Label styleClass="login-subtitle" wrapText="true"
-               text="Connectez-vous pour ouvrir votre espace de travail." />
+               text="%login.subtitle" />
 
         <VBox spacing="6.0">
-            <Label styleClass="form-label" text="Serveur (URL)" />
+            <Label styleClass="form-label" text="%login.server" />
             <TextField fx:id="baseUrlField" promptText="http://localhost:8000" />
         </VBox>
 
         <VBox spacing="6.0">
-            <Label styleClass="form-label" text="Utilisateur" />
+            <Label styleClass="form-label" text="%login.username" />
             <TextField fx:id="usernameField" />
         </VBox>
 
         <VBox spacing="6.0">
-            <Label styleClass="form-label" text="Mot de passe" />
+            <Label styleClass="form-label" text="%login.password" />
             <PasswordField fx:id="passwordField" />
         </VBox>
 
         <HBox alignment="CENTER_LEFT" spacing="12.0">
             <Button fx:id="signInButton" defaultButton="true" mnemonicParsing="false"
-                    onAction="#signIn" styleClass="primary" text="Se connecter" />
+                    onAction="#signIn" styleClass="primary" text="%login.submit" />
         </HBox>
 
         <Label fx:id="statusLabel" maxWidth="Infinity" styleClass="status"

@@ -4,6 +4,7 @@ import com.xdev.gest_comm_clientfx.api.ApiClient;
 import com.xdev.gest_comm_clientfx.api.ApiConfig;
 import com.xdev.gest_comm_clientfx.api.ApiException;
 import com.xdev.gest_comm_clientfx.app.ConfigScreen;
+import com.xdev.gest_comm_clientfx.i18n.Messages;
 import com.xdev.gest_comm_clientfx.models.Article;
 import com.xdev.gest_comm_clientfx.models.BonLiv;
 import com.xdev.gest_comm_clientfx.models.Client;
@@ -11,6 +12,7 @@ import com.xdev.gest_comm_clientfx.models.Devis;
 import com.xdev.gest_comm_clientfx.models.Facture;
 import com.xdev.gest_comm_clientfx.ui.ActionDrawer;
 import com.xdev.gest_comm_clientfx.ui.TabWorkspace;
+import com.xdev.gest_comm_clientfx.ui.Views;
 import com.xdev.gest_comm_clientfx.ui.WorkspacePolicy;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -78,6 +80,7 @@ public class HomeScreenCtrl {
     private String searchTerm = "";
     private int formSequence = 0;
     private Runnable onSignedOut;
+    private Runnable onLanguageChanged;
 
     @FXML
     public void initialize() {
@@ -146,23 +149,19 @@ public class HomeScreenCtrl {
     }
 
     private Node welcomePanel() {
-        Label title = new Label("Bienvenue");
+        Label title = new Label(Messages.get("welcome.title"));
         title.getStyleClass().add("welcome-title");
-        Label subtitle = new Label(
-            "Ouvrez un panneau depuis les menus ou les raccourcis ci-dessous. "
-            + "Chaque panneau s'ouvre dans un onglet : les onglets se ferment "
-            + "avec × et s'épinglent avec ★. Les actions du panneau ouvert "
-            + "apparaissent à droite.");
+        Label subtitle = new Label(Messages.get("welcome.subtitle"));
         subtitle.getStyleClass().add("welcome-subtitle");
         subtitle.setWrapText(true);
         subtitle.setMaxWidth(720);
 
         HBox shortcuts = new HBox(8,
-            shortcut("Clients", this::showClients),
-            shortcut("Articles", this::showArticles),
-            shortcut("Devis", this::showDevis),
-            shortcut("Factures", this::showFactures),
-            shortcut("Bons de livraison", this::showBonLivs));
+            shortcut(Messages.get("menu.clients"), this::showClients),
+            shortcut(Messages.get("menu.articles"), this::showArticles),
+            shortcut(Messages.get("menu.devis"), this::showDevis),
+            shortcut(Messages.get("menu.factures"), this::showFactures),
+            shortcut(Messages.get("menu.bonLivs"), this::showBonLivs));
         VBox box = new VBox(12, title, subtitle, shortcuts);
         box.getStyleClass().add("welcome-panel");
         box.setPadding(new Insets(24));
@@ -217,8 +216,7 @@ public class HomeScreenCtrl {
                 WorkspacePolicy.title(WorkspacePolicy.CONFIG), root);
             updateDrawer(tab);
         } catch (IOException e) {
-            clientStatus.setText(
-                "Erreur : impossible d'ouvrir la configuration.");
+            clientStatus.setText(Messages.get("error.openConfig"));
         }
     }
 
@@ -226,17 +224,16 @@ public class HomeScreenCtrl {
     @FXML
     public void showProfile() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(
-                "/com/xdev/gest_comm_clientfx/views/ProfileView.fxml"));
+            FXMLLoader loader = Views.loader(getClass(), "ProfileView.fxml");
             Parent root = loader.load();
             ProfileCtrl ctrl = loader.getController();
             ctrl.setOnSignedOut(this::requestSignOut);
+            ctrl.setOnLanguageChanged(this::requestLanguageChange);
             Tab tab = workspace.open(WorkspacePolicy.PROFILE,
                 WorkspacePolicy.title(WorkspacePolicy.PROFILE), root);
             updateDrawer(tab);
         } catch (IOException e) {
-            clientStatus.setText(
-                "Erreur : impossible d'ouvrir le profil.");
+            clientStatus.setText(Messages.get("error.openProfile"));
         }
     }
 
@@ -251,6 +248,7 @@ public class HomeScreenCtrl {
         try {
             URL url = getClass().getResource(fxml);
             FXMLLoader loader = new FXMLLoader(url);
+            loader.setResources(Messages.resourceBundle());
             Parent form = loader.load();
             C ctrl = ctrlType.cast(loader.getController());
             // A form taller than the window (devis with many lines, or a
@@ -270,8 +268,7 @@ public class HomeScreenCtrl {
             configure.accept(ctrl);
             updateDrawer(tab);
         } catch (IOException e) {
-            clientStatus.setText(
-                "Erreur : impossible d'ouvrir le formulaire.");
+            clientStatus.setText(Messages.get("error.openForm"));
         }
     }
 
@@ -287,7 +284,7 @@ public class HomeScreenCtrl {
             .replace(" — ", "");
         drawer.show(name, actionsFor(key, tab));
         searchScope.setText(WorkspacePolicy.isList(key)
-            ? "Recherche : " + name : "");
+            ? Messages.get("search.scope", name) : "");
     }
 
     private List<ActionDrawer.Action> actionsFor(String key, Tab tab) {
@@ -296,46 +293,46 @@ public class HomeScreenCtrl {
         }
         List<ActionDrawer.Action> base = switch (key) {
             case WorkspacePolicy.WELCOME -> List.of(
-                action("Mon profil", this::showProfile),
-                action("Clients", this::showClients),
-                action("Articles", this::showArticles),
-                action("Devis", this::showDevis),
-                action("Factures", this::showFactures),
-                action("Bons de livraison", this::showBonLivs));
+                action(Messages.get("menu.profile"), this::showProfile),
+                action(Messages.get("menu.clients"), this::showClients),
+                action(Messages.get("menu.articles"), this::showArticles),
+                action(Messages.get("menu.devis"), this::showDevis),
+                action(Messages.get("menu.factures"), this::showFactures),
+                action(Messages.get("menu.bonLivs"), this::showBonLivs));
             case WorkspacePolicy.CLIENTS -> List.of(
-                action("Actualiser", this::refreshClients),
-                action("Nouveau client", this::showNewClient),
-                action("Modifier", this::editSelectedClient),
-                action("Supprimer", this::deleteSelectedClient));
+                action(Messages.get("action.refresh"), this::refreshClients),
+                action(Messages.get("action.newClient"), this::showNewClient),
+                action(Messages.get("action.edit"), this::editSelectedClient),
+                action(Messages.get("action.delete"), this::deleteSelectedClient));
             case WorkspacePolicy.ARTICLES -> List.of(
-                action("Actualiser", this::refreshArticles),
-                action("Nouvel article", this::showNewArticle),
-                action("Modifier", this::editSelectedArticle),
-                action("Supprimer", this::deleteSelectedArticle));
+                action(Messages.get("action.refresh"), this::refreshArticles),
+                action(Messages.get("action.newArticle"), this::showNewArticle),
+                action(Messages.get("action.edit"), this::editSelectedArticle),
+                action(Messages.get("action.delete"), this::deleteSelectedArticle));
             case WorkspacePolicy.DEVIS -> List.of(
-                action("Actualiser", this::refreshDevis),
-                action("Nouveau devis", this::showNewDevis),
-                action("Modifier", this::editSelectedDevis),
-                action("Valider", this::validerDevis),
-                action("Refuser", this::refuserDevis),
-                action("Convertir en facture", this::convertSelectedDevis),
-                action("Supprimer", this::deleteSelectedDevis));
+                action(Messages.get("action.refresh"), this::refreshDevis),
+                action(Messages.get("action.newDevis"), this::showNewDevis),
+                action(Messages.get("action.edit"), this::editSelectedDevis),
+                action(Messages.get("action.validate"), this::validerDevis),
+                action(Messages.get("action.refuse"), this::refuserDevis),
+                action(Messages.get("action.convert"), this::convertSelectedDevis),
+                action(Messages.get("action.delete"), this::deleteSelectedDevis));
             case WorkspacePolicy.FACTURES -> List.of(
-                action("Actualiser", this::refreshFactures),
-                action("Nouvelle facture", this::showNewFacture),
-                action("Modifier", this::editSelectedFacture),
-                action("Valider", this::validerFacture),
-                action("Marquer payée", this::payerFacture),
-                action("Annuler", this::annulerFacture),
-                action("Supprimer", this::deleteSelectedFacture));
+                action(Messages.get("action.refresh"), this::refreshFactures),
+                action(Messages.get("action.newFacture"), this::showNewFacture),
+                action(Messages.get("action.edit"), this::editSelectedFacture),
+                action(Messages.get("action.validate"), this::validerFacture),
+                action(Messages.get("action.markPaid"), this::payerFacture),
+                action(Messages.get("action.cancel"), this::annulerFacture),
+                action(Messages.get("action.delete"), this::deleteSelectedFacture));
             case WorkspacePolicy.BONLIVS -> List.of(
-                action("Actualiser", this::refreshBonLivs),
-                action("Nouveau bon liv", this::showNewBonLiv),
-                action("Modifier", this::editSelectedBonLiv),
-                action("Valider", this::validerBonLiv),
-                action("Marquer livré", this::livrerBonLiv),
-                action("Annuler", this::annulerBonLiv),
-                action("Supprimer", this::deleteSelectedBonLiv));
+                action(Messages.get("action.refresh"), this::refreshBonLivs),
+                action(Messages.get("action.newBonLiv"), this::showNewBonLiv),
+                action(Messages.get("action.edit"), this::editSelectedBonLiv),
+                action(Messages.get("action.validate"), this::validerBonLiv),
+                action(Messages.get("action.markDelivered"), this::livrerBonLiv),
+                action(Messages.get("action.cancel"), this::annulerBonLiv),
+                action(Messages.get("action.delete"), this::deleteSelectedBonLiv));
             case WorkspacePolicy.CONFIG -> List.of();
             default -> List.of();
         };
@@ -346,12 +343,14 @@ public class HomeScreenCtrl {
     private List<ActionDrawer.Action> tabActions(
             Tab tab, List<ActionDrawer.Action> base) {
         List<ActionDrawer.Action> all = new ArrayList<>(base);
-        all.add(action(workspace.isPinned(tab) ? "Désépingler" : "Épingler",
+        all.add(action(workspace.isPinned(tab)
+                ? Messages.get("drawer.unpin") : Messages.get("drawer.pin"),
             () -> {
                 workspace.togglePin(tab);
                 updateDrawer(tab);
             }));
-        all.add(action("Fermer l'onglet", () -> workspace.close(tab)));
+        all.add(action(Messages.get("drawer.closeTab"),
+            () -> workspace.close(tab)));
         return all;
     }
 
@@ -765,9 +764,20 @@ public class HomeScreenCtrl {
         this.onSignedOut = onSignedOut;
     }
 
+    /** Called when the profile changes the language; rebuilds the scene. */
+    public void setOnLanguageChanged(Runnable onLanguageChanged) {
+        this.onLanguageChanged = onLanguageChanged;
+    }
+
     private void requestSignOut() {
         if (onSignedOut != null) {
             onSignedOut.run();
+        }
+    }
+
+    private void requestLanguageChange() {
+        if (onLanguageChanged != null) {
+            onLanguageChanged.run();
         }
     }
 

@@ -3,6 +3,7 @@ package com.xdev.gest_comm_clientfx.controllers;
 import com.xdev.gest_comm_clientfx.api.ApiClient;
 import com.xdev.gest_comm_clientfx.api.ApiConfig;
 import com.xdev.gest_comm_clientfx.api.ApiException;
+import com.xdev.gest_comm_clientfx.i18n.Messages;
 import com.xdev.gest_comm_clientfx.models.UserProfile;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -33,25 +34,25 @@ public class ConfigScreenCtrl {
     public void saveConfig() {
         config.setBaseUrl(baseUrlField.getText().trim());
         config.save();
-        statusLabel.setText("Paramètres enregistrés.");
+        statusLabel.setText(Messages.get("settings.saved"));
     }
 
     @FXML
     public void testConnection() {
         config.setBaseUrl(baseUrlField.getText().trim());
         config.save();
-        statusLabel.setText("Test en cours…");
+        statusLabel.setText(Messages.get("settings.testing"));
         new Thread(() -> {
             try {
                 UserProfile profile = new ApiClient(config).profile();
                 javafx.application.Platform.runLater(() ->
-                    statusLabel.setText("Connexion OK — connecté : "
-                        + profile.getDisplayName()));
+                    statusLabel.setText(Messages.get("settings.ok",
+                        profile.getDisplayName())));
             } catch (ApiException e) {
                 javafx.application.Platform.runLater(() ->
-                    statusLabel.setText("Échec : "
-                        + Display.text(e.getMessage(),
-                            "connexion impossible")));
+                    statusLabel.setText(Messages.get("settings.failed",
+                        Display.text(e.getMessage(),
+                            Messages.get("settings.unreachable")))));
             }
         }).start();
     }

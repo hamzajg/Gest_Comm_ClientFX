@@ -81,10 +81,18 @@ src/main/java/com/xdev/gest_comm_clientfx/
                         expands/collapses to a 30px rail, never hides
     Theme               installs views/industrial.css on the single app
                         Scene — the sheet is the only place a colour lives
+    AppPreferences      workstation theme (dark/light) and language
+                        (fr/en) in Java Preferences; injected node is
+                        used by tests
+    Views               FXMLLoader factory that attaches the current
+                        messages bundle, so FXML text="%key" localizes
+  i18n/
+    Messages            messages.properties (fr) + messages_en.properties;
+                        get(key, args), Locale-aware for tests
   models/               Article + Client + Devis + LigneDevis + Facture +
                         LigneFacture + BonLiv + LigneBonLiv POJOs
       views/                *.fxml layouts (HomeScreen, ConfigScreen,
-                        LoginView, ProfileView)
+                        LoginView, ProfileView) + the messages bundles
 pom.xml                 JavaFX + Jackson deps + resources-plugin copies
                         views/*.fxml onto the classpath
 ```
@@ -158,10 +166,21 @@ decimals arrive as strings (`"100.00"`) — Jackson handles that into
 
 ## Agent rules
 
-- `StartApp.main` sets `Locale.FRANCE`: JavaFX's own strings (table
-  placeholder, default dialog buttons) must match the French UI. Every date
-  in the client is an ISO text field, not a `DatePicker` — keep it that way,
-  or the locale starts affecting date parsing.
+- `StartApp.main` sets the default locale from the saved language
+  preference: JavaFX's own strings (table placeholder, default dialog
+  buttons) must match the UI. Every date in the client is an ISO text field,
+  not a `DatePicker` — keep it that way, or the locale affects date parsing.
+- UI text lives in `views/messages.properties` (French base) and
+  `messages_en.properties`. FXML uses `text="%key"` and must be loaded
+  through `ui.Views` (or a loader with `Messages.resourceBundle()`); a
+  plain `new FXMLLoader(url)` cannot resolve `%key`. `MessagesBundleTest`
+  enforces key parity and that every FXML key exists.
+- `Messages` resolves the requested locale then the base bundle, never the
+  JVM default: the stock fallback made a French request load the English
+  file on an English machine.
+- Theme and language are workstation preferences (`ui.AppPreferences`), not
+  server state: switching either applies immediately, and the language
+  switch rebuilds the workspace scene (open tabs are lost).
 - Form tabs are opened inside a `ScrollPane` (`.tab-scroll`, `fitToWidth`) so
   a form taller than the window scrolls instead of clipping its buttons.
 - Colours belong in `views/industrial.css` (palette tokens on `.root`),
