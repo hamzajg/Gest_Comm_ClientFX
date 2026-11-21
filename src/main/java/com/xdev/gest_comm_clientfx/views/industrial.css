@@ -747,6 +747,35 @@
     -fx-text-fill: -text-400;
 }
 
+/* --- profile ----------------------------------------------------------- */
+
+/* The panel's label rule above quietens every label, so identity values and
+   the role badge are restored with equally specific selectors. */
+.profile-value,
+.form-panel .profile-value {
+    -fx-text-fill: -text-100;
+    -fx-font-size: 13px;
+}
+
+.role-badge,
+.form-panel .role-badge {
+    -fx-background-color: -surface-750;
+    -fx-border-color: -amber;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 1 10 1 10;
+    -fx-text-fill: -amber;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.profile-note,
+.form-panel .profile-note {
+    -fx-text-fill: -text-400;
+    -fx-font-size: 12px;
+}
+
 /* Form tab content scrolls when the window is short (minimum size) instead
    of clipping its buttons. */
 .tab-scroll,

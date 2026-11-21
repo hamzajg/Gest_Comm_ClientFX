@@ -59,8 +59,10 @@ src/main/java/com/xdev/gest_comm_clientfx/
                         on a background thread, UI updates via
                         Platform.runLater. Every panel opens through
                         TabWorkspace (a tab, never a Stage)
-    ConfigScreenCtrl    @FXML: server URL/user/password fields, save,
-                        test-connection
+    ConfigScreenCtrl    @FXML: server URL only (the account is entered on
+                        the login gate), save, test-connection via /api/me
+    ProfileCtrl         @FXML: profile tab — name, login, e-mail and the
+                        server-derived role, sign out back to the gate
     NouveauClientCtrl   @FXML: client create form → POST /api/client
     NouvelArticleCtrl   @FXML: article create form → POST /api/article
     NouveauDevisCtrl    @FXML: quote form — client/article pickers, line
@@ -81,7 +83,8 @@ src/main/java/com/xdev/gest_comm_clientfx/
                         Scene — the sheet is the only place a colour lives
   models/               Article + Client + Devis + LigneDevis + Facture +
                         LigneFacture + BonLiv + LigneBonLiv POJOs
-  views/                *.fxml layouts (HomeScreen, ConfigScreen)
+      views/                *.fxml layouts (HomeScreen, ConfigScreen,
+                        LoginView, ProfileView)
 pom.xml                 JavaFX + Jackson deps + resources-plugin copies
                         views/*.fxml onto the classpath
 ```
@@ -144,10 +147,12 @@ decimals arrive as strings (`"100.00"`) — Jackson handles that into
   records the screen-evidence feature; `tools/Screenshots.java`
   regenerates captures into gitignored `docs/walkthrough/` (never commit
   PNGs).
-- Credentials + the rotating refresh token live in the OS preferences
-  store; the access token is memory-only. Bearer tokens are plaintext
-  without TLS — acceptable on a LAN, needs TLS before any real
-  deployment (PyGestComm ADR 0008).
+- The username + rotating refresh token live in the OS preferences store;
+  the password is **never** persisted (used for the sign-in exchange only)
+  and `ApiConfig.load()` erases one left by an older release. The access
+  token is memory-only. Bearer tokens are plaintext without TLS —
+  acceptable on a LAN, needs TLS before any real deployment (PyGestComm
+  ADR 0008).
 - README's status table is accurate and current — trust it over
   assumptions.
 
@@ -168,8 +173,8 @@ decimals arrive as strings (`"100.00"`) — Jackson handles that into
   agent trailer, no robot-emoji signature line. A commit message ends at its
   own last line, with no trailer block.
 - Docs-only changes still go through a PR; never commit to `master` directly.
-- Verify before claiming: `mvn -B package` must pass; there are 29 tests —
-  say so.
+- Verify before claiming: `mvn -B package` must pass — quote the test count
+  it reports.
 - CSS state rules must repeat the full selector: a short `.tab:hover` loses
   to the base `.tab-pane > … > .tab` rule and silently never paints. Probe
   states with `tools/ThemeStates.java` (sets hover/pressed/focused

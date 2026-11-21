@@ -27,7 +27,7 @@ Fonctionnalité: Connexion et profil utilisateur
     Alors la réponse porte son nom d'utilisateur, son e-mail et le rôle « admin »
     Et le même appel avec un compte ordinaire renvoie le rôle « operator »
 
-  @w1
+  @w2
   Scénario: No stored password
     Étant donné une connexion réussie
     Quand l'utilisateur relance l'application
@@ -40,7 +40,7 @@ Fonctionnalité: Connexion et profil utilisateur
     Quand l'utilisateur ouvre l'onglet Profil
     Alors il lit son nom, son e-mail et le rôle « Administrateur »
 
-  @w2
+  @w3
   Scénario: Change password
     Étant donné une session ouverte
     Quand l'utilisateur saisit son mot de passe actuel et un nouveau mot de passe valide

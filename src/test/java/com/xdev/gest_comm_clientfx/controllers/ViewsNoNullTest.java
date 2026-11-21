@@ -18,7 +18,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class ViewsNoNullTest {
 
     private static final List<String> VIEWS = List.of(
-        "HomeScreen.fxml", "ConfigScreen.fxml", "NouveauClient.fxml",
+        "HomeScreen.fxml", "ConfigScreen.fxml", "ProfileView.fxml",
+        "NouveauClient.fxml",
         "NouvelArticle.fxml", "NouveauDevis.fxml", "NouvelFacture.fxml",
         "NouveauBonLiv.fxml", "Assistant.fxml");
 
