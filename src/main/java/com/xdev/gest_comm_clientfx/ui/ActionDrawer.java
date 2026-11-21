@@ -25,8 +25,24 @@ import java.util.List;
  */
 public final class ActionDrawer {
 
-    /** One button in the drawer. */
-    public record Action(String label, Runnable handler) { }
+    /** One button in the drawer; admin actions are shown to administrators only. */
+    public record Action(String label, Runnable handler, boolean adminOnly) {
+        public Action(String label, Runnable handler) {
+            this(label, handler, false);
+        }
+    }
+
+    /**
+     * The actions the signed-in role may be offered. Presentation only: the
+     * API keeps `IsAuthenticated`, so this hides buttons, it does not
+     * authorize (specs/login-profile-settings US8, scope-out).
+     */
+    public static List<Action> visible(List<Action> actions, boolean admin) {
+        if (admin) {
+            return actions;
+        }
+        return actions.stream().filter(a -> !a.adminOnly()).toList();
+    }
 
     private static final double OPEN_WIDTH = 210;
     private static final double RAIL_WIDTH = 30;

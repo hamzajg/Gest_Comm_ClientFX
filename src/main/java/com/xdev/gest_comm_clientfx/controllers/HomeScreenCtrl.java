@@ -10,6 +10,7 @@ import com.xdev.gest_comm_clientfx.models.BonLiv;
 import com.xdev.gest_comm_clientfx.models.Client;
 import com.xdev.gest_comm_clientfx.models.Devis;
 import com.xdev.gest_comm_clientfx.models.Facture;
+import com.xdev.gest_comm_clientfx.models.UserProfile;
 import com.xdev.gest_comm_clientfx.ui.ActionDrawer;
 import com.xdev.gest_comm_clientfx.ui.TabWorkspace;
 import com.xdev.gest_comm_clientfx.ui.Views;
@@ -76,6 +77,8 @@ public class HomeScreenCtrl {
 
     private final ApiClient api = new ApiClient(ApiConfig.load());
     private final ActionDrawer drawer = new ActionDrawer();
+    /** The signed-in account; null until /api/me answers. */
+    private volatile UserProfile sessionProfile;
     private TabWorkspace workspace;
     private String searchTerm = "";
     private int formSequence = 0;
@@ -136,6 +139,27 @@ public class HomeScreenCtrl {
                 }
             });
         showWelcome();
+        loadSessionProfile();
+    }
+
+    /** Role for the drawer: read from /api/me, never from the client (D1). */
+    private void loadSessionProfile() {
+        new Thread(() -> {
+            try {
+                UserProfile profile = api.profile();
+                Platform.runLater(() -> {
+                    sessionProfile = profile;
+                    updateDrawer(workspace.active());
+                });
+            } catch (ApiException ignored) {
+                // The gate handles a dead session; the drawer then offers
+                // only the non-administrative actions.
+            }
+        }).start();
+    }
+
+    private boolean isAdmin() {
+        return sessionProfile != null && sessionProfile.isAdmin();
     }
 
     // --- tabs --------------------------------------------------------
@@ -282,7 +306,8 @@ public class HomeScreenCtrl {
         String key = workspace.keyOf(tab);
         String name = Display.text(tab.getText()).replace("★ ", "")
             .replace(" — ", "");
-        drawer.show(name, actionsFor(key, tab));
+        drawer.show(name,
+            ActionDrawer.visible(actionsFor(key, tab), isAdmin()));
         searchScope.setText(WorkspacePolicy.isList(key)
             ? Messages.get("search.scope", name) : "");
     }
@@ -302,37 +327,37 @@ public class HomeScreenCtrl {
             case WorkspacePolicy.CLIENTS -> List.of(
                 action(Messages.get("action.refresh"), this::refreshClients),
                 action(Messages.get("action.newClient"), this::showNewClient),
-                action(Messages.get("action.edit"), this::editSelectedClient),
-                action(Messages.get("action.delete"), this::deleteSelectedClient));
+                adminAction(Messages.get("action.edit"), this::editSelectedClient),
+                adminAction(Messages.get("action.delete"), this::deleteSelectedClient));
             case WorkspacePolicy.ARTICLES -> List.of(
                 action(Messages.get("action.refresh"), this::refreshArticles),
                 action(Messages.get("action.newArticle"), this::showNewArticle),
-                action(Messages.get("action.edit"), this::editSelectedArticle),
-                action(Messages.get("action.delete"), this::deleteSelectedArticle));
+                adminAction(Messages.get("action.edit"), this::editSelectedArticle),
+                adminAction(Messages.get("action.delete"), this::deleteSelectedArticle));
             case WorkspacePolicy.DEVIS -> List.of(
                 action(Messages.get("action.refresh"), this::refreshDevis),
                 action(Messages.get("action.newDevis"), this::showNewDevis),
-                action(Messages.get("action.edit"), this::editSelectedDevis),
-                action(Messages.get("action.validate"), this::validerDevis),
-                action(Messages.get("action.refuse"), this::refuserDevis),
-                action(Messages.get("action.convert"), this::convertSelectedDevis),
-                action(Messages.get("action.delete"), this::deleteSelectedDevis));
+                adminAction(Messages.get("action.edit"), this::editSelectedDevis),
+                adminAction(Messages.get("action.validate"), this::validerDevis),
+                adminAction(Messages.get("action.refuse"), this::refuserDevis),
+                adminAction(Messages.get("action.convert"), this::convertSelectedDevis),
+                adminAction(Messages.get("action.delete"), this::deleteSelectedDevis));
             case WorkspacePolicy.FACTURES -> List.of(
                 action(Messages.get("action.refresh"), this::refreshFactures),
                 action(Messages.get("action.newFacture"), this::showNewFacture),
-                action(Messages.get("action.edit"), this::editSelectedFacture),
-                action(Messages.get("action.validate"), this::validerFacture),
-                action(Messages.get("action.markPaid"), this::payerFacture),
-                action(Messages.get("action.cancel"), this::annulerFacture),
-                action(Messages.get("action.delete"), this::deleteSelectedFacture));
+                adminAction(Messages.get("action.edit"), this::editSelectedFacture),
+                adminAction(Messages.get("action.validate"), this::validerFacture),
+                adminAction(Messages.get("action.markPaid"), this::payerFacture),
+                adminAction(Messages.get("action.cancel"), this::annulerFacture),
+                adminAction(Messages.get("action.delete"), this::deleteSelectedFacture));
             case WorkspacePolicy.BONLIVS -> List.of(
                 action(Messages.get("action.refresh"), this::refreshBonLivs),
                 action(Messages.get("action.newBonLiv"), this::showNewBonLiv),
-                action(Messages.get("action.edit"), this::editSelectedBonLiv),
-                action(Messages.get("action.validate"), this::validerBonLiv),
-                action(Messages.get("action.markDelivered"), this::livrerBonLiv),
-                action(Messages.get("action.cancel"), this::annulerBonLiv),
-                action(Messages.get("action.delete"), this::deleteSelectedBonLiv));
+                adminAction(Messages.get("action.edit"), this::editSelectedBonLiv),
+                adminAction(Messages.get("action.validate"), this::validerBonLiv),
+                adminAction(Messages.get("action.markDelivered"), this::livrerBonLiv),
+                adminAction(Messages.get("action.cancel"), this::annulerBonLiv),
+                adminAction(Messages.get("action.delete"), this::deleteSelectedBonLiv));
             case WorkspacePolicy.CONFIG -> List.of();
             default -> List.of();
         };
@@ -356,6 +381,11 @@ public class HomeScreenCtrl {
 
     private static ActionDrawer.Action action(String label, Runnable r) {
         return new ActionDrawer.Action(label, r);
+    }
+
+    /** Shown to administrators only; presentation gating (US8). */
+    private static ActionDrawer.Action adminAction(String label, Runnable r) {
+        return new ActionDrawer.Action(label, r, true);
     }
 
     @FXML

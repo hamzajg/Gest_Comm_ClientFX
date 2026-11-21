@@ -2,7 +2,7 @@
   "feature": "login-profile-settings",
   "status": "running",
   "iterations": 0,
-  "updated": "2026-11-21T12:44:19Z",
+  "updated": "2026-11-21T12:45:57Z",
   "waves": {
     "1": {
       "status": "done",
@@ -24,6 +24,13 @@
       "pr": "#14",
       "evidence": "theme + language preferences (fr/en bundles, shell rebuild), password change form, login/shell/drawer externalized; clie",
       "updated": "2026-11-21T12:44:19Z"
+    },
+    "4": {
+      "status": "in-progress",
+      "branch": "feat/login-profile-settings-w4",
+      "pr": "\u2014",
+      "evidence": "\u2014",
+      "updated": "2026-11-21T12:45:57Z"
     }
   },
   "gates": {
@@ -46,6 +53,7 @@
     "2026-11-21T11:46:42Z start wave 2 on feat/login-profile-settings-w2",
     "2026-11-21T12:09:47Z complete wave 2 (#13): profile tab (/api/me identity, e-mail, role badge), sign-out to the login gate, password no longer persisted, settings r",
     "2026-11-21T12:19:09Z start wave 3 on feat/login-profile-settings-w3",
-    "2026-11-21T12:44:19Z complete wave 3 (#14): theme + language preferences (fr/en bundles, shell rebuild), password change form, login/shell/drawer externalized; clie"
+    "2026-11-21T12:44:19Z complete wave 3 (#14): theme + language preferences (fr/en bundles, shell rebuild), password change form, login/shell/drawer externalized; clie",
+    "2026-11-21T12:45:57Z start wave 4 on feat/login-profile-settings-w4"
   ]
 }
