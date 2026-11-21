@@ -1,11 +1,14 @@
 package com.xdev.gest_comm_clientfx.controllers;
 
+import com.xdev.gest_comm_clientfx.i18n.Messages;
 import org.junit.jupiter.api.Test;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Locale;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -45,16 +48,22 @@ class ViewsNoNullTest {
     @Test
     void documentCodeFieldsAnnounceAutoNumbering() throws Exception {
         String[][] expected = {
-            {"NouveauDevis.fxml", "codeDevisField"},
-            {"NouvelFacture.fxml", "codeFactureField"},
-            {"NouveauBonLiv.fxml", "codeBonLivField"},
+            {"NouveauDevis.fxml", "codeDevisField", "field.codeDevisHint"},
+            {"NouvelFacture.fxml", "codeFactureField", "field.codeFactureHint"},
+            {"NouveauBonLiv.fxml", "codeBonLivField", "field.codeBonLivHint"},
         };
         for (String[] pair : expected) {
             String fxml = view(pair[0]);
             assertTrue(fxml.contains("fx:id=\"" + pair[1] + "\""),
                 pair[0] + " must keep " + pair[1]);
-            assertTrue(fxml.contains("auto si vide"),
-                pair[0] + " must tell the user the code can stay empty");
+            // The hint is externalized (US7), so the promise lives in the
+            // bundles and the view only names the key.
+            assertTrue(fxml.contains("promptText=\"%" + pair[2] + "\""),
+                pair[0] + " must point its prompt at " + pair[2]);
         }
+        assertEquals("auto si vide (ex. DEV-0001)",
+            Messages.get(Locale.FRENCH, "field.codeDevisHint"));
+        assertEquals("auto if empty (e.g. DEV-0001)",
+            Messages.get(Locale.ENGLISH, "field.codeDevisHint"));
     }
 }

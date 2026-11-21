@@ -4,7 +4,7 @@ Guidance for AI agents (and humans) working in this repository.
 
 ## Project
 
-Gest_Comm_ClientFX is a **JavaFX desktop client** (French UI) for the
+Gest_Comm_ClientFX is a **JavaFX desktop client** (French/English UI) for the
 *gestion commerciale* back end **PyGestComm** (Django REST). Early stage:
 the window, config screen, live Clients/Articles/Devis/Factures list
 tabs, create/edit/delete forms and statut actions for all four resources, and
@@ -51,8 +51,8 @@ src/main/java/com/xdev/gest_comm_clientfx/
     Display             what a screen shows for an absent value:
                         fields → empty (never the literal "null"),
                         cells/labels → "—" (legacy null-on-screen bug)
-    ApiMessages         French phrasing for API failures (409 →
-                        "Suppression impossible : …", 400 → "Action
+    ApiMessages         phrasing for API failures, in the chosen language
+                        (409 → "Suppression impossible : …", 400 → "Action
                         refusée : …"), shared by every controller
     HomeScreenCtrl      @FXML: home shell — table columns, menu actions,
                         drawer wiring + convertSelectedDevis; loads run
@@ -73,7 +73,7 @@ src/main/java/com/xdev/gest_comm_clientfx/
                         picker that prefills client/date/lines, POST
                         /api/facture with nested lignes
   ui/
-    WorkspacePolicy     tab keys, titles, which panels are singletons,
+    WorkspacePolicy     tab keys, title keys, which panels are singletons,
                         which scope the search (no JavaFX — unit tested)
     TabWorkspace        opens/closes tabs, reuses singleton panels,
                         pin (★ removes the close button)
@@ -173,8 +173,11 @@ decimals arrive as strings (`"100.00"`) — Jackson handles that into
 - UI text lives in `views/messages.properties` (French base) and
   `messages_en.properties`. FXML uses `text="%key"` and must be loaded
   through `ui.Views` (or a loader with `Messages.resourceBundle()`); a
-  plain `new FXMLLoader(url)` cannot resolve `%key`. `MessagesBundleTest`
-  enforces key parity and that every FXML key exists.
+  plain `new FXMLLoader(url)` cannot resolve `%key`. Every view — login,
+  shell, profile, settings, the record forms and the assistant — is
+  externalized; table headers, list status and confirmation text go through
+  `Messages` from Java. `MessagesBundleTest` enforces key parity, that every
+  FXML key exists and that no view hard-codes a visible label.
 - `Messages` resolves the requested locale then the base bundle, never the
   JVM default: the stock fallback made a French request load the English
   file on an English machine.

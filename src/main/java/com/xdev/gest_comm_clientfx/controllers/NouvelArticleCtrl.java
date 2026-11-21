@@ -2,6 +2,7 @@ package com.xdev.gest_comm_clientfx.controllers;
 
 import com.xdev.gest_comm_clientfx.api.ApiClient;
 import com.xdev.gest_comm_clientfx.api.ApiException;
+import com.xdev.gest_comm_clientfx.i18n.Messages;
 import com.xdev.gest_comm_clientfx.models.Article;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -75,7 +76,7 @@ public class NouvelArticleCtrl implements ApiDialog {
         putDecimal(payload, "dernierPrixVenteUnitaire",
             dernierPrixField.getText());
 
-        statusLabel.setText("Enregistrement…");
+        statusLabel.setText(Messages.get("form.saving"));
         new Thread(() -> {
             try {
                 if (editing != null) {
@@ -92,27 +93,27 @@ public class NouvelArticleCtrl implements ApiDialog {
                 });
             } catch (ApiException e) {
                 Platform.runLater(() -> statusLabel.setText(
-                    ApiMessages.refused("Enregistrement", e)));
+                    ApiMessages.refused(Messages.get("record.action.save"), e)));
             }
         }).start();
     }
 
     private String validate() {
         if (refArticleField.getText().isBlank()) {
-            return "La référence est obligatoire.";
+            return Messages.get("form.error.reference");
         }
         if (descArticleField.getText().isBlank()) {
-            return "La désignation est obligatoire.";
+            return Messages.get("form.error.designation");
         }
         if (prixVenteField.getText().isBlank()
                 || !isDecimal(prixVenteField.getText())) {
-            return "Le prix de vente est obligatoire (nombre).";
+            return Messages.get("form.error.salePrice");
         }
         for (TextField f : new TextField[]{prixAchatField, remiseAchatField,
                 remiseVenteField, tvaAchatField, tvaVenteField,
                 dernierPrixField}) {
             if (!f.getText().isBlank() && !isDecimal(f.getText())) {
-                return "Valeur numérique invalide : " + f.getText();
+                return Messages.get("form.error.number", f.getText());
             }
         }
         return null;

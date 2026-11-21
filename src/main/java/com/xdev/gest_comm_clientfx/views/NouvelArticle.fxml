@@ -18,36 +18,36 @@
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
 
-    <Label text="Nouvel article" styleClass="form-title" />
+    <Label text="%form.article.new" styleClass="form-title" />
 
     <GridPane hgap="10.0" vgap="8.0">
         <columnConstraints>
             <ColumnConstraints minWidth="160.0" prefWidth="160.0" />
             <ColumnConstraints hgrow="ALWAYS" />
         </columnConstraints>
-        <Label text="Référence *" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+        <Label text="%field.articleReference" GridPane.columnIndex="0" GridPane.rowIndex="0" />
         <TextField fx:id="refArticleField" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-        <Label text="Désignation *" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+        <Label text="%field.articleDesignation" GridPane.columnIndex="0" GridPane.rowIndex="1" />
         <TextField fx:id="descArticleField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-        <Label text="Prix d'achat" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+        <Label text="%field.purchasePrice" GridPane.columnIndex="0" GridPane.rowIndex="2" />
         <TextField fx:id="prixAchatField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-        <Label text="Prix de vente *" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+        <Label text="%field.salePrice" GridPane.columnIndex="0" GridPane.rowIndex="3" />
         <TextField fx:id="prixVenteField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-        <Label text="Remise achat (%)" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+        <Label text="%field.purchaseDiscount" GridPane.columnIndex="0" GridPane.rowIndex="4" />
         <TextField fx:id="remiseAchatField" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-        <Label text="Remise vente (%)" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+        <Label text="%field.saleDiscount" GridPane.columnIndex="0" GridPane.rowIndex="5" />
         <TextField fx:id="remiseVenteField" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-        <Label text="TVA achat (%)" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+        <Label text="%field.purchaseVat" GridPane.columnIndex="0" GridPane.rowIndex="6" />
         <TextField fx:id="tvaAchatField" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-        <Label text="TVA vente (%)" GridPane.columnIndex="0" GridPane.rowIndex="7" />
+        <Label text="%field.saleVat" GridPane.columnIndex="0" GridPane.rowIndex="7" />
         <TextField fx:id="tvaVenteField" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-        <Label text="Dernier prix de vente" GridPane.columnIndex="0" GridPane.rowIndex="8" />
+        <Label text="%field.lastSalePrice" GridPane.columnIndex="0" GridPane.rowIndex="8" />
         <TextField fx:id="dernierPrixField" GridPane.columnIndex="1" GridPane.rowIndex="8" />
     </GridPane>
 
     <HBox spacing="10.0">
-        <Button mnemonicParsing="false" onAction="#save" styleClass="primary" text="Enregistrer" />
-        <Button mnemonicParsing="false" onAction="#cancel" text="Annuler" />
+        <Button mnemonicParsing="false" onAction="#save" styleClass="primary" text="%form.save" />
+        <Button mnemonicParsing="false" onAction="#cancel" text="%form.cancel" />
     </HBox>
 
     <Label fx:id="statusLabel" text="" wrapText="true" />

@@ -3,6 +3,7 @@ package com.xdev.gest_comm_clientfx.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xdev.gest_comm_clientfx.api.ApiClient;
 import com.xdev.gest_comm_clientfx.api.ApiException;
+import com.xdev.gest_comm_clientfx.i18n.Messages;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -41,7 +42,7 @@ public class AssistantCtrl implements ApiDialog {
             return;
         }
         questionField.clear();
-        statusLabel.setText("Réflexion…");
+        statusLabel.setText(Messages.get("assistant.thinking"));
         new Thread(() -> {
             try {
                 Map<String, Object> response = api.askAssistant(question);

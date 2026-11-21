@@ -17,13 +17,13 @@
         <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
     </padding>
 
-    <Label text="Assistant" styleClass="form-title" />
-    <Label styleClass="assistant-hint" text="Posez une question sur les clients, articles, devis ou factures — ex. « combien de clients », « trouver devis D001 »." wrapText="true" />
+    <Label text="%assistant.title" styleClass="form-title" />
+    <Label styleClass="assistant-hint" text="%assistant.hint" wrapText="true" />
 
     <HBox spacing="8.0">
         <TextField fx:id="questionField" HBox.hgrow="ALWAYS"
-                   promptText="Votre question…" />
-        <Button mnemonicParsing="false" onAction="#ask" styleClass="primary" text="Poser" />
+                   promptText="%assistant.question" />
+        <Button mnemonicParsing="false" onAction="#ask" styleClass="primary" text="%assistant.ask" />
     </HBox>
 
     <TextArea fx:id="logArea" editable="false" styleClass="transcript" wrapText="true"

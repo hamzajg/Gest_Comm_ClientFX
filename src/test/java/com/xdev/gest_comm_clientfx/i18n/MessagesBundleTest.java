@@ -17,16 +17,22 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Covers "Language switches the shell" (specs/login-profile-settings US6):
- * both bundles carry exactly the same keys, every {@code %key} an FXML view
- * asks for exists, and English really is English. A missing key otherwise
- * shows up as a broken layout at runtime, not as a failed build.
+ * Covers "Language switches the shell" (specs/login-profile-settings US6) and
+ * "the record tables and forms follow the chosen language" (US7): both bundles
+ * carry exactly the same keys, every {@code %key} an FXML view asks for
+ * exists, every visible label goes through the bundle, and English really is
+ * English. A missing key otherwise shows up as a broken layout at runtime,
+ * not as a failed build.
  */
 class MessagesBundleTest {
 
+    /** Every FXML view ships translated, the record forms and assistant
+     *  included (US7). */
     private static final List<String> VIEWS = List.of(
         "HomeScreen.fxml", "LoginView.fxml", "ProfileView.fxml",
-        "ConfigScreen.fxml");
+        "ConfigScreen.fxml", "NouveauClient.fxml", "NouvelArticle.fxml",
+        "NouveauDevis.fxml", "NouvelFacture.fxml", "NouveauBonLiv.fxml",
+        "Assistant.fxml");
 
     private static final Pattern KEY = Pattern.compile("%([A-Za-z0-9_.]+)");
 
@@ -58,8 +64,33 @@ class MessagesBundleTest {
                 checked++;
             }
         }
-        assertTrue(checked >= 15,
-            "expected the shell, login and profile views to use the bundles");
+        assertTrue(checked >= 40,
+            "expected every view, record forms included, to use the bundles");
+    }
+
+    /**
+     * No view may bake a French (or English) literal into a label or a
+     * prompt: a literal is invisible to the language switch and is exactly
+     * the gap US7 closes.
+     */
+    @Test
+    void everyVisibleTextComesFromTheBundle() throws Exception {
+        Pattern attribute = Pattern.compile(
+            "(?:promptT|t)ext=\"([^\"]*)\"");
+        for (String view : VIEWS) {
+            Matcher m = attribute.matcher(read(view));
+            while (m.find()) {
+                String value = m.group(1);
+                // An empty label and a URL example read the same in every
+                // language; anything else must come from the bundle.
+                boolean neutral = value.isEmpty()
+                    || value.startsWith("%")
+                    || value.startsWith("http://")
+                    || value.startsWith("https://");
+                assertTrue(neutral,
+                    view + " hard-codes the text \"" + value + "\"");
+            }
+        }
     }
 
     @Test
@@ -71,6 +102,41 @@ class MessagesBundleTest {
             Messages.get(Locale.FRENCH, "login.connected", "Ada"));
         assertEquals("Signed in: Ada",
             Messages.get(Locale.ENGLISH, "login.connected", "Ada"));
+    }
+
+    @Test
+    void theRecordTablesAndFormsFollowTheLanguage() {
+        assertEquals("Mat. fiscale",
+            Messages.get(Locale.FRENCH, "table.taxId"));
+        assertEquals("Tax ID", Messages.get(Locale.ENGLISH, "table.taxId"));
+
+        assertEquals("Total TTC",
+            Messages.get(Locale.FRENCH, "table.totalTtc"));
+        assertEquals("Total incl. tax",
+            Messages.get(Locale.ENGLISH, "table.totalTtc"));
+
+        assertEquals("Nouveau devis",
+            Messages.get(Locale.FRENCH, "form.devis.new"));
+        assertEquals("New quote",
+            Messages.get(Locale.ENGLISH, "form.devis.new"));
+
+        assertEquals("auto si vide (ex. DEV-0001)",
+            Messages.get(Locale.FRENCH, "field.codeDevisHint"));
+        assertEquals("auto if empty (e.g. DEV-0001)",
+            Messages.get(Locale.ENGLISH, "field.codeDevisHint"));
+
+        assertEquals("3 clients chargés.",
+            Messages.get(Locale.FRENCH, "record.loaded.clients", 3));
+        assertEquals("3 clients loaded.",
+            Messages.get(Locale.ENGLISH, "record.loaded.clients", 3));
+
+        assertEquals("Total HT : 10.00 — TVA : 2.00 — TTC : 12.00",
+            Messages.get(Locale.FRENCH, "form.totals",
+                "10.00", "2.00", "12.00"));
+        assertEquals("Total excl. tax: 10.00 — VAT: 2.00 — "
+                + "Total incl. tax: 12.00",
+            Messages.get(Locale.ENGLISH, "form.totals",
+                "10.00", "2.00", "12.00"));
     }
 
     private static String read(String view) throws Exception {

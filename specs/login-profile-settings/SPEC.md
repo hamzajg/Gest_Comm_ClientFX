@@ -59,6 +59,10 @@ alone enforced.
 - String externalization for the login, profile, shell menus and drawer
   captions into `Messages` bundles (`fr`, `en`); language choice applies to
   those surfaces immediately, by rebuilding the workspace scene.
+- The five record tables (column headers, list status, selection and
+  confirmation messages) and the eight record forms (client, article, quote,
+  invoice, delivery note, each in create and edit) externalized through the
+  same bundles, so the whole app follows the language (US7).
 - Role enforcement for the destructive drawer actions (delete, validate,
   refuse, convert) — admin only — with the backend's own permission unchanged.
 - `tools/SkinShots.java` and `tools/ThemeStates.java` extended to cover the
@@ -73,10 +77,9 @@ alone enforced.
   presentation. The API keeps `IsAuthenticated`; an operator token can still
   call a destructive endpoint directly. That gap is named in VALIDATION.md
   and is a follow-up feature, not something this one claims to close.
-- Translating the five record tables and the eight record forms: they stay
-  French in this feature (US7 tracks the migration). The language choice is
-  honest about that: it switches the externalized surfaces, not the domain
-  screens.
+- Translating the *data*: statut values (`brouillon`, `valide`, `refuse`,
+  `livre`, `payee`, `annulee`) are API enum values, not labels, and are shown
+  as sent. Only the surrounding screens are translated.
 - Window chrome, animations, third-party theme libraries.
 
 ## Acceptance criteria
@@ -93,6 +96,7 @@ alone enforced.
 | 8 | Regular operators do not get the admin-only actions; administrators do | Role gates destructive actions |
 | 9 | No password is persisted on disk after this feature | No stored password |
 | 10 | Both suites build and pass | (quality gate G2) |
+| 11 | The five record tables and the record forms follow the chosen language | All record screens follow the language |
 
 ## Decisions
 

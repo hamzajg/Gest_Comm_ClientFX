@@ -90,39 +90,43 @@ public class HomeScreenCtrl {
         for (TableView<?> table : new TableView<?>[]{clientTable,
                 articleTable, devisTable, factureTable, bonlivTable}) {
             applyColumnPolicy(table);
+            // JavaFX's own placeholder is fixed at JVM start; ours follows
+            // the chosen language (US7).
+            table.setPlaceholder(new Label(Messages.get("table.empty")));
         }
         clientTable.getColumns().addAll(
-            column("Code", "codeClient", 100),
-            column("Nom", "nomPrenomClient", 220),
-            column("Mat. fiscale", "matFiscalClient", 140),
-            column("Tél. 1", "numTelClient1", 110),
-            column("Tél. 2", "numTelClient2", 110));
+            column(Messages.get("table.code"), "codeClient", 100),
+            column(Messages.get("table.name"), "nomPrenomClient", 220),
+            column(Messages.get("table.taxId"), "matFiscalClient", 140),
+            column(Messages.get("table.phone1"), "numTelClient1", 110),
+            column(Messages.get("table.phone2"), "numTelClient2", 110));
         articleTable.getColumns().addAll(
-            column("Référence", "ref_article", 120),
-            column("Désignation", "desc_article", 260),
-            column("Prix vente", "prix_vente_unitaire", 110));
+            column(Messages.get("table.reference"), "ref_article", 120),
+            column(Messages.get("table.designation"), "desc_article", 260),
+            column(Messages.get("table.salePrice"),
+                "prix_vente_unitaire", 110));
         devisTable.getColumns().addAll(
-            column("Code", "codeDevis", 90),
-            column("Date", "dateDevis", 100),
-            column("Client", "codeClient", 90),
-            column("Nom", "nomPrenomClient", 200),
-            column("Statut", "statutDevis", 90),
-            column("Total TTC", "totalTTC", 100));
+            column(Messages.get("table.code"), "codeDevis", 90),
+            column(Messages.get("table.date"), "dateDevis", 100),
+            column(Messages.get("table.client"), "codeClient", 90),
+            column(Messages.get("table.name"), "nomPrenomClient", 200),
+            column(Messages.get("table.status"), "statutDevis", 90),
+            column(Messages.get("table.totalTtc"), "totalTTC", 100));
         factureTable.getColumns().addAll(
-            column("Code", "codeFacture", 90),
-            column("Date", "dateFacture", 100),
-            column("Client", "codeClient", 90),
-            column("Nom", "nomPrenomClient", 200),
-            column("Devis", "codeDevis", 90),
-            column("Statut", "statutFacture", 90),
-            column("Total TTC", "totalTTC", 100));
+            column(Messages.get("table.code"), "codeFacture", 90),
+            column(Messages.get("table.date"), "dateFacture", 100),
+            column(Messages.get("table.client"), "codeClient", 90),
+            column(Messages.get("table.name"), "nomPrenomClient", 200),
+            column(Messages.get("table.quote"), "codeDevis", 90),
+            column(Messages.get("table.status"), "statutFacture", 90),
+            column(Messages.get("table.totalTtc"), "totalTTC", 100));
         bonlivTable.getColumns().addAll(
-            column("Code", "codeBonLiv", 90),
-            column("Date", "dateBonLiv", 100),
-            column("Client", "codeClient", 90),
-            column("Nom", "nomPrenomClient", 200),
-            column("Statut", "statutBonLiv", 90),
-            column("Total TTC", "totalTTC", 100));
+            column(Messages.get("table.code"), "codeBonLiv", 90),
+            column(Messages.get("table.date"), "dateBonLiv", 100),
+            column(Messages.get("table.client"), "codeClient", 90),
+            column(Messages.get("table.name"), "nomPrenomClient", 200),
+            column(Messages.get("table.status"), "statutBonLiv", 90),
+            column(Messages.get("table.totalTtc"), "totalTTC", 100));
 
         searchField.setOnAction(e -> applySearch());
 
@@ -168,7 +172,8 @@ public class HomeScreenCtrl {
     @FXML
     public void showWelcome() {
         Tab tab = workspace.open(WorkspacePolicy.WELCOME,
-            WorkspacePolicy.title(WorkspacePolicy.WELCOME), welcomePanel());
+            Messages.get(WorkspacePolicy.titleKey(WorkspacePolicy.WELCOME)),
+            welcomePanel());
         updateDrawer(tab);
     }
 
@@ -200,7 +205,8 @@ public class HomeScreenCtrl {
     }
 
     private void openList(String key, Node panel, Runnable refresh) {
-        workspace.open(key, WorkspacePolicy.title(key), panel);
+        workspace.open(key, Messages.get(WorkspacePolicy.titleKey(key)),
+            panel);
         updateDrawer(workspace.active());
         refresh.run();
     }
@@ -237,7 +243,7 @@ public class HomeScreenCtrl {
         try {
             Node root = new ConfigScreen().getRootView();
             Tab tab = workspace.open(WorkspacePolicy.CONFIG,
-                WorkspacePolicy.title(WorkspacePolicy.CONFIG), root);
+                Messages.get(WorkspacePolicy.titleKey(WorkspacePolicy.CONFIG)), root);
             updateDrawer(tab);
         } catch (IOException e) {
             clientStatus.setText(Messages.get("error.openConfig"));
@@ -254,7 +260,7 @@ public class HomeScreenCtrl {
             ctrl.setOnSignedOut(this::requestSignOut);
             ctrl.setOnLanguageChanged(this::requestLanguageChange);
             Tab tab = workspace.open(WorkspacePolicy.PROFILE,
-                WorkspacePolicy.title(WorkspacePolicy.PROFILE), root);
+                Messages.get(WorkspacePolicy.titleKey(WorkspacePolicy.PROFILE)), root);
             updateDrawer(tab);
         } catch (IOException e) {
             clientStatus.setText(Messages.get("error.openProfile"));
@@ -444,50 +450,50 @@ public class HomeScreenCtrl {
 
     @FXML
     public void refreshClients() {
-        load("clients", clientStatus,
+        load("record.loaded.clients", clientStatus,
             () -> FXCollections.observableArrayList(api.listClients(searchTerm)),
             clientTable::setItems);
     }
 
     @FXML
     public void refreshArticles() {
-        load("articles", articleStatus,
+        load("record.loaded.articles", articleStatus,
             () -> FXCollections.observableArrayList(api.listArticles(searchTerm)),
             articleTable::setItems);
     }
 
     @FXML
     public void refreshDevis() {
-        load("devis", devisStatus,
+        load("record.loaded.devis", devisStatus,
             () -> FXCollections.observableArrayList(api.listDevis(searchTerm)),
             devisTable::setItems);
     }
 
     @FXML
     public void refreshFactures() {
-        load("facture", factureStatus,
+        load("record.loaded.factures", factureStatus,
             () -> FXCollections.observableArrayList(api.listFactures(searchTerm)),
             factureTable::setItems);
     }
 
     @FXML
     public void refreshBonLivs() {
-        load("bon de livraison", bonlivStatus,
+        load("record.loaded.bonlivs", bonlivStatus,
             () -> FXCollections.observableArrayList(api.listBonLivs(searchTerm)),
             bonlivTable::setItems);
     }
 
-    private <T> void load(String label, Label status,
+    private <T> void load(String loadedKey, Label status,
                           Supplier<javafx.collections.ObservableList<T>> fetch,
                           java.util.function.Consumer<
                               javafx.collections.ObservableList<T>> apply) {
-        status.setText("Chargement…");
+        status.setText(Messages.get("record.loading"));
         new Thread(() -> {
             try {
                 var data = fetch.get();
                 Platform.runLater(() -> {
                     apply.accept(data);
-                    status.setText(data.size() + " " + label + " chargé(s).");
+                    status.setText(Messages.get(loadedKey, data.size()));
                 });
             } catch (ApiException e) {
                 Platform.runLater(() ->
@@ -504,30 +510,30 @@ public class HomeScreenCtrl {
     @FXML
     public void showNewDevis() {
         openForm("/com/xdev/gest_comm_clientfx/views/NouveauDevis.fxml",
-            "Nouveau devis", NouveauDevisCtrl.class, this::refreshDevis);
+            Messages.get("form.devis.new"), NouveauDevisCtrl.class, this::refreshDevis);
     }
 
     @FXML
     public void convertSelectedDevis() {
         Devis devis = devisTable.getSelectionModel().getSelectedItem();
         if (devis == null) {
-            devisStatus.setText("Sélectionnez un devis à convertir.");
+            devisStatus.setText(Messages.get("record.select.devisConvert"));
             return;
         }
-        devisStatus.setText("Conversion en cours…");
+        devisStatus.setText(Messages.get("record.converting"));
         new Thread(() -> {
             try {
                 Facture f = api.convertDevis(devis.getIdDevis(),
                     Map.of());
                 Platform.runLater(() -> {
-                    devisStatus.setText("Devis converti → facture "
-                        + Display.cell(f.getCodeFacture()));
+                    devisStatus.setText(Messages.get("record.converted",
+                        Display.cell(f.getCodeFacture())));
                     refreshDevis();
                     refreshFactures();
                 });
             } catch (ApiException e) {
                 Platform.runLater(() -> devisStatus.setText(
-                    ApiMessages.refused("Conversion", e)));
+                    ApiMessages.refused(Messages.get("record.action.convert"), e)));
             }
         }).start();
     }
@@ -535,25 +541,25 @@ public class HomeScreenCtrl {
     @FXML
     public void showNewFacture() {
         openForm("/com/xdev/gest_comm_clientfx/views/NouvelFacture.fxml",
-            "Nouvelle facture", NouvelFactureCtrl.class,
+            Messages.get("form.facture.new"), NouvelFactureCtrl.class,
             this::refreshFactures);
     }
 
     @FXML
     public void showNewBonLiv() {
         openForm("/com/xdev/gest_comm_clientfx/views/NouveauBonLiv.fxml",
-            "Nouveau bon de livraison", NouveauBonLivCtrl.class,
+            Messages.get("form.bonliv.new"), NouveauBonLivCtrl.class,
             this::refreshBonLivs);
     }
 
     private void setBonLivStatut(String statut) {
         BonLiv b = bonlivTable.getSelectionModel().getSelectedItem();
         if (b == null) {
-            bonlivStatus.setText("Sélectionnez un bon de livraison.");
+            bonlivStatus.setText(Messages.get("record.select.bonliv"));
             return;
         }
-        mutate(bonlivStatus, "Statut du bon de livraison mis à jour.",
-            "Mise à jour",
+        mutate(bonlivStatus, Messages.get("record.updated.bonliv"),
+            Messages.get("record.action.update"),
             () -> api.patch("/api/bonliv/" + b.getIdBonLiv(),
                 Map.of("statutBonLiv", statut)),
             this::refreshBonLivs);
@@ -567,11 +573,11 @@ public class HomeScreenCtrl {
     public void editSelectedBonLiv() {
         BonLiv b = bonlivTable.getSelectionModel().getSelectedItem();
         if (b == null) {
-            bonlivStatus.setText("Sélectionnez un bon de livraison.");
+            bonlivStatus.setText(Messages.get("record.select.bonliv"));
             return;
         }
         openForm("/com/xdev/gest_comm_clientfx/views/NouveauBonLiv.fxml",
-            "Modifier le bon de livraison", NouveauBonLivCtrl.class,
+            Messages.get("form.bonliv.edit"), NouveauBonLivCtrl.class,
             this::refreshBonLivs, c -> c.setEditing(b));
     }
 
@@ -579,14 +585,14 @@ public class HomeScreenCtrl {
     public void deleteSelectedBonLiv() {
         BonLiv b = bonlivTable.getSelectionModel().getSelectedItem();
         if (b == null) {
-            bonlivStatus.setText("Sélectionnez un bon de livraison.");
+            bonlivStatus.setText(Messages.get("record.select.bonliv"));
             return;
         }
-        if (!confirmDelete("le bon de livraison "
-                + Display.cell(b.getCodeBonLiv()))) {
+        if (!confirmDelete(Messages.get("record.confirm.bonliv",
+                Display.cell(b.getCodeBonLiv())))) {
             return;
         }
-        mutate(bonlivStatus, "Bon de livraison supprimé.", "Suppression",
+        mutate(bonlivStatus, Messages.get("record.deleted.bonliv"), Messages.get("record.action.delete"),
             () -> api.delete("/api/bonliv/" + b.getIdBonLiv()),
             this::refreshBonLivs);
     }
@@ -596,20 +602,20 @@ public class HomeScreenCtrl {
     @FXML
     public void showNewClient() {
         openForm("/com/xdev/gest_comm_clientfx/views/NouveauClient.fxml",
-            "Nouveau client", NouveauClientCtrl.class, this::refreshClients);
+            Messages.get("form.client.new"), NouveauClientCtrl.class, this::refreshClients);
     }
 
     @FXML
     public void showNewArticle() {
         openForm("/com/xdev/gest_comm_clientfx/views/NouvelArticle.fxml",
-            "Nouvel article", NouvelArticleCtrl.class, this::refreshArticles);
+            Messages.get("form.article.new"), NouvelArticleCtrl.class, this::refreshArticles);
     }
 
     // --- row actions: edit / delete / statut -------------------------
 
     private void mutate(Label status, String okMessage, String action,
                         Runnable call, Runnable refresh) {
-        status.setText("Enregistrement…");
+        status.setText(Messages.get("record.saving"));
         new Thread(() -> {
             try {
                 call.run();
@@ -626,9 +632,9 @@ public class HomeScreenCtrl {
 
     private boolean confirmDelete(String what) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Confirmation");
+        alert.setTitle(Messages.get("record.confirm.title"));
         alert.setHeaderText(null);
-        alert.setContentText("Supprimer " + what + " ?");
+        alert.setContentText(Messages.get("record.confirm.delete", what));
         Optional<ButtonType> result = alert.showAndWait();
         return result.isPresent() && result.get() == ButtonType.OK;
     }
@@ -637,11 +643,11 @@ public class HomeScreenCtrl {
     public void editSelectedClient() {
         Client c = clientTable.getSelectionModel().getSelectedItem();
         if (c == null) {
-            clientStatus.setText("Sélectionnez un client.");
+            clientStatus.setText(Messages.get("record.select.client"));
             return;
         }
         openForm("/com/xdev/gest_comm_clientfx/views/NouveauClient.fxml",
-            "Modifier le client", NouveauClientCtrl.class,
+            Messages.get("form.client.edit"), NouveauClientCtrl.class,
             this::refreshClients, d -> d.setEditing(c));
     }
 
@@ -649,13 +655,14 @@ public class HomeScreenCtrl {
     public void deleteSelectedClient() {
         Client c = clientTable.getSelectionModel().getSelectedItem();
         if (c == null) {
-            clientStatus.setText("Sélectionnez un client.");
+            clientStatus.setText(Messages.get("record.select.client"));
             return;
         }
-        if (!confirmDelete("le client " + Display.cell(c.getCodeClient()))) {
+        if (!confirmDelete(Messages.get("record.confirm.client",
+                Display.cell(c.getCodeClient())))) {
             return;
         }
-        mutate(clientStatus, "Client supprimé.", "Suppression",
+        mutate(clientStatus, Messages.get("record.deleted.client"), Messages.get("record.action.delete"),
             () -> api.delete("/api/client/" + c.getIdClient()),
             this::refreshClients);
     }
@@ -664,11 +671,11 @@ public class HomeScreenCtrl {
     public void editSelectedArticle() {
         Article a = articleTable.getSelectionModel().getSelectedItem();
         if (a == null) {
-            articleStatus.setText("Sélectionnez un article.");
+            articleStatus.setText(Messages.get("record.select.article"));
             return;
         }
         openForm("/com/xdev/gest_comm_clientfx/views/NouvelArticle.fxml",
-            "Modifier l'article", NouvelArticleCtrl.class,
+            Messages.get("form.article.edit"), NouvelArticleCtrl.class,
             this::refreshArticles, d -> d.setEditing(a));
     }
 
@@ -676,14 +683,14 @@ public class HomeScreenCtrl {
     public void deleteSelectedArticle() {
         Article a = articleTable.getSelectionModel().getSelectedItem();
         if (a == null) {
-            articleStatus.setText("Sélectionnez un article.");
+            articleStatus.setText(Messages.get("record.select.article"));
             return;
         }
-        if (!confirmDelete("l'article "
-                + Display.cell(a.getRef_article()))) {
+        if (!confirmDelete(Messages.get("record.confirm.article",
+                Display.cell(a.getRef_article())))) {
             return;
         }
-        mutate(articleStatus, "Article supprimé.", "Suppression",
+        mutate(articleStatus, Messages.get("record.deleted.article"), Messages.get("record.action.delete"),
             () -> api.delete("/api/article/" + a.getId_article()),
             this::refreshArticles);
     }
@@ -691,10 +698,10 @@ public class HomeScreenCtrl {
     private void setDevisStatut(String statut) {
         Devis d = devisTable.getSelectionModel().getSelectedItem();
         if (d == null) {
-            devisStatus.setText("Sélectionnez un devis.");
+            devisStatus.setText(Messages.get("record.select.devis"));
             return;
         }
-        mutate(devisStatus, "Statut du devis mis à jour.", "Mise à jour",
+        mutate(devisStatus, Messages.get("record.updated.devis"), Messages.get("record.action.update"),
             () -> api.patch("/api/devis/" + d.getIdDevis(),
                 Map.of("statutDevis", statut)),
             this::refreshDevis);
@@ -707,11 +714,11 @@ public class HomeScreenCtrl {
     public void editSelectedDevis() {
         Devis d = devisTable.getSelectionModel().getSelectedItem();
         if (d == null) {
-            devisStatus.setText("Sélectionnez un devis.");
+            devisStatus.setText(Messages.get("record.select.devis"));
             return;
         }
         openForm("/com/xdev/gest_comm_clientfx/views/NouveauDevis.fxml",
-            "Modifier le devis", NouveauDevisCtrl.class,
+            Messages.get("form.devis.edit"), NouveauDevisCtrl.class,
             this::refreshDevis, c -> c.setEditing(d));
     }
 
@@ -719,13 +726,14 @@ public class HomeScreenCtrl {
     public void deleteSelectedDevis() {
         Devis d = devisTable.getSelectionModel().getSelectedItem();
         if (d == null) {
-            devisStatus.setText("Sélectionnez un devis.");
+            devisStatus.setText(Messages.get("record.select.devis"));
             return;
         }
-        if (!confirmDelete("le devis " + Display.cell(d.getCodeDevis()))) {
+        if (!confirmDelete(Messages.get("record.confirm.devis",
+                Display.cell(d.getCodeDevis())))) {
             return;
         }
-        mutate(devisStatus, "Devis supprimé.", "Suppression",
+        mutate(devisStatus, Messages.get("record.deleted.devis"), Messages.get("record.action.delete"),
             () -> api.delete("/api/devis/" + d.getIdDevis()),
             this::refreshDevis);
     }
@@ -733,11 +741,11 @@ public class HomeScreenCtrl {
     private void setFactureStatut(String statut) {
         Facture f = factureTable.getSelectionModel().getSelectedItem();
         if (f == null) {
-            factureStatus.setText("Sélectionnez une facture.");
+            factureStatus.setText(Messages.get("record.select.facture"));
             return;
         }
-        mutate(factureStatus, "Statut de la facture mis à jour.",
-            "Mise à jour",
+        mutate(factureStatus, Messages.get("record.updated.facture"),
+            Messages.get("record.action.update"),
             () -> api.patch("/api/facture/" + f.getIdFacture(),
                 Map.of("statutFacture", statut)),
             this::refreshFactures);
@@ -751,11 +759,11 @@ public class HomeScreenCtrl {
     public void editSelectedFacture() {
         Facture f = factureTable.getSelectionModel().getSelectedItem();
         if (f == null) {
-            factureStatus.setText("Sélectionnez une facture.");
+            factureStatus.setText(Messages.get("record.select.facture"));
             return;
         }
         openForm("/com/xdev/gest_comm_clientfx/views/NouvelFacture.fxml",
-            "Modifier la facture", NouvelFactureCtrl.class,
+            Messages.get("form.facture.edit"), NouvelFactureCtrl.class,
             this::refreshFactures, c -> c.setEditing(f));
     }
 
@@ -763,13 +771,14 @@ public class HomeScreenCtrl {
     public void deleteSelectedFacture() {
         Facture f = factureTable.getSelectionModel().getSelectedItem();
         if (f == null) {
-            factureStatus.setText("Sélectionnez une facture.");
+            factureStatus.setText(Messages.get("record.select.facture"));
             return;
         }
-        if (!confirmDelete("la facture " + Display.cell(f.getCodeFacture()))) {
+        if (!confirmDelete(Messages.get("record.confirm.facture",
+                Display.cell(f.getCodeFacture())))) {
             return;
         }
-        mutate(factureStatus, "Facture supprimée.", "Suppression",
+        mutate(factureStatus, Messages.get("record.deleted.facture"), Messages.get("record.action.delete"),
             () -> api.delete("/api/facture/" + f.getIdFacture()),
             this::refreshFactures);
     }
@@ -777,7 +786,7 @@ public class HomeScreenCtrl {
     @FXML
     public void showAssistant() {
         openForm("/com/xdev/gest_comm_clientfx/views/Assistant.fxml",
-            "Assistant", AssistantCtrl.class, () -> { });
+            Messages.get("form.assistant"), AssistantCtrl.class, () -> { });
     }
 
     /** Sign-out: revoke the session, then return to the login gate (US3). */

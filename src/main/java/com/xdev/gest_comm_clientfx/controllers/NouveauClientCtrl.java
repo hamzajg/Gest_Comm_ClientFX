@@ -2,6 +2,7 @@ package com.xdev.gest_comm_clientfx.controllers;
 
 import com.xdev.gest_comm_clientfx.api.ApiClient;
 import com.xdev.gest_comm_clientfx.api.ApiException;
+import com.xdev.gest_comm_clientfx.i18n.Messages;
 import com.xdev.gest_comm_clientfx.models.Client;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -68,7 +69,7 @@ public class NouveauClientCtrl implements ApiDialog {
         payload.put("numTelClient1", parsePhone(tel1Field.getText()));
         payload.put("numTelClient2", parsePhone(tel2Field.getText()));
 
-        statusLabel.setText("Enregistrement…");
+        statusLabel.setText(Messages.get("form.saving"));
         new Thread(() -> {
             try {
                 if (editing != null) {
@@ -85,27 +86,27 @@ public class NouveauClientCtrl implements ApiDialog {
                 });
             } catch (ApiException e) {
                 Platform.runLater(() -> statusLabel.setText(
-                    ApiMessages.refused("Enregistrement", e)));
+                    ApiMessages.refused(Messages.get("record.action.save"), e)));
             }
         }).start();
     }
 
     private String validate() {
         if (codeClientField.getText().isBlank()) {
-            return "Le code client est obligatoire.";
+            return Messages.get("form.error.clientCode");
         }
         if (nomPrenomField.getText().isBlank()) {
-            return "Le nom et prénom sont obligatoires.";
+            return Messages.get("form.error.clientName");
         }
         if (matFiscalField.getText().isBlank()) {
-            return "Le matricule fiscal est obligatoire.";
+            return Messages.get("form.error.taxId");
         }
         if (adresse1Field.getText().isBlank()) {
-            return "L'adresse 1 est obligatoire.";
+            return Messages.get("form.error.address1");
         }
         if (!isInteger(tel1Field.getText())
                 || !isInteger(tel2Field.getText())) {
-            return "Les numéros de téléphone doivent être des nombres.";
+            return Messages.get("form.error.phones");
         }
         return null;
     }
