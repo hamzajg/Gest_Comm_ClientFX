@@ -2,6 +2,7 @@ package com.xdev.gest_comm_clientfx.controllers;
 
 import com.xdev.gest_comm_clientfx.api.ApiClient;
 import com.xdev.gest_comm_clientfx.api.ApiException;
+import com.xdev.gest_comm_clientfx.i18n.Messages;
 import com.xdev.gest_comm_clientfx.models.Article;
 import com.xdev.gest_comm_clientfx.models.Client;
 import com.xdev.gest_comm_clientfx.models.Devis;
@@ -164,6 +165,7 @@ public class NouveauDevisCtrl implements ApiDialog {
         colRemise.setCellValueFactory(new PropertyValueFactory<>("remise"));
         colTva.setCellValueFactory(new PropertyValueFactory<>("tva"));
         linesTable.setItems(lines);
+        linesTable.setPlaceholder(new Label(Messages.get("line.empty")));
         linesTable.getSelectionModel().selectedItemProperty()
             .addListener((obs, oldV, newV) -> updateTotals());
         lines.addListener((javafx.collections.ListChangeListener<LigneDraft>)
@@ -180,7 +182,7 @@ public class NouveauDevisCtrl implements ApiDialog {
         articleCombo.getSelectionModel().selectedItemProperty()
             .addListener((obs, oldV, article) -> prefillFromArticle(article));
 
-        statusLabel.setText("Chargement des clients et articles…");
+        statusLabel.setText(Messages.get("form.loading.lookups"));
     }
 
     private void loadLookups() {
@@ -229,14 +231,14 @@ public class NouveauDevisCtrl implements ApiDialog {
         String quantite = quantiteField.getText().trim();
         String prix = prixField.getText().trim();
         if (designation.isEmpty() && articleCombo.getValue() == null) {
-            statusLabel.setText("Choisissez un article ou saisissez une désignation.");
+            statusLabel.setText(Messages.get("form.chooseArticleOrDesignation"));
             return;
         }
         if (designation.isEmpty()) {
             designation = articleCombo.getValue().getDesc_article();
         }
         if (!isPositiveNumber(quantite) || !isPositiveNumber(prix)) {
-            statusLabel.setText("Quantité et prix doivent être des nombres > 0.");
+            statusLabel.setText(Messages.get("form.positiveNumbers"));
             return;
         }
         Article article = articleCombo.getValue();
@@ -261,9 +263,9 @@ public class NouveauDevisCtrl implements ApiDialog {
             ht += l.lineHt();
             tva += l.lineTva();
         }
-        totalsLabel.setText(String.format(
-            "Total HT : %.2f — TVA : %.2f — TTC : %.2f",
-            ht, tva, ht + tva));
+        totalsLabel.setText(Messages.get("form.totals",
+            String.format("%.2f", ht), String.format("%.2f", tva),
+            String.format("%.2f", ht + tva)));
     }
 
     private static boolean isPositiveNumber(String text) {
@@ -294,7 +296,7 @@ public class NouveauDevisCtrl implements ApiDialog {
         }
         payload.put("lignes", lignes);
 
-        statusLabel.setText("Enregistrement…");
+        statusLabel.setText(Messages.get("form.saving"));
         new Thread(() -> {
             try {
                 if (editing != null) {
@@ -311,24 +313,24 @@ public class NouveauDevisCtrl implements ApiDialog {
                 });
             } catch (ApiException e) {
                 Platform.runLater(() -> statusLabel.setText(
-                    ApiMessages.refused("Enregistrement", e)));
+                    ApiMessages.refused(Messages.get("record.action.save"), e)));
             }
         }).start();
     }
 
     private String validate() {
         if (clientCombo.getValue() == null) {
-            return "Choisissez un client.";
+            return Messages.get("form.chooseClient");
         }
         if (!dateDevisField.getText().trim().matches("\\d{4}-\\d{2}-\\d{2}")) {
-            return "La date doit être au format AAAA-MM-JJ.";
+            return Messages.get("form.dateFormat");
         }
         if (lines.isEmpty()) {
-            return "Ajoutez au moins une ligne.";
+            return Messages.get("form.addLineFirst");
         }
         for (LigneDraft l : lines) {
             if (l.getDesignation() == null || l.getDesignation().isBlank()) {
-                return "Chaque ligne doit avoir une désignation.";
+                return Messages.get("form.lineNeedsDesignation");
             }
         }
         return null;

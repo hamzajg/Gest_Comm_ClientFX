@@ -28,15 +28,16 @@ public final class WorkspacePolicy {
     private static final Set<String> LISTS = Set.of(
         CLIENTS, ARTICLES, DEVIS, FACTURES, BONLIVS);
 
-    private static final Map<String, String> TITLES = Map.of(
-        WELCOME, "Bienvenue",
-        CLIENTS, "Clients",
-        ARTICLES, "Articles",
-        DEVIS, "Devis",
-        FACTURES, "Factures",
-        BONLIVS, "Bons de livraison",
-        CONFIG, "Paramètres",
-        PROFILE, "Profil");
+    /** Menu key that names the panel; callers resolve it in the bundles. */
+    private static final Map<String, String> TITLE_KEYS = Map.of(
+        WELCOME, "menu.welcome",
+        CLIENTS, "menu.clients",
+        ARTICLES, "menu.articles",
+        DEVIS, "menu.devis",
+        FACTURES, "menu.factures",
+        BONLIVS, "menu.bonLivs",
+        CONFIG, "menu.settings",
+        PROFILE, "menu.profile");
 
     private WorkspacePolicy() { }
 
@@ -48,8 +49,8 @@ public final class WorkspacePolicy {
         return LISTS.contains(key);
     }
 
-    public static String title(String key) {
-        return TITLES.getOrDefault(key, key);
+    public static String titleKey(String key) {
+        return TITLE_KEYS.getOrDefault(key, key);
     }
 
     /** A form tab is never reused: two clients can be created side by side. */

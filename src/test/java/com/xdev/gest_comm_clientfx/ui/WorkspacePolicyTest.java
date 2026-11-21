@@ -38,10 +38,14 @@ class WorkspacePolicyTest {
     }
 
     @Test
-    void everyPanelHasAFrenchTitle() {
-        assertEquals("Bienvenue", WorkspacePolicy.title(WorkspacePolicy.WELCOME));
-        assertEquals("Bons de livraison",
-            WorkspacePolicy.title(WorkspacePolicy.BONLIVS));
-        assertEquals("Paramètres", WorkspacePolicy.title(WorkspacePolicy.CONFIG));
+    void everyPanelNamesTheMenuKeyThatTitlesIt() {
+        assertEquals("menu.welcome",
+            WorkspacePolicy.titleKey(WorkspacePolicy.WELCOME));
+        assertEquals("menu.bonLivs",
+            WorkspacePolicy.titleKey(WorkspacePolicy.BONLIVS));
+        assertEquals("menu.settings",
+            WorkspacePolicy.titleKey(WorkspacePolicy.CONFIG));
+        assertEquals("menu.profile",
+            WorkspacePolicy.titleKey(WorkspacePolicy.PROFILE));
     }
 }

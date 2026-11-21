@@ -3,6 +3,8 @@ package com.xdev.gest_comm_clientfx.api;
 import com.xdev.gest_comm_clientfx.controllers.ApiMessages;
 import org.junit.jupiter.api.Test;
 
+import java.util.Locale;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -26,7 +28,7 @@ class ApiExceptionTest {
             + "1 devis.", e.getDetail());
         assertEquals("Suppression impossible : This client cannot be "
             + "deleted: still referenced by 1 devis.",
-            ApiMessages.refused("Suppression", e));
+            ApiMessages.refused(Locale.FRENCH, "Suppression", e));
     }
 
     @Test
@@ -38,7 +40,7 @@ class ApiExceptionTest {
         assertEquals(400, e.getStatusCode());
         assertEquals("question : Ce champ est obligatoire.", e.getDetail());
         assertEquals("Action refusée : question : Ce champ est obligatoire.",
-            ApiMessages.refused("Enregistrement", e));
+            ApiMessages.refused(Locale.FRENCH, "Enregistrement", e));
     }
 
     @Test
@@ -54,11 +56,11 @@ class ApiExceptionTest {
     @Test
     void anUnexpectedFailureNeverRendersTheLiteralNull() {
         assertEquals("Erreur inattendue : IllegalStateException",
-            ApiMessages.unexpected(new IllegalStateException()));
+            ApiMessages.unexpected(Locale.FRENCH, new IllegalStateException()));
         assertEquals("Erreur inattendue : boom",
-            ApiMessages.unexpected(new RuntimeException("boom")));
+            ApiMessages.unexpected(Locale.FRENCH, new RuntimeException("boom")));
         assertEquals("Erreur inattendue : inconnue",
-            ApiMessages.unexpected(null));
+            ApiMessages.unexpected(Locale.FRENCH, null));
     }
 
     @Test
