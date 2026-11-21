@@ -73,6 +73,7 @@ public class SkinShots {
         shootPair("06-rail-min", SkinShots::railAtMinimum, 500);
         shootPair("07-login", SkinShots::login, 300);
         shootPair("08-login-refused", SkinShots::loginRefused, 300);
+        shootPair("09-profile", SkinShots::profile, 250, SkinShots::poseProfile);
         System.out.println("skin captures written to " + outDir.getAbsolutePath());
     }
 
@@ -84,7 +85,7 @@ public class SkinShots {
     }
 
     private interface Settle {
-        void run() throws Exception;
+        void run(Scene scene) throws Exception;
     }
 
     private static Scene homeClients() throws Exception {
@@ -135,6 +136,24 @@ public class SkinShots {
         return new Scene(root, 1024, 640);
     }
 
+    /** The account card, posed with a synthetic administrator (no backend). */
+    private static Scene profile() throws Exception {
+        FXMLLoader loader = loader("ProfileView.fxml");
+        Parent root = loader.load();
+        return new Scene(root, 900, 640);
+    }
+
+    private static void poseProfile(Scene scene) {
+        Parent root = scene.getRoot();
+        label(root, "#nameLabel").setText("Ada Lovelace");
+        label(root, "#usernameLabel").setText("ada.lovelace");
+        label(root, "#emailLabel").setText("ada@atelier-moreau.fr");
+        Label role = label(root, "#roleLabel");
+        role.setText("Administrateur");
+        role.getStyleClass().add("role-admin");
+        label(root, "#statusLabel").setText("");
+    }
+
     private static Scene loginRefused() throws Exception {
         Scene scene = login();
         Label status = label(scene.getRoot(), "#statusLabel");
@@ -179,6 +198,11 @@ public class SkinShots {
      */
     private static void shootPair(String name, Screen screen,
                                   long settleMs) throws Exception {
+        shootPair(name, screen, settleMs, null);
+    }
+
+    private static void shootPair(String name, Screen screen, long settleMs,
+                                  Settle settle) throws Exception {
         final Scene[] scene = new Scene[1];
         fx(() -> {
             scene[0] = screen.build();
@@ -197,6 +221,9 @@ public class SkinShots {
                 // the selected row is the surface this comparison is about.
                 table.getSelectionModel().select(2);
                 label(root, "#clientStatus").setText("6 clients chargés.");
+            }
+            if (settle != null) {
+                settle.run(scene[0]);
             }
         });
 

@@ -28,6 +28,7 @@
             <Menu mnemonicParsing="false" text="Application">
                 <items>
                     <MenuItem mnemonicParsing="false" onAction="#showWelcome" text="Bienvenue" />
+                    <MenuItem mnemonicParsing="false" onAction="#showProfile" text="Mon profil" />
                     <MenuItem mnemonicParsing="false" onAction="#openConfig" text="Parametre de l'application" />
                     <MenuItem mnemonicParsing="false" onAction="#toggleDrawer" text="Panneau d'actions" />
                     <SeparatorMenuItem/>

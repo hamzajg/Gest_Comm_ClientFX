@@ -18,10 +18,11 @@ public final class WorkspacePolicy {
     public static final String FACTURES = "factures";
     public static final String BONLIVS = "bonlivs";
     public static final String CONFIG = "config";
+    public static final String PROFILE = "profile";
 
     /** Panels that exist at most once: reopening focuses the existing tab. */
     private static final Set<String> SINGLETONS = Set.of(
-        WELCOME, CLIENTS, ARTICLES, DEVIS, FACTURES, BONLIVS, CONFIG);
+        WELCOME, CLIENTS, ARTICLES, DEVIS, FACTURES, BONLIVS, CONFIG, PROFILE);
 
     /** Panels whose table the toolbar search filters. */
     private static final Set<String> LISTS = Set.of(
@@ -34,7 +35,8 @@ public final class WorkspacePolicy {
         DEVIS, "Devis",
         FACTURES, "Factures",
         BONLIVS, "Bons de livraison",
-        CONFIG, "Paramètres");
+        CONFIG, "Paramètres",
+        PROFILE, "Profil");
 
     private WorkspacePolicy() { }
 

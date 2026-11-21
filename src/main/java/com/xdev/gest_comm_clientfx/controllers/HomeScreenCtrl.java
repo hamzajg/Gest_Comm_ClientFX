@@ -77,6 +77,7 @@ public class HomeScreenCtrl {
     private TabWorkspace workspace;
     private String searchTerm = "";
     private int formSequence = 0;
+    private Runnable onSignedOut;
 
     @FXML
     public void initialize() {
@@ -221,6 +222,24 @@ public class HomeScreenCtrl {
         }
     }
 
+    /** The signed-in account, its role and the way out (US3). */
+    @FXML
+    public void showProfile() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(
+                "/com/xdev/gest_comm_clientfx/views/ProfileView.fxml"));
+            Parent root = loader.load();
+            ProfileCtrl ctrl = loader.getController();
+            ctrl.setOnSignedOut(this::requestSignOut);
+            Tab tab = workspace.open(WorkspacePolicy.PROFILE,
+                WorkspacePolicy.title(WorkspacePolicy.PROFILE), root);
+            updateDrawer(tab);
+        } catch (IOException e) {
+            clientStatus.setText(
+                "Erreur : impossible d'ouvrir le profil.");
+        }
+    }
+
     /** Loads a form FXML into a tab instead of its own window. */
     private <C> void openForm(String fxml, String title, Class<C> ctrlType,
                               Runnable onSaved) {
@@ -277,6 +296,7 @@ public class HomeScreenCtrl {
         }
         List<ActionDrawer.Action> base = switch (key) {
             case WorkspacePolicy.WELCOME -> List.of(
+                action("Mon profil", this::showProfile),
                 action("Clients", this::showClients),
                 action("Articles", this::showArticles),
                 action("Devis", this::showDevis),
@@ -731,14 +751,24 @@ public class HomeScreenCtrl {
             "Assistant", AssistantCtrl.class, () -> { });
     }
 
+    /** Sign-out: revoke the session, then return to the login gate (US3). */
     @FXML
     public void logout() {
         new Thread(() -> {
             api.logout();
-            Platform.runLater(() -> clientStatus.setText(
-                "Session révoquée — la prochaine action reconnectera "
-                + "automatiquement."));
+            Platform.runLater(this::requestSignOut);
         }).start();
+    }
+
+    /** Called by the shell that owns the stage once the session is revoked. */
+    public void setOnSignedOut(Runnable onSignedOut) {
+        this.onSignedOut = onSignedOut;
+    }
+
+    private void requestSignOut() {
+        if (onSignedOut != null) {
+            onSignedOut.run();
+        }
     }
 
     /** Kept for callers that still hold a Stage (tests, tools). */

@@ -61,7 +61,11 @@ public class StartApp extends Application {
     /** Builds the workspace scene on the stage that the login gate used. */
     public void showWorkspace() {
         try {
-            Scene scene = new Scene(new HomeScreen().getRootView(), 1200, 700);
+            HomeScreen home = new HomeScreen();
+            // Sign-out is the same scene swap as a launch without a session:
+            // the workspace is discarded, the gate is rebuilt (US3, D2).
+            home.setOnSignedOut(this::signOut);
+            Scene scene = new Scene(home.getRootView(), 1200, 700);
             Theme.install(scene);
             stage.setScene(scene);
         } catch (IOException e) {
@@ -69,6 +73,10 @@ public class StartApp extends Application {
         }
     }
 
+    /** The session has already been revoked; show the gate again. */
+    public void signOut() {
+        showLogin();
+    }
 
     public static void main(String[] args) {
         // French UI: JavaFX's own strings (the table's "no content" caption,
