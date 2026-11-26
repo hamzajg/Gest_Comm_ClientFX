@@ -10,7 +10,7 @@ the window, config screen, live Clients/Articles/Devis/Factures list
 tabs, create/edit/delete forms and statut actions for all four resources, and
 devis→facture conversion, an assistant panel and bons de livraison
 work against the API — the full declared domain is wired.
-Stack: Java 17, JavaFX 17 (via Maven, `javafx-controls`/`javafx-fxml`),
+Stack: Java 25, JavaFX 17 (via Maven, `javafx-controls`/`javafx-fxml`),
 Jackson databind, `java.net.http`, Maven, FXML views.
 
 ## Commands
@@ -19,11 +19,11 @@ Verified 2026-11-17 against CI (`.github/workflows/ci.yml`) and README.
 
 | Task | Command |
 |---|---|
-| Build | `mvn -B package` (CI: JDK 17) |
+| Build | `mvn -B package` (CI: JDK 25) |
 | Run app | `mvn javafx:run` |
 | Tests | `mvn -B package` runs JUnit 5 tests (29) |
 
-Requires: JDK 17 only — JavaFX and Jackson come from Maven. The app also
+Requires: JDK 25 only — JavaFX and Jackson come from Maven. The app also
 needs a running PyGestComm backend (`python manage.py runserver` in that
 repo) plus credentials configured via *Application → Parametre de
 l'application*.
