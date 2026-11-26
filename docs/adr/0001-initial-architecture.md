@@ -29,7 +29,7 @@ Gest_Comm ADF REST service.
    `prix_vente_unitaire`, `remise_achat`, `tva_*` mirror the business
    language and the backend schema. Rationale: consistency across the
    two-repo system beats anglicising.
-6. **CI = Maven package only.** JDK 17, `mvn -B package`, no tests. The
+6. **CI = Maven package only.** JDK 25, `mvn -B package`, no tests. The
    build proves compilation; nothing else is claimed.
 
 ## Consequences

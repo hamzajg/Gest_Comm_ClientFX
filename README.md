@@ -20,7 +20,7 @@ be deleted…*), see `controllers/ApiMessages`.
 
 ## Run it
 
-Requirements: JDK 17 (JavaFX 17 is pulled from Maven, so no separate SDK is
+Requirements: JDK 25 (JavaFX 17 is pulled from Maven, so no separate SDK is
 needed) and a running PyGestComm backend:
 
 ```bash
@@ -124,7 +124,7 @@ by the `maven-resources-plugin` resource entry in `pom.xml`, which is why
 
 ## Continuous integration
 
-[`.github/workflows/ci.yml`](.github/workflows/ci.yml) builds with JDK 17 and
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml) builds with JDK 25 and
 `mvn -B package` on every push and pull request to `master`.
 
 ## License
